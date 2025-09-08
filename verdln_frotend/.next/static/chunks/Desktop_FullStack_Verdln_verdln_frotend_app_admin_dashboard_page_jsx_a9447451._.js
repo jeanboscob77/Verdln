@@ -9,37 +9,45 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$LanguageContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/Context/LanguageContext.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$AuthContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/Context/AuthContext.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/node_modules/next/navigation.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
+;
+;
 function AdminDashboard() {
     _s();
     const { t } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$LanguageContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useLanguage"])();
+    const { user, loading } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$AuthContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuth"])();
     // Dummy loan requests
-    const [requests, setRequests] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([
-        {
-            id: 1,
-            farmer: "Alice",
-            input: "Seeds",
-            package: "5kg",
-            amount: 100,
-            status: "Pending",
-            notes: "",
-            repayments: []
-        },
-        {
-            id: 2,
-            farmer: "Bob",
-            input: "Fertilizer",
-            package: "10kg",
-            amount: 150,
-            status: "Approved",
-            notes: "",
-            repayments: []
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "AdminDashboard.useEffect": ()=>{
+            if (!loading && !user) {
+                router.push("/auth/login");
+            } else {
+            // fetchData();
+            }
         }
+    }["AdminDashboard.useEffect"], [
+        user,
+        loading,
+        router
     ]);
+    const [requests, setRequests] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    async function fetchData() {
+        try {
+            const res = await apiGet("/loans");
+            setRequests(res.requests || []);
+        } catch (err) {
+            console.error(err);
+        // setError("Failed to fetch data");
+        }
+    }
+    fetchData();
     const [selectedRepayment, setSelectedRepayment] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [repayAmount, setRepayAmount] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [repayMethod, setRepayMethod] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Cash");
@@ -88,7 +96,7 @@ function AdminDashboard() {
                 children: t.adminDashboardTitle
             }, void 0, false, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                lineNumber: 86,
+                lineNumber: 85,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -102,20 +110,20 @@ function AdminDashboard() {
                                 children: t.totalLoans
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 91,
+                                lineNumber: 90,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: totalLoans
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 92,
+                                lineNumber: 91,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                        lineNumber: 90,
+                        lineNumber: 89,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -126,20 +134,20 @@ function AdminDashboard() {
                                 children: t.totalRepayments
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 95,
+                                lineNumber: 94,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: totalRepayments
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 96,
+                                lineNumber: 95,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                        lineNumber: 94,
+                        lineNumber: 93,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -150,26 +158,26 @@ function AdminDashboard() {
                                 children: t.pendingRequests
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 99,
+                                lineNumber: 98,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: pendingRequests
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 100,
+                                lineNumber: 99,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                        lineNumber: 98,
+                        lineNumber: 97,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                lineNumber: 89,
+                lineNumber: 88,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -186,7 +194,7 @@ function AdminDashboard() {
                                         children: t.farmer
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 109,
+                                        lineNumber: 108,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -194,7 +202,7 @@ function AdminDashboard() {
                                         children: t.input
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 110,
+                                        lineNumber: 109,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -202,7 +210,7 @@ function AdminDashboard() {
                                         children: t.package
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 111,
+                                        lineNumber: 110,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -210,7 +218,7 @@ function AdminDashboard() {
                                         children: t.amount
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 112,
+                                        lineNumber: 111,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -218,7 +226,7 @@ function AdminDashboard() {
                                         children: t.status
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 113,
+                                        lineNumber: 112,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -226,7 +234,7 @@ function AdminDashboard() {
                                         children: t.notes
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 114,
+                                        lineNumber: 113,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -234,18 +242,18 @@ function AdminDashboard() {
                                         children: t.actions
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 115,
+                                        lineNumber: 114,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 108,
+                                lineNumber: 107,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                            lineNumber: 107,
+                            lineNumber: 106,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -257,12 +265,20 @@ function AdminDashboard() {
                                             children: r.farmer
                                         }, void 0, false, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
+                                            lineNumber: 120,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "p-2 border",
+                                            children: r.input_type
+                                        }, void 0, false, {
+                                            fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
                                             lineNumber: 121,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                             className: "p-2 border",
-                                            children: r.input
+                                            children: r.package_size
                                         }, void 0, false, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
                                             lineNumber: 122,
@@ -270,18 +286,10 @@ function AdminDashboard() {
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                             className: "p-2 border",
-                                            children: r.package
-                                        }, void 0, false, {
-                                            fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                            lineNumber: 123,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                            className: "p-2 border",
                                             children: r.amount
                                         }, void 0, false, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                            lineNumber: 124,
+                                            lineNumber: 123,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -289,7 +297,7 @@ function AdminDashboard() {
                                             children: r.status
                                         }, void 0, false, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                            lineNumber: 125,
+                                            lineNumber: 124,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -301,12 +309,12 @@ function AdminDashboard() {
                                                 onChange: (e)=>handleAddNotes(r.id, e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                                lineNumber: 137,
+                                                lineNumber: 136,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                            lineNumber: 136,
+                                            lineNumber: 135,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -318,7 +326,7 @@ function AdminDashboard() {
                                                     children: t.approve
                                                 }, void 0, false, {
                                                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                                    lineNumber: 145,
+                                                    lineNumber: 144,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -327,7 +335,7 @@ function AdminDashboard() {
                                                     children: t.reject
                                                 }, void 0, false, {
                                                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                                    lineNumber: 151,
+                                                    lineNumber: 150,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -336,35 +344,35 @@ function AdminDashboard() {
                                                     children: t.repay
                                                 }, void 0, false, {
                                                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                                    lineNumber: 157,
+                                                    lineNumber: 156,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                            lineNumber: 144,
+                                            lineNumber: 143,
                                             columnNumber: 17
                                         }, this)
                                     ]
-                                }, r.id, true, {
+                                }, r._id, true, {
                                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                    lineNumber: 120,
+                                    lineNumber: 119,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                            lineNumber: 118,
+                            lineNumber: 117,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                    lineNumber: 106,
+                    lineNumber: 105,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                lineNumber: 105,
+                lineNumber: 104,
                 columnNumber: 7
             }, this),
             selectedRepayment && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -379,7 +387,7 @@ function AdminDashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                        lineNumber: 173,
+                        lineNumber: 172,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -394,7 +402,7 @@ function AdminDashboard() {
                                 className: "w-full border p-2 rounded"
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 177,
+                                lineNumber: 176,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -407,7 +415,7 @@ function AdminDashboard() {
                                         children: t.cash
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 189,
+                                        lineNumber: 188,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -415,13 +423,13 @@ function AdminDashboard() {
                                         children: t.mobileMoney
                                     }, void 0, false, {
                                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                        lineNumber: 190,
+                                        lineNumber: 189,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 184,
+                                lineNumber: 183,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -430,31 +438,33 @@ function AdminDashboard() {
                                 children: t.submitRepayment
                             }, void 0, false, {
                                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                                lineNumber: 192,
+                                lineNumber: 191,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                        lineNumber: 176,
+                        lineNumber: 175,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-                lineNumber: 172,
+                lineNumber: 171,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/app/admin/dashboard/page.jsx",
-        lineNumber: 85,
+        lineNumber: 84,
         columnNumber: 5
     }, this);
 }
-_s(AdminDashboard, "pqGz6N8y2V558/iwmHCFg5S4B5o=", false, function() {
+_s(AdminDashboard, "Bl+FFm9j9bP0i3IC1pMuWANh6MU=", false, function() {
     return [
-        __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$LanguageContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useLanguage"]
+        __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$LanguageContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useLanguage"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$AuthContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuth"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
 });
 _c = AdminDashboard;

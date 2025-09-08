@@ -3,10 +3,28 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
+import { useAuth } from "@/Context/AuthContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { lang, setLang, t } = useLanguage(); // use context
+  const { lang, setLang, t } = useLanguage();
+  const { user, logout } = useAuth();
+  const pathname = usePathname();
+
+  // Links with roles
+  const links = [
+    { label: t.home, href: "/", roles: ["guest", "farmer", "admin"] },
+    { label: t.farmer, href: "/farmer/dashboard", roles: ["farmer"] },
+    { label: t.admin, href: "/admin/dashboard", roles: ["admin"] },
+    { label: t.ussd, href: "/ussd", roles: ["guest", "farmer", "admin"] },
+  ];
+
+  // Filtered links based on role
+  const availableLinks = links.filter((link) => {
+    if (!user && link.roles.includes("guest")) return true;
+    if (user?.role && link.roles.includes(user.role)) return true;
+    return false;
+  });
 
   return (
     <nav className="bg-white border-b sticky top-0 z-30">
@@ -24,12 +42,16 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-4">
-            <NavLink label={t.home} href="/" />
-            <NavLink label={t.farmer} href="/farmer/dashboard" />
-            <NavLink label={t.admin} href="/admin/dashboard" />
-            <NavLink label={t.ussd} href="#ussd" />
+            {availableLinks.map((link) => (
+              <NavLink
+                key={link.href}
+                label={link.label}
+                href={link.href}
+                pathname={pathname}
+              />
+            ))}
             <LangSwitcher lang={lang} setLang={setLang} />
-            <AuthButtons t={t} />
+            <AuthButtons t={t} user={user} logout={logout} />
           </div>
 
           {/* Mobile menu button */}
@@ -62,12 +84,16 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden px-4 pb-4">
           <div className="flex flex-col gap-2">
-            <MobileLink label={t.home} href="/" />
-            <MobileLink label={t.farmerDashboard} href="/farmer/dashboard" />
-            <MobileLink label={t.adminDashboard} href="/admin/dashboard" />
-            <MobileLink label={t.ussdInfo} href="#ussd" />
+            {availableLinks.map((link) => (
+              <MobileLink
+                key={link.href}
+                label={link.label}
+                href={link.href}
+                pathname={pathname}
+              />
+            ))}
             <div className="pt-2 border-t mt-2">
-              <AuthButtons stacked t={t} />
+              <AuthButtons stacked t={t} user={user} logout={logout} />
             </div>
           </div>
         </div>
@@ -76,11 +102,8 @@ export default function Navbar() {
   );
 }
 
-// Desktop NavLink with active link
-function NavLink({ label, href = "#" }) {
-  const pathname = usePathname();
+function NavLink({ label, href, pathname }) {
   const isActive = pathname === href;
-
   return (
     <Link
       href={href}
@@ -93,11 +116,8 @@ function NavLink({ label, href = "#" }) {
   );
 }
 
-// Mobile link with active link
-function MobileLink({ label, href = "#" }) {
-  const pathname = usePathname();
+function MobileLink({ label, href, pathname }) {
   const isActive = pathname === href;
-
   return (
     <Link
       href={href}
@@ -110,7 +130,6 @@ function MobileLink({ label, href = "#" }) {
   );
 }
 
-// Language switcher
 function LangSwitcher({ lang, setLang, compact = false }) {
   if (compact) {
     return (
@@ -147,8 +166,22 @@ function LangSwitcher({ lang, setLang, compact = false }) {
   );
 }
 
-// Auth buttons
-function AuthButtons({ stacked = false, t }) {
+function AuthButtons({ stacked = false, t, user, logout }) {
+  if (user) {
+    return (
+      <button
+        onClick={logout}
+        className={
+          stacked
+            ? "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 mt-2"
+            : "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700"
+        }
+      >
+        {t.logout || "Logout"}
+      </button>
+    );
+  }
+
   return (
     <div
       className={

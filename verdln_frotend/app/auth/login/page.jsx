@@ -1,13 +1,14 @@
-// pages/auth/login.js
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
-// import { apiPost } from "@/utils/api";
+import { useAuth } from "@/Context/AuthContext"; // <-- import Auth context
+import { apiPost } from "@/Utils/api";
 
 export default function LoginPage() {
   const router = useRouter();
   const { t, setLang } = useLanguage();
+  const { login } = useAuth(); // <-- get login function from context
 
   const [nationalId, setNationalId] = useState("");
   const [phone, setPhone] = useState("");
@@ -32,25 +33,36 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      // update path to your backend auth URL if needed
-      //   const data = await apiPost("/api/auth/login", {
-      //     national_id: nationalId,
-      //     phone_number: phone,
-      //   });
+      const data = await apiPost("/auth/login", {
+        national_id: nationalId,
+        phone_number: phone,
+      });
 
-      // backend may return preferred_language and a token/session
+      // Set preferred language
       if (data.preferred_language) {
         setLang(data.preferred_language);
         localStorage.setItem("preferredLang", data.preferred_language);
       }
 
-      if (data.token) {
+      if (data.token && data.user) {
+        // Save token in localStorage
         localStorage.setItem("authToken", data.token);
-        // redirect to farmer dashboard (adjust based on role)
-        router.push("/farmer/dashboard");
+
+        // Update Auth context
+        login(data.user, data.token);
+
+        // Redirect based on role
+        if (data.user.role === "farmer") {
+          router.push("/farmer/dashboard");
+        } else if (data.user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
+
+        console.log("Logged in user:", data.user);
       } else {
-        // fallback behavior
-        router.push("/farmer/dashboard");
+        setError("Login failed: missing token or user data");
       }
     } catch (err) {
       setError(err.message || "Login failed");

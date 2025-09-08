@@ -1,83 +1,89 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/Context/LanguageContext";
+import { useRouter } from "next/navigation";
+import { apiGet, apiPost } from "@/Utils/api";
+import { useAuth } from "@/Context/AuthContext";
 
 export default function FarmerDashboard() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage(); // get language
+  const router = useRouter();
+  const { user, loading } = useAuth();
 
-  // Form state
   const [inputType, setInputType] = useState("");
   const [packageSize, setPackageSize] = useState("");
   const [repaymentDate, setRepaymentDate] = useState("");
   const [amount, setAmount] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
   const [error, setError] = useState("");
 
-  // Dummy data
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      input_type: "Fertilizer",
-      package_size: "50kg",
-      repayment_date: "2025-09-15",
-      amount: 50000,
-      status: "Pending",
-    },
-    {
-      id: 2,
-      input_type: "Seeds",
-      package_size: "20kg",
-      repayment_date: "2025-10-01",
-      amount: 20000,
-      status: "Approved",
-    },
-  ]);
+  const [requests, setRequests] = useState([]);
 
-  const [repayments, setRepayments] = useState([
+  const inputOptions = [
+    { value: "seeds", label: { en: "Seeds", rw: "Imbuto" } },
+    { value: "fertilizer", label: { en: "Fertilizer", rw: "Ifumbire" } },
     {
-      id: 1,
-      amount: 25000,
-      date: "2025-08-15",
-      method: "Mobile Money",
+      value: "pesticides",
+      label: { en: "Pesticides", rw: "Imiti yica udukoko" },
     },
-    {
-      id: 2,
-      amount: 15000,
-      date: "2025-08-20",
-      method: "Bank Transfer",
-    },
-  ]);
+  ];
 
-  // Form submission simulation
-  function handleSubmit(e) {
+  const statusLabels = {
+    Pending: { en: "Pending", rw: "Bitegereje" },
+    Approved: { en: "Approved", rw: "Yemejwe" },
+    Rejected: { en: "Rejected", rw: "Yanenzwe" },
+  };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login");
+    } else {
+      fetchData();
+    }
+  }, [user, loading, router]);
+
+  async function fetchData() {
+    try {
+      const res = await apiGet(`/loans/farmer/${user?.id || user?._id}`);
+      setRequests(res.requests || []);
+    } catch (err) {
+      console.error(err);
+      // setError("Failed to fetch data");
+    }
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
     if (!inputType || !packageSize || !repaymentDate) {
       setError(t.required);
+      fetchData();
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      const newRequest = {
-        id: requests.length + 1,
+    setLoadingRequest(true);
+    try {
+      const res = await apiPost("/loans/submit", {
+        farmerId: user?.id || user?._id,
         input_type: inputType,
         package_size: packageSize,
         repayment_date: repaymentDate,
-        amount: amount || 0,
-        status: "Pending",
-      };
-      setRequests([newRequest, ...requests]);
+        amount,
+      });
+
+      // setRequests([res.request, ...requests]);
       setInputType("");
       setPackageSize("");
       setRepaymentDate("");
       setAmount("");
-      setLoading(false);
-    }, 500);
+    } catch (err) {
+      setError(err.message || "Failed to submit request");
+    } finally {
+      setLoadingRequest(false);
+    }
   }
 
-  // Helper to color status
   const statusColor = (status) => {
     switch (status) {
       case "Pending":
@@ -91,24 +97,36 @@ export default function FarmerDashboard() {
     }
   };
 
+  if (loading || !user) {
+    return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-6xl mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">{t.farmerDashboard}</h1>
 
-        {/* Request Submission Form */}
+        {/* Request Form */}
         <section className="mb-8 p-4 bg-white rounded shadow">
           <h2 className="font-semibold mb-4">{t.submitRequest}</h2>
           {error && <div className="mb-3 text-red-600">{error}</div>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <label className="block">
               <span>{t.inputType}</span>
-              <input
+              <select
                 value={inputType}
                 onChange={(e) => setInputType(e.target.value)}
                 className="w-full border p-2 rounded mt-1"
-              />
+              >
+                <option value="">{t.choice}</option>
+                {inputOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label[lang]}
+                  </option>
+                ))}
+              </select>
             </label>
+
             <label className="block">
               <span>{t.packageSize}</span>
               <input
@@ -117,6 +135,7 @@ export default function FarmerDashboard() {
                 className="w-full border p-2 rounded mt-1"
               />
             </label>
+
             <label className="block">
               <span>{t.repaymentDate}</span>
               <input
@@ -126,6 +145,7 @@ export default function FarmerDashboard() {
                 className="w-full border p-2 rounded mt-1"
               />
             </label>
+
             <label className="block">
               <span>{t.amountOptional}</span>
               <input
@@ -135,17 +155,18 @@ export default function FarmerDashboard() {
                 className="w-full border p-2 rounded mt-1"
               />
             </label>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loadingRequest}
               className="w-full bg-green-600 text-white p-2 rounded"
             >
-              {loading ? "..." : t.submit}
+              {loadingRequest ? "..." : t.submit}
             </button>
           </form>
         </section>
 
-        {/* My Requests Table */}
+        {/* Requests Table */}
         <section className="mb-8">
           <h2 className="font-semibold mb-2">{t.myRequests}</h2>
           <div className="overflow-x-auto">
@@ -162,15 +183,23 @@ export default function FarmerDashboard() {
               <tbody>
                 {requests.length ? (
                   requests.map((r) => (
-                    <tr key={r.id} className="text-center border-t">
-                      <td className="px-4 py-2">{r.input_type}</td>
+                    <tr key={r._id} className="text-center border-t">
+                      <td className="px-4 py-2">
+                        {inputOptions.find((i) => i.value === r.input_type)
+                          ?.label[lang] || r.input_type}
+                      </td>
                       <td className="px-4 py-2">{r.package_size}</td>
-                      <td className="px-4 py-2">{r.repayment_date}</td>
+                      <td className="px-4 py-2">
+                        {new Date(r.repayment_date).toLocaleDateString()}
+                      </td>
                       <td className="px-4 py-2">{r.amount}</td>
                       <td
                         className={`px-4 py-2 rounded ${statusColor(r.status)}`}
                       >
-                        {r.status}
+                        {statusLabels[
+                          r.status?.trim()?.charAt(0).toUpperCase() +
+                            r.status?.trim()?.slice(1)
+                        ]?.[lang] || r.status}
                       </td>
                     </tr>
                   ))
@@ -178,39 +207,6 @@ export default function FarmerDashboard() {
                   <tr>
                     <td colSpan={5} className="text-center py-4 text-gray-500">
                       {t.noRequests}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Repayment History Table */}
-        <section className="mb-8">
-          <h2 className="font-semibold mb-2">{t.repaymentHistory}</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded shadow">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2">{t.amount}</th>
-                  <th className="px-4 py-2">{t.repaymentDate}</th>
-                  <th className="px-4 py-2">{t.method}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {repayments.length ? (
-                  repayments.map((r) => (
-                    <tr key={r.id} className="text-center border-t">
-                      <td className="px-4 py-2">{r.amount}</td>
-                      <td className="px-4 py-2">{r.date}</td>
-                      <td className="px-4 py-2">{r.method}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={3} className="text-center py-4 text-gray-500">
-                      {t.noRepayments}
                     </td>
                   </tr>
                 )}

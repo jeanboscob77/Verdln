@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
-// import { apiPost } from "@/utils/api";
+import { apiPost } from "@/Utils/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function RegisterPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const data = await apiPost("/api/auth/register", {
+      const data = await apiPost("/auth/register", {
         national_id: nationalId,
         phone_number: phone,
         preferred_language: preferred,
@@ -102,7 +102,7 @@ export default function RegisterPage() {
           disabled={loading}
           className="w-full bg-green-600 text-white p-2 rounded"
         >
-          {loading ? "..." : t.submit}
+          {loading ? "..." : t.register}
         </button>
       </form>
     </div>

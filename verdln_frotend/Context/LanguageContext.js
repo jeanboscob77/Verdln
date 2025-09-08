@@ -2,6 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { translations } from "@/Utils/translations";
 
+/* =========================
+   Language Context
+========================= */
 const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {

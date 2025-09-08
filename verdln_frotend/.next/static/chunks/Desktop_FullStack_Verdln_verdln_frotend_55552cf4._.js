@@ -58,7 +58,28 @@ const translations = {
         repay: "Repay",
         submitRepayment: "Submit Repayment",
         cash: "Cash",
-        mobileMoney: "Mobile Money"
+        mobileMoney: "Mobile Money",
+        //Home page
+        welcomeTitle: "Welcome to VerdIn",
+        welcomeSubtitle: "A digital platform that connects farmers and administrators for better farming support and services.",
+        getStarted: "Get Started",
+        farmerDesc: "Submit requests, track progress, and view repayment history.",
+        register: "Register",
+        adminDesc: "Manage farmer requests, approve or reject, and track repayments.",
+        ussd: "USSD Access",
+        ussdDesc: "Easily connect using your phone without internet.",
+        ctaTitle: "Ready to transform farming?",
+        ctaSubtitle: "Join our platform today and make your farming journey easier.",
+        joinNow: "Join Now",
+        // --- USSD PAGE ---
+        ussdTitle: "Access via USSD",
+        ussdDescription: "Our platform is accessible even without internet. Farmers can use the USSD code below to submit requests and view updates directly from their phone.",
+        howToAccess: "How to Access",
+        step1: "Dial *123# on your phone.",
+        step2: "Select the option you want (Request, Check Status, Repayment).",
+        step3: "Follow the instructions step by step.",
+        step4: "Submit and you will receive confirmation instantly.",
+        ussdCodeInfo: "Dial this code anytime, anywhere:"
     },
     rw: {
         appName: "VerdIn",
@@ -111,7 +132,30 @@ const translations = {
         repay: "Subiza",
         submitRepayment: "Ohereza Subiza",
         cash: "Amafaranga",
-        mobileMoney: "Mobile Money"
+        mobileMoney: "Mobile Money",
+        //home page in kinyarwanda
+        welcomeTitle: "Murakaza neza kuri Verdln",
+        welcomeSubtitle: "Urubuga rukomatanyije abahinzi n’abayobozi kugira ngo ubuhinzi burusheho kugenda neza.",
+        getStarted: "Tangira",
+        register: "Iyandikishe",
+        farmerDashboard: "Urupapuro rw’Umuhinzi",
+        farmerDesc: "Ohereza ibisabwa, ukurikirane aho bigeze, urebe n’amateka yo kwishyura.",
+        adminDashboard: "Urupapuro rw’Ubuyobozi",
+        adminDesc: "Shyiraho ibyemezo ku bisabwa by’abahinzi, byemeze cyangwa ubyange, kandi ukurikirane imyishyurire.",
+        ussd: "Ukoreshe USSD",
+        ussdDesc: "Koresha telefoni yawe utagombye internet.",
+        ctaTitle: "Witeguye guhindura ubuhinzi?",
+        ctaSubtitle: "Injira ku rubuga rwacu uyu munsi, byorohereze urugendo rwawe mu buhinzi.",
+        joinNow: "Injira Ubu",
+        // --- USSD PAGE ---
+        ussdTitle: "Koresha USSD",
+        ussdDescription: "Urubuga rwacu rwagerwaho n’udafite murandasi. Abahinzi bashobora gukoresha kode ya USSD ikurikira kugirango batange ubusabe cyangwa barebe amakuru ku byabo bakoresheje telefoni isanzwe.",
+        howToAccess: "Uko bikorwa",
+        step1: "Kanda *123# kuri telefoni yawe.",
+        step2: "Hitamo icyo ushaka (Gutanga ubusabe, Kugenzura uko byakiriwe, Kwishyura).",
+        step3: "Kurikiza amabwiriza by’itonaniza.",
+        step4: "Ohereza, hanyuma uzahita ubona ubutumwa bwo kubyemeza.",
+        ussdCodeInfo: "Hamagara iyi kode igihe cyose, ahantu hose:"
     }
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
@@ -135,7 +179,9 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
 "use client";
 ;
 ;
-const LanguageContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createContext"])();
+/* =========================
+   Language Context
+========================= */ const LanguageContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createContext"])();
 function LanguageProvider(param) {
     let { children } = param;
     _s();
@@ -166,7 +212,7 @@ function LanguageProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/Context/LanguageContext.js",
-        lineNumber: 25,
+        lineNumber: 28,
         columnNumber: 5
     }, this);
 }
@@ -196,7 +242,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verd
 var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$Context$2f$LanguageContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Desktop/FullStack/Verdln/verdln_frotend/Context/LanguageContext.js [app-client] (ecmascript)");
 ;
-var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature();
+var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature(), _s2 = __turbopack_context__.k.signature(), _s3 = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
@@ -268,7 +314,7 @@ function Navbar() {
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(NavLink, {
                                     label: t.ussd,
-                                    href: "#ussd"
+                                    href: "/ussd"
                                 }, void 0, false, {
                                     fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/components/Navbar.jsx",
                                     lineNumber: 30,
@@ -534,9 +580,37 @@ function LangSwitcher(param) {
     }, this);
 }
 _c3 = LangSwitcher;
-// Auth buttons
+// Auth buttons with Logout
 function AuthButtons(param) {
     let { stacked = false, t } = param;
+    _s3();
+    const [isLoggedIn, setIsLoggedIn] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "AuthButtons.useEffect": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                setIsLoggedIn(!!localStorage.getItem("authToken"));
+            }
+        }
+    }["AuthButtons.useEffect"], []);
+    const handleLogout = ()=>{
+        if ("TURBOPACK compile-time truthy", 1) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("preferredLang");
+            setIsLoggedIn(false);
+            window.location.href = "/auth/login"; // redirect
+        }
+    };
+    if (isLoggedIn) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+            onClick: handleLogout,
+            className: stacked ? "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 mt-2" : "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700",
+            children: t.logout || "Logout"
+        }, void 0, false, {
+            fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/components/Navbar.jsx",
+            lineNumber: 171,
+            columnNumber: 7
+        }, this);
+    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: stacked ? "flex flex-col gap-2 mt-2" : "flex items-center gap-2",
         children: [
@@ -546,7 +620,7 @@ function AuthButtons(param) {
                 children: t.login
             }, void 0, false, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/components/Navbar.jsx",
-                lineNumber: 158,
+                lineNumber: 190,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Desktop$2f$FullStack$2f$Verdln$2f$verdln_frotend$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -555,16 +629,17 @@ function AuthButtons(param) {
                 children: t.register
             }, void 0, false, {
                 fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/components/Navbar.jsx",
-                lineNumber: 164,
+                lineNumber: 196,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Desktop/FullStack/Verdln/verdln_frotend/components/Navbar.jsx",
-        lineNumber: 153,
+        lineNumber: 185,
         columnNumber: 5
     }, this);
 }
+_s3(AuthButtons, "0neqspS9hb9Y6HEhacbb0xAzpiU=");
 _c4 = AuthButtons;
 var _c, _c1, _c2, _c3, _c4;
 __turbopack_context__.k.register(_c, "Navbar");
