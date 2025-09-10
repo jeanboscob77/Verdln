@@ -14,7 +14,6 @@ const loanRequestSchema = new mongoose.Schema(
     },
     package_size: {
       type: String,
-      enum: ["small", "medium", "large"],
       required: true,
     },
     status: {
