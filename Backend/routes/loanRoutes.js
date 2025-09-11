@@ -5,6 +5,7 @@ const {
   getFarmerRequests,
   updateRequestStatus,
   getAllRequests,
+  updateRequestNotes,
 } = require("../controllers/loanController");
 
 // Submit a new loan/input request
@@ -17,6 +18,7 @@ router.get("/farmer/:farmerId", getFarmerRequests);
 router.get("/", getAllRequests);
 
 // Admin: Update status and add notes
-router.put("/:requestId/status", updateRequestStatus);
+router.patch("/:requestId/status", updateRequestStatus);
+router.patch("/:requestId/notes", updateRequestNotes);
 
 module.exports = router;

@@ -58,36 +58,51 @@ exports.getFarmerRequests = async (req, res) => {
   }
 };
 
-// Admin: Update status and add notes
+// Admin: Update status
 exports.updateRequestStatus = async (req, res) => {
   try {
     const { requestId } = req.params;
-    const { status, admin_notes } = req.body;
+    const { status } = req.body;
 
-    if (!["pending", "approved", "rejected"].includes(status)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid status" });
+    const updated = await LoanRequest.findByIdAndUpdate(
+      requestId,
+      { status },
+      { new: true }
+    ).populate("farmer", "phone_number");
+
+    if (!updated) {
+      return res.status(404).json({ message: "Loan request not found" });
     }
 
-    const request = await LoanRequest.findById(requestId);
-    if (!request) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Request not found" });
-    }
-
-    request.status = status;
-    request.admin_notes = admin_notes || "";
-    await request.save();
-
-    res.json({ success: true, message: "Request updated", request });
+    res.json({ success: true, request: updated });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("Update error:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
+// Admin: add notes
+exports.updateRequestNotes = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { admin_notes } = req.body;
+
+    const updated = await LoanRequest.findByIdAndUpdate(
+      requestId,
+      { admin_notes },
+      { new: true }
+    ).populate("farmer", "phone_number");
+
+    if (!updated) {
+      return res.status(404).json({ message: "Loan request not found" });
+    }
+
+    res.json({ success: true, request: updated });
+  } catch (err) {
+    console.error("Update error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 // Admin: Get all requests
 exports.getAllRequests = async (req, res) => {
   try {

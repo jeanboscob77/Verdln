@@ -36,7 +36,7 @@ export const translations = {
     noRequests: "No requests submitted yet.",
     noRepayments: "No repayment history available.",
     required: "All fields are required.",
-
+    notes: "Admin Notes",
     //admin dashboard
     adminDashboardTitle: "Admin Dashboard",
     totalLoans: "Total Loans",
@@ -134,7 +134,7 @@ export const translations = {
     noRequests: "Nta busabe bwatanzwe.",
     noRepayments: "Nta mateka yo kugarura aboneka.",
     required: "Uzuza ibisabwa byose.",
-
+    notes: "Inyandiko y'Ubuyobozi",
     //admin dashboard
     adminDashboardTitle: "Dashboard y'Ubuyobozi",
     totalLoans: "Inguzanyo zose",

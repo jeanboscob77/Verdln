@@ -1,5 +1,5 @@
 "use strict";
-
+const twilio = require("twilio");
 const User = require("./models/User");
 const LoanRequest = require("./models/Loan_Request");
 const Repayment = require("./models/Repayment");
@@ -25,6 +25,38 @@ app.use("/api/loans", loanRoutes);
 
 const repaymentRoutes = require("./routes/repaymentRoutes");
 app.use("/api/repayment", repaymentRoutes);
+
+//send sms with twilio
+
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
+const sendSMS = async (to, message) => {
+  try {
+    await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: to,
+    });
+    console.log("✅ SMS sent to:", to);
+  } catch (err) {
+    console.error("❌ SMS error:", err);
+  }
+};
+
+const formatPhoneNumber = (phone) => {
+  // If number starts with 0, replace with +250
+  if (phone.startsWith("0")) {
+    return "+250" + phone.slice(1);
+  }
+  // If already starts with +, return as is
+  if (phone.startsWith("+")) {
+    return phone;
+  }
+  return phone; // fallback
+};
 
 // Sessions memory
 const sessions = {};
@@ -142,11 +174,18 @@ app.post("/ussd", async (req, res) => {
         preferred_language: session.preferred_language,
       });
       await newUser.save();
+
+      // Send SMS
+      await sendSMS(
+        formatPhoneNumber(phoneNumber),
+        session.preferred_language === "en"
+          ? "🎉 Welcome to VerdIn! Your registration was successful."
+          : "🎉 Murakaza neza kuri VerdIn! Kwiyandikisha kwawe byagenze neza."
+      );
       delete sessions[sessionId];
       response = `END ${messages[lang].registrationSuccess}`;
       return res.send(response);
     }
-
     // --- USER MENU ---
     if (session.step === "menu") {
       const user = await User.findById(session.userId);
