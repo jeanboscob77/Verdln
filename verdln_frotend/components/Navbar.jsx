@@ -27,15 +27,13 @@ export default function Navbar() {
   });
 
   return (
-    <nav className="bg-white border-b sticky top-0 z-30">
+    <nav className="bg-green-600 text-white sticky top-0 z-30 shadow-md">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <button className="text-green-700 font-extrabold text-lg">
-              {t.appName}
-            </button>
-            <span className="hidden sm:inline text-sm text-gray-600">
+            <button className="font-extrabold text-lg">{t.appName}</button>
+            <span className="hidden sm:inline text-sm opacity-80">
               {t.tagline}
             </span>
           </div>
@@ -92,7 +90,7 @@ export default function Navbar() {
                 pathname={pathname}
               />
             ))}
-            <div className="pt-2 border-t mt-2">
+            <div className="pt-2 border-t mt-2 border-white/30">
               <AuthButtons stacked t={t} user={user} logout={logout} />
             </div>
           </div>
@@ -107,11 +105,19 @@ function NavLink({ label, href, pathname }) {
   return (
     <Link
       href={href}
-      className={`text-gray-700 hover:text-green-700 px-2 py-1 rounded-md text-sm ${
-        isActive ? "text-green-700 font-semibold" : ""
+      className={`relative group px-3 py-2 rounded-md text-sm transition-colors ${
+        isActive
+          ? "bg-white text-green-700 font-semibold"
+          : "text-white hover:text-yellow-200"
       }`}
     >
       {label}
+      {/* Underline effect */}
+      <span
+        className={`absolute left-0 -bottom-1 h-0.5 bg-yellow-300 transition-all duration-300 ${
+          isActive ? "w-full" : "w-0 group-hover:w-full"
+        }`}
+      ></span>
     </Link>
   );
 }
@@ -121,11 +127,18 @@ function MobileLink({ label, href, pathname }) {
   return (
     <Link
       href={href}
-      className={`block text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md ${
-        isActive ? "bg-green-100 text-green-700 font-semibold" : ""
+      className={`relative group block px-3 py-2 rounded-md transition-colors ${
+        isActive
+          ? "bg-white text-green-700 font-semibold"
+          : "text-white hover:text-yellow-200"
       }`}
     >
       {label}
+      <span
+        className={`absolute left-0 bottom-0 h-0.5 bg-yellow-300 transition-all duration-300 ${
+          isActive ? "w-full" : "w-0 group-hover:w-full"
+        }`}
+      ></span>
     </Link>
   );
 }
@@ -136,7 +149,7 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       <select
         value={lang}
         onChange={(e) => setLang(e.target.value)}
-        className="px-2 py-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-400"
+        className="px-2 py-1 border rounded text-sm text-green-700 focus:outline-none focus:ring-1 focus:ring-yellow-300"
       >
         <option value="en">EN</option>
         <option value="rw">RW</option>
@@ -149,7 +162,9 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       <button
         onClick={() => setLang("en")}
         className={`px-2 py-1 rounded text-sm ${
-          lang === "en" ? "bg-green-400 text-white" : "hover:bg-gray-100"
+          lang === "en"
+            ? "bg-yellow-300 text-green-800"
+            : "border border-yellow-300 text-yellow-300 hover:bg-yellow-200 hover:text-green-800"
         }`}
       >
         EN
@@ -157,7 +172,9 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       <button
         onClick={() => setLang("rw")}
         className={`px-2 py-1 rounded text-sm ${
-          lang === "rw" ? "bg-green-400 text-white" : "hover:bg-gray-100"
+          lang === "rw"
+            ? "bg-yellow-300 text-green-800"
+            : "border border-yellow-300 text-yellow-300 hover:bg-yellow-200 hover:text-green-800"
         }`}
       >
         RW
@@ -171,11 +188,9 @@ function AuthButtons({ stacked = false, t, user, logout }) {
     return (
       <button
         onClick={logout}
-        className={
-          stacked
-            ? "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 mt-2"
-            : "px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700"
-        }
+        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
+          bg-red-600 text-white hover:bg-red-700
+          ${stacked ? "mt-2" : ""}`}
       >
         {t.logout || "Logout"}
       </button>
@@ -190,13 +205,13 @@ function AuthButtons({ stacked = false, t, user, logout }) {
     >
       <Link
         href="/auth/login"
-        className="text-sm px-3 py-1 rounded-md border border-gray-200 hover:bg-gray-50"
+        className="px-3 py-2 rounded-md text-sm font-medium border border-white text-white hover:bg-white hover:text-green-700"
       >
         {t.login}
       </Link>
       <Link
         href="/auth/register"
-        className="text-sm px-3 py-1 rounded-md bg-green-600 text-white hover:bg-green-700"
+        className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-300 text-green-800 hover:bg-yellow-400"
       >
         {t.register}
       </Link>
