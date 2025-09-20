@@ -100,7 +100,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white p-2 rounded"
+          className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-500 hover:transition-300"
         >
           {loading ? "..." : t.loginButtonLabel}
         </button>

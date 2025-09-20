@@ -100,7 +100,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white p-2 rounded"
+          className="w-full bg-green-600 hover:bg-green-500 text-white p-2 rounded"
         >
           {loading ? "..." : t.register}
         </button>

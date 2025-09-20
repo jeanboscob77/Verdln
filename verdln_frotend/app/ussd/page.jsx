@@ -27,7 +27,7 @@ export default function UssdPage() {
         <div className="w-64 h-96 bg-black rounded-3xl relative shadow-lg flex flex-col items-center justify-center">
           {/* Screen */}
           <div className="bg-white w-56 h-80 rounded-2xl flex items-center justify-center text-center p-4">
-            <p className="text-2xl font-bold text-green-700">
+            <div className="text-2xl font-bold text-green-700">
               <Typewriter
                 options={{
                   strings: ["*123#"],
@@ -37,7 +37,7 @@ export default function UssdPage() {
                   deleteSpeed: 60,
                 }}
               />
-            </p>
+            </div>
           </div>
           {/* Home button */}
           <div className="w-12 h-12 bg-gray-800 rounded-full absolute bottom-3"></div>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/Context/LanguageContext";
 import { useAuth } from "@/Context/AuthContext";
 import { useRouter } from "next/navigation";
-import { apiGet } from "@/Utils/api";
+import { apiGet, apiPost } from "@/Utils/api";
 
 export default function AdminDashboard() {
   const { t } = useLanguage();
@@ -12,47 +12,47 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   const [requests, setRequests] = useState([]);
+  const [repayments, setRepayments] = useState([]);
   const [selectedRepayment, setSelectedRepayment] = useState(null);
   const [repayAmount, setRepayAmount] = useState("");
   const [repayMethod, setRepayMethod] = useState("cash");
 
-  // Fetch loan requests
+  // Fetch data after user is loaded
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/login");
+    } else if (user) {
+      fetchData();
+      fetchRepayments();
+    }
+  }, [user, loading, router]);
+
   async function fetchData() {
     try {
-      const res = await apiGet(`/loans`);
+      const res = await apiGet("/loans");
       setRequests(res.requests || []);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch loans:", err);
     }
   }
 
-  //fetch repayments
-  const [repayments, setRepayments] = useState([]);
-
-  // Fetch all repayments
   async function fetchRepayments() {
     try {
-      const res = await axios.get("http://localhost:5000/api/repayment/all");
+      const res = await apiGet("/api/repayment/all");
       if (res.data.success) setRepayments(res.data.repayments);
     } catch (err) {
       console.error("Failed to fetch repayments:", err);
     }
   }
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/auth/login");
-    } else {
-      fetchData();
-      fetchRepayments(); // fetch repayments separately
-    }
-  }, [user, loading, router]);
 
   // Approve / Reject loan
   const handleStatusChange = async (id, newStatus) => {
     try {
       const res = await axios.patch(
         `http://localhost:5000/api/loans/${id}/status`,
-        { status: newStatus }
+        {
+          status: newStatus,
+        }
       );
       if (res.status === 200) {
         setRequests((prev) =>
@@ -60,90 +60,70 @@ export default function AdminDashboard() {
         );
       }
     } catch (err) {
-      console.error("Failed to update status:", err);
-      alert("❌ Failed to update status. Please try again.");
+      alert("❌ Failed to update status.");
     }
   };
 
-  // Save admin notes (on change / blur)
+  // Save notes
   const handleAddNotes = async (id, admin_notes) => {
     try {
       setRequests((prev) =>
         prev.map((r) => (r._id === id ? { ...r, admin_notes } : r))
       );
-
       await axios.patch(`http://localhost:5000/api/loans/${id}/notes`, {
         admin_notes,
       });
     } catch (err) {
-      console.error("❌ Failed to save notes:", err);
-      alert("Failed to save notes. Please try again.");
+      alert("❌ Failed to save notes.");
     }
   };
+
+  // Record repayment
   const handleRepayment = async (e) => {
     e.preventDefault();
     if (!selectedRepayment) return;
 
     try {
-      // Call backend to save repayment
-      const res = await axios.post(
-        "http://localhost:5000/api/repayment/record",
-        {
-          loan_request_id: selectedRepayment._id, // correct
-          farmer: selectedRepayment.farmer._id,
-          amount: repayAmount,
-          method: repayMethod,
-        }
-      );
+      const res = await apiPost("/api/repayment/record", {
+        loan_request_id: selectedRepayment._id,
+        farmer: selectedRepayment.farmer._id,
+        amount: repayAmount,
+        method: repayMethod,
+      });
 
       if (res.data.success) {
         const newRepayment = res.data.repayment;
-
-        // Update local state
         setRequests((prev) =>
           prev.map((r) =>
             r._id === selectedRepayment._id
-              ? {
-                  ...r,
-                  repayments: [...(r.repayments || []), newRepayment],
-                }
+              ? { ...r, repayments: [...(r.repayments || []), newRepayment] }
               : r
           )
         );
-
-        // Reset form
         setRepayAmount("");
         setRepayMethod("cash");
         setSelectedRepayment(null);
         alert("✅ Repayment recorded successfully!");
-      } else {
-        alert("❌ Failed to record repayment. Please try again.");
       }
     } catch (err) {
-      console.error("Failed to record repayment:", err);
-      alert("❌ Server error. Could not record repayment.");
+      alert("❌ Failed to record repayment.");
     }
   };
 
-  //sumarry of summary of repayments
+  // Prepare summary
   const loansWithRepayments = requests.map((loan) => ({
     ...loan,
     repayments: repayments.filter((rep) => rep.loan_request._id === loan._id),
   }));
 
-  // Calculate summary
   const totalLoans = requests.reduce((acc, r) => acc + (r.amount || 0), 0);
   const totalRepayments = loansWithRepayments.reduce(
     (acc, r) =>
-      acc +
-      (r.repayments
-        ? r.repayments.reduce((a, p) => a + Number(p.amount || 0), 0)
-        : 0),
+      acc + (r.repayments?.reduce((a, p) => a + Number(p.amount || 0), 0) || 0),
     0
   );
   const pendingRequests = requests.filter((r) => r.status === "Pending").length;
 
-  // Status badge color
   const getStatusClass = (status) => {
     if (status === "Pending") return "text-yellow-600";
     if (status === "Approved") return "text-green-600";
@@ -300,11 +280,11 @@ export default function AdminDashboard() {
           </table>
         </div>
       </div>
+
       {/* Repayment Modal */}
       {selectedRepayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-            {/* Close button */}
             <button
               onClick={() => setSelectedRepayment(null)}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -326,7 +306,6 @@ export default function AdminDashboard() {
                 onChange={(e) => setRepayAmount(e.target.value)}
                 className="w-full border p-2 rounded"
               />
-
               <select
                 value={repayMethod}
                 onChange={(e) => setRepayMethod(e.target.value)}
@@ -335,7 +314,6 @@ export default function AdminDashboard() {
                 <option value="cash">{t.cash}</option>
                 <option value="mobile_money">{t.mobileMoney}</option>
               </select>
-
               <button
                 type="submit"
                 className="w-full bg-green-600 text-white p-2 rounded"
