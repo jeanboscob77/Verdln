@@ -96,7 +96,42 @@ export const translations = {
       approved: "approved",
       rejected: "rejected",
     },
+    // Details
+    // Farmer Details
+    farmer_details:
+      "The farmer form empowers farmers to connect directly with cooperatives and lenders. It simplifies access to financial services and allows farmers to take control of their journey.",
+    farmer_points: [
+      "Submit loan requests with just a few clicks.",
+      "Track loan approval progress in real-time.",
+      "View repayment history and outstanding balances.",
+      "Generate downloadable reports for your records.",
+      "Communicate directly with your cooperative.",
+    ],
+
+    // Dashboard Details
+    dashboard_details:
+      "The admin dashboard is designed for cooperatives, SACCOs, and local leaders to monitor, approve, and support farmers. It ensures transparency and accountability.",
+    dashboard_points: [
+      "Approve or reject farmer loan requests with clear criteria.",
+      "Monitor repayment performance for each farmer.",
+      "Generate detailed financial and progress reports.",
+      "Support farmers by providing tailored guidance.",
+      "Track community-wide repayment statistics.",
+    ],
+
+    // USSD Details
+    ussd_details:
+      "USSD services allow farmers without smartphones or internet access to benefit from digital systems. By dialing a short code, farmers stay connected and informed.",
+    ussd_points: [
+      "Apply for loans using a basic mobile phone.",
+      "Check loan approval and repayment status instantly.",
+      "Receive SMS reminders for repayment deadlines.",
+      "No internet or smartphone required.",
+      "Available 24/7 anywhere in the country.",
+    ],
+    learnMore: "Learn More",
   },
+
   rw: {
     appName: "VerdIn",
     tagline: "Inguzanyo y'ibikoresho",
@@ -197,5 +232,39 @@ export const translations = {
       Approved: "Byemejwe",
       Rejected: "Byanzwe",
     },
+    // Details
+    // Farmer Details
+    farmer_details:
+      "Urupapuro rw’umuhinzi rutuma abahinzi bashobora guhita bahuzwa n’amakoperative n’abatanga inguzanyo. Byoroshya uburyo bwo kubona serivisi z’imari no guha umuhinzi uburenganzira bwo kugenzura inzira ye.",
+    farmer_points: [
+      "Kohereza ibisabwa by’inguzanyo mu buryo bworoshye.",
+      "Kukurikirana aho ibisabwa bigeze mu buryo nyabwo.",
+      "Kureba amateka yo kwishyura n’ibitarishyurwa.",
+      "Kubona raporo zishobora gukururwa.",
+      "Kuvugana n’ikoperative mu buryo butaziguye.",
+    ],
+
+    // Dashboard Details
+    dashboard_details:
+      "Dashboard y’ubuyobozi yagenewe amakoperative, SACCO, n’abayobozi b’inzego z’ibanze kugira ngo bagenzure, bemere cyangwa bahakane ibisabwa, kandi bafashe abahinzi. Ibi bizana umucyo n’ubutabera.",
+    dashboard_points: [
+      "Kwemeza cyangwa guhakana ibisabwa by’inguzanyo by’abahinzi hakoreshejwe ibisobanuro bihamye.",
+      "Gukurikirana uko umuhinzi yishyura buri gihe.",
+      "Gutegura raporo z’imari n’iterambere ry’akazi.",
+      "Gufasha abahinzi mu buryo bujyanye n’ibyo bakeneye.",
+      "Kugenzura uko imirenge yose yishyura mu buryo rusange.",
+    ],
+
+    // USSD Details
+    ussd_details:
+      "Serivisi za USSD zifasha abahinzi badafite smartphone cyangwa internet kugira ngo nabo babone serivisi z’ikoranabuhanga. Bakoresheje kode ngufi, bahorana amakuru kandi bahuzwa.",
+    ussd_points: [
+      "Gusaba inguzanyo ukoresheje telefoni isanzwe.",
+      "Kureba aho gusaba inguzanyo bigeze n’imyishyurire.",
+      "Kwakira ubutumwa bubibutsa igihe cyo kwishyura.",
+      "Nta internet cyangwa smartphone ikenewe.",
+      "Iraboneka igihe cyose ahantu hose mu gihugu.",
+    ],
+    learnMore: "Menya Byinshi",
   },
 };

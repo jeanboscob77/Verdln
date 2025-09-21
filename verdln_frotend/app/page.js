@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 export default function HomePage() {
   const { t } = useLanguage();
 
-  // Animation variants
   const containerVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.3 } },
@@ -18,13 +17,6 @@ export default function HomePage() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-    hover: { scale: 1.05, y: -2, transition: { duration: 0.2 } },
-    tap: { scale: 0.95, y: 0, transition: { duration: 0.1 } },
-  };
-
   return (
     <motion.div
       className="bg-gray-50 min-h-screen"
@@ -33,9 +25,9 @@ export default function HomePage() {
       variants={containerVariants}
     >
       {/* Hero Section */}
-      <section className="bg-green-600 text-white py-20 px-6 text-center">
+      <section className="bg-gradient-to-r from-green-700 to-green-500 text-white py-20 px-6 text-center">
         <motion.h1
-          className="text-4xl sm:text-5xl font-bold mb-4"
+          className="text-4xl sm:text-5xl font-extrabold mb-4 drop-shadow"
           variants={itemVariants}
         >
           {t.welcomeTitle}
@@ -50,30 +42,18 @@ export default function HomePage() {
           className="flex justify-center gap-4"
           variants={itemVariants}
         >
-          <motion.div
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
+          <Link
+            href="/auth/register"
+            className="px-6 py-3 bg-white text-green-700 font-semibold rounded shadow hover:bg-gray-100"
           >
-            <Link
-              href="/auth/register"
-              className="px-6 py-3 bg-white text-green-700 font-semibold rounded shadow hover:bg-gray-100"
-            >
-              {t.getStarted}
-            </Link>
-          </motion.div>
-          <motion.div
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
+            {t.getStarted}
+          </Link>
+          <Link
+            href="/auth/login"
+            className="px-6 py-3 border border-white font-semibold rounded hover:bg-green-700 hover:text-white"
           >
-            <Link
-              href="/auth/login"
-              className="px-6 py-3 border border-white font-semibold rounded hover:bg-green-700 hover:text-white"
-            >
-              {t.login}
-            </Link>
-          </motion.div>
+            {t.login}
+          </Link>
         </motion.div>
       </section>
 
@@ -82,18 +62,50 @@ export default function HomePage() {
         <FeatureCard
           title={t.farmerDashboard}
           desc={t.farmerDesc}
-          link="/farmer/dashboard"
+          link="#farmer-section"
+          t={t}
         />
         <FeatureCard
-          title={t.adminDashboard}
+          title={t.adminDashboardTitle}
           desc={t.adminDesc}
-          link="/admin/dashboard"
+          link="#dashboard-section"
+          t={t}
         />
-        <FeatureCard title={t.ussd} desc={t.ussdDesc} link="#ussd" />
+        <FeatureCard
+          title={t.ussd}
+          desc={t.ussdDesc}
+          link="#ussd-section"
+          t={t}
+        />
       </section>
 
+      {/* Detailed Sections */}
+      <div className="mt-20 mx-auto w-11/12 max-w-5xl space-y-24 scroll-smooth">
+        <DetailSection
+          id="farmer-section"
+          title={t.farmerDashboard}
+          desc={t.farmer_details}
+          points={t.farmer_points}
+          icon="🧑‍🌾"
+        />
+        <DetailSection
+          id="dashboard-section"
+          title={t.adminDashboardTitle}
+          desc={t.dashboard_details}
+          points={t.dashboard_points}
+          icon="🖥️"
+        />
+        <DetailSection
+          id="ussd-section"
+          title={t.ussdTitle}
+          desc={t.ussd_details}
+          points={t.ussd_points}
+          icon="📱"
+        />
+      </div>
+
       {/* Call to Action */}
-      <section className="bg-gray-100 py-12 text-center px-6">
+      <section className="bg-gray-100 py-16 text-center px-6 mt-16">
         <motion.h2
           className="text-2xl font-bold mb-4"
           initial={{ opacity: 0, y: 20 }}
@@ -112,29 +124,18 @@ export default function HomePage() {
         >
           {t.ctaSubtitle}
         </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.6, delay: 0.4 },
-          }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <Link
+          href="/auth/register"
+          className="px-6 py-3 bg-green-600 text-white font-semibold rounded shadow hover:bg-green-700 transition"
         >
-          <Link
-            href="/auth/register"
-            className="px-6 py-3 bg-green-600 text-white font-semibold rounded shadow hover:bg-green-700"
-          >
-            {t.joinNow}
-          </Link>
-        </motion.div>
+          {t.joinNow}
+        </Link>
       </section>
     </motion.div>
   );
 }
 
-function FeatureCard({ title, desc, link }) {
+function FeatureCard({ title, desc, link, t }) {
   return (
     <motion.div
       className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
@@ -147,10 +148,37 @@ function FeatureCard({ title, desc, link }) {
       <p className="text-gray-600 mb-4">{desc}</p>
       <Link
         href={link}
+        scroll={true}
         className="text-green-600 font-semibold hover:underline"
       >
-        Learn more →
+        {t.learnMore} →
       </Link>
     </motion.div>
+  );
+}
+
+function DetailSection({ id, title, desc, points, icon }) {
+  return (
+    <section
+      id={id}
+      className="bg-white p-10 rounded-2xl shadow-lg border-l-4 border-green-600"
+    >
+      <h2 className="text-3xl font-bold mb-6 text-green-700 flex items-center gap-2">
+        <span>{icon}</span> {title}
+      </h2>
+      <p className="text-gray-700 leading-relaxed mb-6">{desc}</p>
+      <ul className="list-disc list-inside text-gray-600 space-y-2">
+        {points.map((point, i) => (
+          <motion.li
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.2 }}
+          >
+            {point}
+          </motion.li>
+        ))}
+      </ul>
+    </section>
   );
 }
