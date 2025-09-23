@@ -1,10 +1,11 @@
 "use client";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLanguage } from "@/Context/LanguageContext";
 import { useAuth } from "@/Context/AuthContext";
 import { useRouter } from "next/navigation";
-import { apiGet, apiPost } from "@/Utils/api";
+import { apiGet } from "@/Utils/api";
+import { DollarSign, Repeat, Clock } from "lucide-react";
 
 export default function AdminDashboard() {
   const { t } = useLanguage();
@@ -38,10 +39,15 @@ export default function AdminDashboard() {
 
   async function fetchRepayments() {
     try {
-      const res = await apiGet("/api/repayment/all");
-      if (res.data.success) setRepayments(res.data.repayments);
+      const res = await apiGet("/repayment/all");
+      console.log("Raw API response:", res.repayments);
+
+      // sometimes your data is inside res.data.repayments
+      const repaymentData = res.repayments;
+      setRepayments(repaymentData);
     } catch (err) {
       console.error("Failed to fetch repayments:", err);
+      setRepayments([]);
     }
   }
 
@@ -84,15 +90,21 @@ export default function AdminDashboard() {
     if (!selectedRepayment) return;
 
     try {
-      const res = await apiPost("/api/repayment/record", {
-        loan_request_id: selectedRepayment._id,
-        farmer: selectedRepayment.farmer._id,
-        amount: repayAmount,
-        method: repayMethod,
+      const res = await fetch("http://localhost:5000/api/repayment/record", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          loan_request_id: selectedRepayment._id,
+          farmer: selectedRepayment.farmer._id || selectedRepayment.farmer,
+          amount: parseFloat(repayAmount),
+          method: repayMethod,
+        }),
       });
 
-      if (res.data.success) {
-        const newRepayment = res.data.repayment;
+      const data = await res.json(); // important: parse JSON
+
+      if (data.success && data.repayment) {
+        const newRepayment = data.repayment;
         setRequests((prev) =>
           prev.map((r) =>
             r._id === selectedRepayment._id
@@ -103,26 +115,42 @@ export default function AdminDashboard() {
         setRepayAmount("");
         setRepayMethod("cash");
         setSelectedRepayment(null);
-        alert("✅ Repayment recorded successfully!");
+        alert(data.message || "✅ Repayment recorded successfully!");
+      } else {
+        alert("❌ Failed to record repayment: Invalid server response.");
+        console.log(data);
       }
     } catch (err) {
       alert("❌ Failed to record repayment.");
+      console.log(err);
     }
   };
-
   // Prepare summary
-  const loansWithRepayments = requests.map((loan) => ({
-    ...loan,
-    repayments: repayments.filter((rep) => rep.loan_request._id === loan._id),
-  }));
-
   const totalLoans = requests.reduce((acc, r) => acc + (r.amount || 0), 0);
-  const totalRepayments = loansWithRepayments.reduce(
-    (acc, r) =>
-      acc + (r.repayments?.reduce((a, p) => a + Number(p.amount || 0), 0) || 0),
-    0
+  const loansWithRepayments = useMemo(() => {
+    return requests.map((loan) => ({
+      ...loan,
+      repayments: repayments.filter(
+        (rep) => String(rep.loan_request._id) === String(loan._id)
+      ),
+    }));
+  }, [requests, repayments]);
+
+  const totalRepayments = useMemo(
+    () =>
+      loansWithRepayments.reduce(
+        (acc, loan) =>
+          acc +
+          (loan.repayments?.reduce((a, r) => a + Number(r.amount || 0), 0) ||
+            0),
+        0
+      ),
+    [loansWithRepayments]
   );
-  const pendingRequests = requests.filter((r) => r.status === "Pending").length;
+
+  const pendingRequests = requests.filter((r) => r.status === "pending").length;
+
+  console.log(pendingRequests);
 
   const getStatusClass = (status) => {
     if (status === "Pending") return "text-yellow-600";
@@ -138,15 +166,24 @@ export default function AdminDashboard() {
       {/* Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white rounded shadow">
-          <h2 className="font-semibold">{t.totalLoans}</h2>
+          <h2 className="font-semibold">
+            <DollarSign className="w-8 h-8 text-blue-600" />
+            {t.totalLoans}
+          </h2>
           <p>{totalLoans}</p>
         </div>
         <div className="p-4 bg-white rounded shadow">
-          <h2 className="font-semibold">{t.totalRepayments}</h2>
+          <h2 className="font-semibold">
+            <Repeat className="w-8 h-8 text-blue-600" />
+            {t.totalRepayments}
+          </h2>
           <p>{totalRepayments}</p>
         </div>
         <div className="p-4 bg-white rounded shadow">
-          <h2 className="font-semibold">{t.pendingRequests}</h2>
+          <h2 className="font-semibold">
+            <Clock className="w-8 h-8 text-blue-600" />
+            {t.pendingRequests}
+          </h2>
           <p>{pendingRequests}</p>
         </div>
       </div>

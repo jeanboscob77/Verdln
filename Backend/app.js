@@ -26,8 +26,7 @@ app.use("/api/loans", loanRoutes);
 const repaymentRoutes = require("./routes/repaymentRoutes");
 app.use("/api/repayment", repaymentRoutes);
 
-//send sms with twilio
-
+// Twilio client
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
@@ -47,15 +46,9 @@ const sendSMS = async (to, message) => {
 };
 
 const formatPhoneNumber = (phone) => {
-  // If number starts with 0, replace with +250
-  if (phone.startsWith("0")) {
-    return "+250" + phone.slice(1);
-  }
-  // If already starts with +, return as is
-  if (phone.startsWith("+")) {
-    return phone;
-  }
-  return phone; // fallback
+  if (phone.startsWith("0")) return "+250" + phone.slice(1);
+  if (phone.startsWith("+")) return phone;
+  return phone;
 };
 
 // Sessions memory
@@ -74,6 +67,7 @@ app.post("/ussd", async (req, res) => {
   const textArray = text.split("*");
   const input = textArray[textArray.length - 1];
   let response = "";
+  session.lastInput = input;
 
   function goBack() {
     if (session.history.length > 0) {
@@ -83,8 +77,95 @@ app.post("/ussd", async (req, res) => {
     return false;
   }
 
+  async function showLoanRequests() {
+    const inputTrimmed = input.trim().toUpperCase();
+    if (inputTrimmed === "0") {
+      session.step = "menu";
+      return res.send(
+        `CON ${messages[session.lang].welcome}\n${
+          messages[session.lang].mainMenu
+        }`
+      );
+    }
+
+    const requests = await LoanRequest.find({ farmer: session.userId });
+    if (!requests.length)
+      return res.send(`END ${messages[session.lang].noRequests}`);
+
+    const pageSize = 5;
+    if (!session.page) session.page = 0;
+
+    let page = session.page;
+    if (input.toUpperCase() === "N") page += 1;
+    else if (input.toUpperCase() === "B") page = Math.max(0, page - 1);
+    session.page = page;
+
+    const start = page * pageSize;
+    const paged = requests.slice(start, start + pageSize);
+
+    let resp = `CON ${messages[session.lang].yourRequests}\n`;
+    paged.forEach((req, i) => {
+      const statusKey = (req.status || "").toLowerCase();
+      const statusLabel =
+        messages[session.lang].status?.[statusKey] || req.status || "";
+      const inputTypeKey = (req.input_type || "").toLowerCase();
+      const inputTypeLabel =
+        messages[session.lang].inputTypes?.[inputTypeKey] ||
+        req.input_type ||
+        "";
+      resp += `${start + i + 1}. ${inputTypeLabel} (${req.package_size}) - ${
+        req.amount
+      } - ${statusLabel}\n`;
+    });
+
+    if (start + pageSize < requests.length) resp += `N. Next\n`;
+    if (page > 0) resp += `B. Back\n`;
+    resp += `0. Main Menu`;
+
+    return res.send(resp);
+  }
+  async function showRepayments() {
+    const inputTrimmed = input.trim().toUpperCase();
+    if (inputTrimmed === "0") {
+      session.step = "menu";
+      return res.send(
+        `CON ${messages[session.lang].welcome}\n${
+          messages[session.lang].mainMenu
+        }`
+      );
+    }
+
+    const repayments = await Repayment.find({ farmer: session.userId });
+    if (!repayments.length)
+      return res.send(`END ${messages[session.lang].noRepayments}`);
+
+    const pageSize = 5;
+    if (!session.page) session.page = 0;
+
+    let page = session.page;
+    if (input.toUpperCase() === "N") page += 1;
+    else if (input.toUpperCase() === "B") page = Math.max(0, page - 1);
+    session.page = page;
+
+    const start = page * pageSize;
+    const paged = repayments.slice(start, start + pageSize);
+
+    let resp = `CON ${messages[session.lang].repaymentHistory}\n`;
+    paged.forEach((r, i) => {
+      resp += `${start + i + 1}. ${r.amount} via ${r.method} on ${
+        r.date.toISOString().split("T")[0]
+      }\n`;
+    });
+
+    if (start + pageSize < repayments.length) resp += `N. Next\n`;
+    if (page > 0) resp += `B. Back\n`;
+    resp += `0. Main Menu`;
+
+    return res.send(resp);
+  }
+
   try {
-    // STEP 1: LANGUAGE SELECTION
+    // LANGUAGE
     if (session.step === "language") {
       if (!text || text === "") {
         response = `CON Welcome to VerdIn!\nSelect language:\n1. English\n2. Kinyarwanda`;
@@ -106,76 +187,126 @@ app.post("/ussd", async (req, res) => {
       }
     }
 
-    // STEP 2: MAIN ENTRY MENU (Register / Login)
+    // MAIN MENU
     if (session.step === "mainMenu") {
       const lang = session.lang;
-
       if (input === "1") {
         session.history.push("mainMenu");
         session.step = "nationalId";
-        response = `CON ${messages[lang].enterNationalId}\n0. Back`;
-        return res.send(response);
+        return res.send(`CON ${messages[lang].enterNationalId}\n0. Back`);
       } else if (input === "2") {
         const user = await User.findOne({ phone_number: phoneNumber });
-        if (!user) {
-          response = `END ${messages[lang].notRegistered}`;
-          return res.send(response);
-        }
+        if (!user) return res.send(`END ${messages[lang].notRegistered}`);
         session.step = "menu";
         session.userId = user._id;
-        response = `CON ${messages[lang].welcome}\n${messages[lang].mainMenu}`;
-        return res.send(response);
+        session.role = user.role || "farmer";
+        return res.send(
+          `CON ${messages[lang].welcome}\n${
+            session.role === "admin"
+              ? messages[lang].adminMenu
+              : messages[lang].mainMenu
+          }`
+        );
       } else if (input === "0" && goBack()) {
         session.step = "language";
         return res.send(
           `CON Welcome to VerdIn!\nSelect language:\n1. English\n2. Kinyarwanda`
         );
-      } else {
-        response = `END ${messages[lang].invalidChoice}`;
-        return res.send(response);
+      } else return res.send(`END ${messages[lang].invalidChoice}`);
+    }
+
+    // USER MENU
+    if (session.step === "menu") {
+      const user = await User.findById(session.userId);
+      const lang = session.lang;
+
+      if (user.role === "farmer") {
+        switch (input) {
+          case "1":
+            session.history.push("menu");
+            session.step = "loan_inputType";
+            return res.send(
+              `CON ${messages[lang].selectInputType}\n1. Seeds\n2. Fertilizer\n3. Pesticides\n0. Back`
+            );
+          case "2":
+            session.history.push("menu");
+            session.step = "loanPage";
+            session.page = 0;
+            return showLoanRequests();
+          case "3":
+            session.history.push("menu");
+            session.step = "repaymentPage";
+            session.page = 0;
+            return showRepayments();
+          case "4":
+            delete sessions[sessionId];
+            return res.send(`END ${messages[lang].thankYou}`);
+          default:
+            return res.send(`END ${messages[lang].invalidChoice}`);
+        }
+      }
+
+      if (user.role === "admin") {
+        switch (input) {
+          case "1":
+            const pendingLoans = await LoanRequest.find({ status: "pending" });
+            if (!pendingLoans.length)
+              return res.send(`END ${messages[lang].noPendingLoans}`);
+            let resp = `END Pending Loans:\n`;
+            pendingLoans.forEach((loan, i) => {
+              resp += `${i + 1}. ${loan.input_type} - ${loan.amount} (${
+                loan.status
+              })\n`;
+            });
+            return res.send(resp);
+          case "2":
+            const allFarmers = await User.find({ role: "farmer" });
+            let farmerResp = `END ${messages[lang].farmerList}\n`;
+            allFarmers.forEach((f, i) => {
+              farmerResp += `${i + 1}. ${f.national_id} - ${f.phone_number}\n`;
+            });
+            return res.send(farmerResp);
+          case "3":
+            delete sessions[sessionId];
+            return res.send(`END ${messages[lang].thankYou}`);
+          default:
+            return res.send(`END ${messages[lang].invalidChoice}`);
+        }
       }
     }
 
-    // --- REGISTRATION FLOW ---
+    // LOAN / REPAYMENT PAGINATION
+    if (session.step === "loanPage") return showLoanRequests();
+    if (session.step === "repaymentPage") return showRepayments();
+
+    // --- REGISTRATION & LOAN INPUT FLOW ---
     if (session.step === "nationalId") {
       const lang = session.lang;
-      if (input === "0" && goBack()) {
-        response = `CON ${messages[lang].entryMenu}`;
-        return res.send(response);
-      }
+      if (input === "0" && goBack())
+        return res.send(`CON ${messages[lang].entryMenu}`);
       const existingID = await User.findOne({ national_id: input });
-      if (existingID) {
-        response = `END ${messages[lang].alreadyRegistered}`;
-        delete sessions[sessionId];
-        return res.send(response);
-      }
+      if (existingID)
+        return res.send(`END ${messages[lang].alreadyRegistered}`);
       session.national_id = input;
       session.history.push("nationalId");
       session.step = "phone";
-      response = `CON ${messages[lang].enterPhone}\n0. Back`;
-      return res.send(response);
+      return res.send(`CON ${messages[lang].enterPhone}\n0. Back`);
     }
 
     if (session.step === "phone") {
       const lang = session.lang;
-      if (input === "0" && goBack()) {
-        response = `CON ${messages[lang].enterNationalId}\n0. Back`;
-        return res.send(response);
-      }
+      if (input === "0" && goBack())
+        return res.send(`CON ${messages[lang].enterNationalId}\n0. Back`);
       const existingPhone = await User.findOne({ phone_number: phoneNumber });
-      if (existingPhone) {
-        response = `END ${messages[lang].phoneAlreadyRegistered}`;
-        delete sessions[sessionId];
-        return res.send(response);
-      }
+      if (existingPhone)
+        return res.send(`END ${messages[lang].phoneAlreadyRegistered}`);
       const newUser = new User({
         national_id: session.national_id,
         phone_number: phoneNumber,
         preferred_language: session.preferred_language,
+        role: "farmer",
       });
       await newUser.save();
-
-      // Send SMS
       await sendSMS(
         formatPhoneNumber(phoneNumber),
         session.preferred_language === "en"
@@ -183,117 +314,58 @@ app.post("/ussd", async (req, res) => {
           : "🎉 Murakaza neza kuri VerdIn! Kwiyandikisha kwawe byagenze neza."
       );
       delete sessions[sessionId];
-      response = `END ${messages[lang].registrationSuccess}`;
-      return res.send(response);
-    }
-    // --- USER MENU ---
-    if (session.step === "menu") {
-      const user = await User.findById(session.userId);
-      const lang = session.lang;
-
-      switch (input) {
-        case "1": // Loan request
-          session.history.push("menu");
-          session.step = "loan_inputType";
-          response = `CON ${messages[lang].selectInputType}\n1. ${
-            lang === "en" ? "Seeds" : "Imbuto"
-          }\n2. ${lang === "en" ? "Fertilizer" : "Ifumbire"}\n3. ${
-            lang === "en" ? "Pesticides" : "Ibinini byica udukoko"
-          }\n0. Back`;
-          break;
-
-        case "2": // Check requests
-          const requests = await LoanRequest.find({ farmer: user._id });
-          if (!requests.length) response = `END ${messages[lang].noRequests}`;
-          else {
-            response = `END ${messages[lang].yourRequests}\n`;
-            requests.forEach((r, i) => {
-              response += `${i + 1}. ${r.input_type} (${r.package_size}) - ${
-                r.amount
-              } - ${r.status} - Repay by: ${
-                r.repayment_date?.toISOString().split("T")[0]
-              }\n`;
-            });
-          }
-          break;
-
-        case "3": // Repayment history
-          const repayments = await Repayment.find({ farmer: user._id });
-          if (!repayments.length)
-            response = `END ${messages[lang].noRepayments}`;
-          else {
-            response = `END ${messages[lang].repaymentHistory}\n`;
-            repayments.forEach((r, i) => {
-              response += `${i + 1}. ${r.amount} via ${r.method} on ${
-                r.date.toISOString().split("T")[0]
-              }\n`;
-            });
-          }
-          break;
-
-        case "4": // Exit
-          response = `END ${messages[lang].thankYou}`;
-          delete sessions[sessionId];
-          break;
-
-        default:
-          response = `END ${messages[lang].invalidChoice}`;
-          break;
-      }
-      return res.send(response);
+      return res.send(`END ${messages[lang].registrationSuccess}`);
     }
 
-    // --- LOAN REQUEST FLOW ---
+    // LOAN REQUEST FLOW (farmer)
     if (session.step === "loan_inputType") {
       const lang = session.lang;
-      const displayOptions =
-        lang === "en"
-          ? ["Seeds", "Fertilizer", "Pesticides"]
-          : ["Imbuto", "Ifumbire", "Ibinini byica udukoko"];
-      const dbOptions = ["seeds", "fertilizer", "pesticides"];
+      const user = await User.findById(session.userId);
+      if (!user || user.role !== "farmer")
+        return res.send(`END ${messages[lang].notAllowed}`);
 
-      if (input === "0" && goBack()) {
-        response = `CON ${messages[lang].mainMenu}`;
-        return res.send(response);
-      }
+      const dbOptions = ["seeds", "fertilizer", "pesticides"];
+      if (input === "0" && goBack())
+        return res.send(`CON ${messages[lang].mainMenu}`);
 
       const index = parseInt(input) - 1;
-      if (index < 0 || index >= dbOptions.length) {
-        response = `CON Select input type:\n1. ${displayOptions[0]}\n2. ${displayOptions[1]}\n3. ${displayOptions[2]}\n0. Back`;
-        return res.send(response);
-      }
+      if (index < 0 || index >= dbOptions.length)
+        return res.send(
+          `CON Select input type:\n1. Seeds\n2. Fertilizer\n3. Pesticides\n0. Back`
+        );
 
-      session.input_type = dbOptions[index]; // Save in DB in English
+      session.input_type = dbOptions[index];
       session.history.push("loan_inputType");
       session.step = "loan_packageSize";
-      response = `CON ${messages[lang].enterPackageSize}\n0. Back`;
-      return res.send(response);
+      return res.send(`CON ${messages[lang].enterPackageSize}\n0. Back`);
     }
 
     if (session.step === "loan_packageSize") {
       const lang = session.lang;
-      if (input === "0" && goBack()) {
-        response = `CON ${messages[lang].selectInputType}`;
-        return res.send(response);
-      }
+      const user = await User.findById(session.userId);
+      if (!user || user.role !== "farmer")
+        return res.send(`END ${messages[lang].notAllowed}`);
+
+      if (input === "0" && goBack())
+        return res.send(`CON ${messages[lang].selectInputType}`);
       session.package_size = input;
       session.history.push("loan_packageSize");
       session.step = "loan_amount";
-      response = `CON ${messages[lang].enterAmount}\n0. Back`;
-      return res.send(response);
+      return res.send(`CON ${messages[lang].enterAmount}\n0. Back`);
     }
 
     if (session.step === "loan_amount") {
       const lang = session.lang;
-      if (input === "0" && goBack()) {
-        response = `CON ${messages[lang].enterPackageSize}\n0. Back`;
-        return res.send(response);
-      }
+      const user = await User.findById(session.userId);
+      if (!user || user.role !== "farmer")
+        return res.send(`END ${messages[lang].notAllowed}`);
+
+      if (input === "0" && goBack())
+        return res.send(`CON ${messages[lang].enterPackageSize}\n0. Back`);
       session.loan_amount = parseFloat(input);
-      if (isNaN(session.loan_amount)) {
-        response = `CON ${messages[lang].invalidAmount}\n0. Back`;
-        return res.send(response);
-      }
+      if (isNaN(session.loan_amount))
+        return res.send(`CON ${messages[lang].invalidAmount}\n0. Back`);
+
       const newRequest = new LoanRequest({
         farmer: session.userId,
         input_type: session.input_type,
@@ -302,16 +374,15 @@ app.post("/ussd", async (req, res) => {
         status: "pending",
         repayment_date: new Date(
           new Date().setMonth(new Date().getMonth() + 1)
-        ), // default repayment date 1 month from now
+        ),
       });
       await newRequest.save();
       delete sessions[sessionId];
-      response = `END ${messages[lang].requestSuccess}`;
-      return res.send(response);
+      return res.send(`END ${messages[lang].requestSuccess}`);
     }
   } catch (err) {
     console.error(err);
-    response = `END ${messages["en"].error}`;
+    return res.send(`END ${messages["en"].error}`);
   }
 
   res.set("Content-Type", "text/plain");
