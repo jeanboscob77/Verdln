@@ -1,13 +1,14 @@
-const User = require("../models/User");
+const pool = require("../config/db");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey"; // put in .env
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 // Helper: create token
 function generateToken(user) {
   return jwt.sign(
     {
-      id: user._id,
+      id: user.id,
       national_id: user.national_id,
       role: user.role,
       lang: user.preferred_language,
@@ -29,52 +30,53 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Check for existing user
-    let user = await User.findOne({
-      $or: [{ national_id: national_id }, { phone_number: phone_number }],
-    });
+    // Check if user exists
+    const [existing] = await pool.query(
+      "SELECT * FROM users WHERE national_id = ? OR phone_number = ?",
+      [national_id, phone_number]
+    );
 
-    if (user) {
+    if (existing.length > 0) {
       return res
         .status(400)
         .json({ success: false, message: "User already exists" });
     }
 
-    // Create new user
-    user = new User({
-      national_id,
-      phone_number,
-      role: role || "farmer",
-      preferred_language: preferred_language || "en",
-    });
+    // Generate UUID for user
+    const userId = uuidv4();
 
-    await user.save();
+    // Insert new user
+    await pool.query(
+      "INSERT INTO users (id, national_id, phone_number, role, preferred_language) VALUES (?, ?, ?, ?, ?)",
+      [
+        userId,
+        national_id,
+        phone_number,
+        role || "farmer",
+        preferred_language || "en",
+      ]
+    );
 
-    const token = generateToken(user);
+    // Fetch the newly created user
+    const [newUser] = await pool.query("SELECT * FROM users WHERE id = ?", [
+      userId,
+    ]);
+
+    const token = generateToken(newUser[0]);
 
     res.status(201).json({
       success: true,
       message: "User registered successfully",
       token,
-      user,
+      user: newUser[0],
     });
   } catch (error) {
-    if (error.name === "ValidationError") {
-      // Handle validation errors gracefully
-      const errors = {};
-      Object.keys(error.errors).forEach((key) => {
-        errors[key] = error.errors[key].message;
-      });
-      return res
-        .status(400)
-        .json({ success: false, message: "Validation failed", errors });
-    }
     console.error("Registration error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-// Login user
+// Login user (unchanged except still works with UUID id)
 exports.login = async (req, res) => {
   try {
     const { national_id, phone_number } = req.body;
@@ -86,24 +88,27 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ national_id, phone_number });
+    const [user] = await pool.query(
+      "SELECT * FROM users WHERE national_id = ? AND phone_number = ?",
+      [national_id, phone_number]
+    );
 
-    if (!user) {
+    if (user.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    const token = generateToken(user);
+    const token = generateToken(user[0]);
 
     res.json({
       success: true,
       message: "Login successful",
       token,
-      user,
+      user: user[0],
     });
   } catch (err) {
-    console.error(err);
+    console.error("Login error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

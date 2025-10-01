@@ -62,7 +62,7 @@ export default function AdminDashboard() {
       );
       if (res.status === 200) {
         setRequests((prev) =>
-          prev.map((r) => (r._id === id ? { ...r, status: newStatus } : r))
+          prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
         );
       }
     } catch (err) {
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const handleAddNotes = async (id, admin_notes) => {
     try {
       setRequests((prev) =>
-        prev.map((r) => (r._id === id ? { ...r, admin_notes } : r))
+        prev.map((r) => (r.id === id ? { ...r, admin_notes } : r))
       );
       await axios.patch(`http://localhost:5000/api/loans/${id}/notes`, {
         admin_notes,
@@ -89,25 +89,43 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!selectedRepayment) return;
 
+    // Normalize IDs
+    const loanRequestId =
+      selectedRepayment.id ||
+      selectedRepayment._id ||
+      selectedRepayment.loan_request_id;
+
+    const farmerId =
+      selectedRepayment.farmer_id ||
+      selectedRepayment.farmer?.id ||
+      selectedRepayment.farmer?._id ||
+      selectedRepayment.farmer;
+
+    if (!loanRequestId || !farmerId) {
+      alert("❌ Loan request ID or farmer ID is missing.");
+      console.log("selectedRepayment:", selectedRepayment);
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:5000/api/repayment/record", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          loan_request_id: selectedRepayment._id,
-          farmer: selectedRepayment.farmer._id || selectedRepayment.farmer,
+          loan_request_id: loanRequestId,
+          farmer_id: farmerId,
           amount: parseFloat(repayAmount),
           method: repayMethod,
         }),
       });
 
-      const data = await res.json(); // important: parse JSON
+      const data = await res.json();
 
-      if (data.success && data.repayment) {
+      if (res.ok && data.success && data.repayment) {
         const newRepayment = data.repayment;
         setRequests((prev) =>
           prev.map((r) =>
-            r._id === selectedRepayment._id
+            (r.id || r._id) === loanRequestId
               ? { ...r, repayments: [...(r.repayments || []), newRepayment] }
               : r
           )
@@ -117,24 +135,30 @@ export default function AdminDashboard() {
         setSelectedRepayment(null);
         alert(data.message || "✅ Repayment recorded successfully!");
       } else {
-        alert("❌ Failed to record repayment: Invalid server response.");
+        alert(
+          "❌ Failed to record repayment: " +
+            (data.message || "Invalid server response.")
+        );
         console.log(data);
       }
     } catch (err) {
       alert("❌ Failed to record repayment.");
-      console.log(err);
+      console.error(err);
     }
   };
+
   // Prepare summary
   const totalLoans = requests.reduce((acc, r) => acc + (r.amount || 0), 0);
   const loansWithRepayments = useMemo(() => {
     return requests.map((loan) => ({
       ...loan,
       repayments: repayments.filter(
-        (rep) => String(rep.loan_request._id) === String(loan._id)
+        (rep) => String(rep.loan_request_id) === String(loan.id)
       ),
     }));
   }, [requests, repayments]);
+
+  console.log(repayments);
 
   const totalRepayments = useMemo(
     () =>
@@ -193,7 +217,7 @@ export default function AdminDashboard() {
         {/* Mobile Cards */}
         <div className="block md:hidden space-y-4">
           {requests.map((r) => (
-            <div key={r._id} className="bg-white rounded-lg shadow p-4 border">
+            <div key={r.id} className="bg-white rounded-lg shadow p-4 border">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-semibold text-lg">{t.farmer}</h3>
                 <span className={`font-semibold ${getStatusClass(r.status)}`}>
@@ -224,7 +248,7 @@ export default function AdminDashboard() {
                   type="text"
                   className="w-full border p-2 rounded"
                   value={r.admin_notes || ""}
-                  onChange={(e) => handleAddNotes(r._id, e.target.value)}
+                  onChange={(e) => handleAddNotes(r.id, e.target.value)}
                 />
               </div>
 
@@ -232,13 +256,13 @@ export default function AdminDashboard() {
               <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
                 <button
                   className="px-3 py-1 bg-green-600 text-white rounded text-sm"
-                  onClick={() => handleStatusChange(r._id, "Approved")}
+                  onClick={() => handleStatusChange(r.id, "Approved")}
                 >
                   {t.approve}
                 </button>
                 <button
                   className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-                  onClick={() => handleStatusChange(r._id, "Rejected")}
+                  onClick={() => handleStatusChange(r.id, "Rejected")}
                 >
                   {t.reject}
                 </button>
@@ -269,7 +293,7 @@ export default function AdminDashboard() {
             </thead>
             <tbody>
               {requests.map((r) => (
-                <tr key={r._id} className="text-center">
+                <tr key={r.id} className="text-center">
                   <td className="p-2 border">
                     {r.phone_number || r.farmer?.phone_number}
                   </td>
@@ -288,19 +312,19 @@ export default function AdminDashboard() {
                       type="text"
                       className="border p-1 rounded w-full"
                       defaultValue={r.admin_notes || ""}
-                      onBlur={(e) => handleAddNotes(r._id, e.target.value)}
+                      onBlur={(e) => handleAddNotes(r.id, e.target.value)}
                     />
                   </td>
                   <td className="p-2 border space-x-2">
                     <button
                       className="px-2 py-1 bg-green-600 text-white rounded"
-                      onClick={() => handleStatusChange(r._id, "Approved")}
+                      onClick={() => handleStatusChange(r.id, "Approved")}
                     >
                       {t.approve}
                     </button>
                     <button
                       className="px-2 py-1 bg-red-600 text-white rounded"
-                      onClick={() => handleStatusChange(r._id, "Rejected")}
+                      onClick={() => handleStatusChange(r.id, "Rejected")}
                     >
                       {t.reject}
                     </button>

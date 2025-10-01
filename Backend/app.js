@@ -1,8 +1,6 @@
 "use strict";
 const twilio = require("twilio");
-const User = require("./models/User");
-const LoanRequest = require("./models/Loan_Request");
-const Repayment = require("./models/Repayment");
+const pool = require("./config/db");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -88,7 +86,11 @@ app.post("/ussd", async (req, res) => {
       );
     }
 
-    const requests = await LoanRequest.find({ farmer: session.userId });
+    const [requests] = await pool.query(
+      "SELECT * FROM loan_requests WHERE farmer_id = ? ORDER BY created_at DESC",
+      [session.userId]
+    );
+
     if (!requests.length)
       return res.send(`END ${messages[session.lang].noRequests}`);
 
@@ -135,7 +137,11 @@ app.post("/ussd", async (req, res) => {
       );
     }
 
-    const repayments = await Repayment.find({ farmer: session.userId });
+    const [repayments] = await pool.query(
+      "SELECT * FROM repayments WHERE farmer_id = ? ORDER BY created_at DESC",
+      [session.userId]
+    );
+
     if (!repayments.length)
       return res.send(`END ${messages[session.lang].noRepayments}`);
 
@@ -148,7 +154,10 @@ app.post("/ussd", async (req, res) => {
     session.page = page;
 
     const start = page * pageSize;
-    const paged = repayments.slice(start, start + pageSize);
+    const [paged] = await pool.query(
+      "SELECT * FROM loan_requests WHERE farmer_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+      [session.userId, pageSize, page * pageSize]
+    );
 
     let resp = `CON ${messages[session.lang].repaymentHistory}\n`;
     paged.forEach((r, i) => {
@@ -195,7 +204,13 @@ app.post("/ussd", async (req, res) => {
         session.step = "nationalId";
         return res.send(`CON ${messages[lang].enterNationalId}\n0. Back`);
       } else if (input === "2") {
-        const user = await User.findOne({ phone_number: phoneNumber });
+        const [rows] = await pool.query(
+          "SELECT * FROM users WHERE phone_number = ? LIMIT 1",
+          [phoneNumber]
+        );
+
+        const user = rows[0]; // undefined if not found
+
         if (!user) return res.send(`END ${messages[lang].notRegistered}`);
         session.step = "menu";
         session.userId = user._id;
@@ -217,7 +232,10 @@ app.post("/ussd", async (req, res) => {
 
     // USER MENU
     if (session.step === "menu") {
-      const user = await User.findById(session.userId);
+      const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [
+        session.userId,
+      ]);
+      const user = rows[0]; // first row is the user
       const lang = session.lang;
 
       if (user.role === "farmer") {
@@ -249,7 +267,10 @@ app.post("/ussd", async (req, res) => {
       if (user.role === "admin") {
         switch (input) {
           case "1":
-            const pendingLoans = await LoanRequest.find({ status: "pending" });
+            const [pendingLoans] = await pool.query(
+              "SELECT * FROM loan_requests WHERE status = ? ORDER BY created_at DESC",
+              ["pending"]
+            );
             if (!pendingLoans.length)
               return res.send(`END ${messages[lang].noPendingLoans}`);
             let resp = `END Pending Loans:\n`;
@@ -260,7 +281,13 @@ app.post("/ussd", async (req, res) => {
             });
             return res.send(resp);
           case "2":
-            const allFarmers = await User.find({ role: "farmer" });
+            const [rows] = await pool.query(
+              "SELECT * FROM users WHERE role = ?",
+              ["farmer"]
+            );
+
+            const allFarmers = rows; // array of farmer objects
+
             let farmerResp = `END ${messages[lang].farmerList}\n`;
             allFarmers.forEach((f, i) => {
               farmerResp += `${i + 1}. ${f.national_id} - ${f.phone_number}\n`;
@@ -284,7 +311,12 @@ app.post("/ussd", async (req, res) => {
       const lang = session.lang;
       if (input === "0" && goBack())
         return res.send(`CON ${messages[lang].entryMenu}`);
-      const existingID = await User.findOne({ national_id: input });
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE national_id = ? LIMIT 1",
+        [input]
+      );
+
+      const existingID = rows[0]; // undefined if not found
       if (existingID)
         return res.send(`END ${messages[lang].alreadyRegistered}`);
       session.national_id = input;
@@ -297,16 +329,30 @@ app.post("/ussd", async (req, res) => {
       const lang = session.lang;
       if (input === "0" && goBack())
         return res.send(`CON ${messages[lang].enterNationalId}\n0. Back`);
-      const existingPhone = await User.findOne({ phone_number: phoneNumber });
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE phone_number = ? LIMIT 1",
+        [phoneNumber]
+      );
+
+      const existingPhone = rows[0]; // undefined if no user found
+
       if (existingPhone)
         return res.send(`END ${messages[lang].phoneAlreadyRegistered}`);
-      const newUser = new User({
-        national_id: session.national_id,
-        phone_number: phoneNumber,
-        preferred_language: session.preferred_language,
-        role: "farmer",
-      });
-      await newUser.save();
+      const newUserId = uuidv4();
+
+      await pool.query(
+        `INSERT INTO users (id, national_id, phone_number, preferred_language, role)
+   VALUES (?, ?, ?, ?, ?)`,
+        [
+          newUserId,
+          session.national_id,
+          phoneNumber,
+          session.preferred_language,
+          "farmer",
+        ]
+      );
+      session.userId = newUserId;
+      session.role = "farmer";
       await sendSMS(
         formatPhoneNumber(phoneNumber),
         session.preferred_language === "en"
@@ -320,7 +366,13 @@ app.post("/ussd", async (req, res) => {
     // LOAN REQUEST FLOW (farmer)
     if (session.step === "loan_inputType") {
       const lang = session.lang;
-      const user = await User.findById(session.userId);
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE id = ? LIMIT 1",
+        [session.userId]
+      );
+
+      const user = rows[0]; // undefined if no user found
+
       if (!user || user.role !== "farmer")
         return res.send(`END ${messages[lang].notAllowed}`);
 
@@ -342,7 +394,13 @@ app.post("/ussd", async (req, res) => {
 
     if (session.step === "loan_packageSize") {
       const lang = session.lang;
-      const user = await User.findById(session.userId);
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE id = ? LIMIT 1",
+        [session.userId]
+      );
+
+      const user = rows[0]; // this is your user object, or undefined if not found
+
       if (!user || user.role !== "farmer")
         return res.send(`END ${messages[lang].notAllowed}`);
 
@@ -356,7 +414,13 @@ app.post("/ussd", async (req, res) => {
 
     if (session.step === "loan_amount") {
       const lang = session.lang;
-      const user = await User.findById(session.userId);
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE id = ? LIMIT 1",
+        [session.userId]
+      );
+
+      const user = rows[0]; // this is your user object, or undefined if not found
+
       if (!user || user.role !== "farmer")
         return res.send(`END ${messages[lang].notAllowed}`);
 
@@ -365,18 +429,21 @@ app.post("/ussd", async (req, res) => {
       session.loan_amount = parseFloat(input);
       if (isNaN(session.loan_amount))
         return res.send(`CON ${messages[lang].invalidAmount}\n0. Back`);
+      const loanRequestId = uuidv4();
+      await pool.query(
+        `INSERT INTO loan_requests (id, farmer_id, input_type, package_size, amount, status, repayment_date)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          loanRequestId,
+          session.userId,
+          session.input_type,
+          session.package_size,
+          session.loan_amount,
+          "pending",
+          new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        ]
+      );
 
-      const newRequest = new LoanRequest({
-        farmer: session.userId,
-        input_type: session.input_type,
-        package_size: session.package_size,
-        amount: session.loan_amount,
-        status: "pending",
-        repayment_date: new Date(
-          new Date().setMonth(new Date().getMonth() + 1)
-        ),
-      });
-      await newRequest.save();
       delete sessions[sessionId];
       return res.send(`END ${messages[lang].requestSuccess}`);
     }

@@ -1,26 +1,13 @@
-const mongoose = require("mongoose");
+const mysql = require("mysql2/promise");
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect("mongodb://localhost:27017/verdin", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST || "localhost",
+  user: process.env.MYSQL_USER || "root",
+  password: process.env.MYSQL_PASSWORD || "",
+  database: process.env.MYSQL_DB || "verdln",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
 
-    console.log("✅ MongoDB Connected Successfully");
-  } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
-
-    // Instead of crashing the app, just log and continue running
-    mongoose.connection.on("disconnected", () => {
-      console.warn("⚠️ MongoDB disconnected. Retrying...");
-    });
-  }
-
-  // Handle runtime errors without crashing
-  mongoose.connection.on("error", (err) => {
-    console.error("⚠️ MongoDB Runtime Error:", err.message);
-  });
-};
-
-module.exports = connectDB();
+module.exports = pool;
