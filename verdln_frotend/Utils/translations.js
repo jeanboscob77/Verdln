@@ -130,6 +130,14 @@ export const translations = {
       "Available 24/7 anywhere in the country.",
     ],
     learnMore: "Learn More",
+    //footer
+    quickLinks: "Quick Links",
+    home: "Home",
+    ussd: "USSD Access",
+    requests: "Requests",
+    contact: "Contact",
+    description: "Digital input credit platform for Rwandan farmers",
+    copyright: "All rights reserved.",
   },
 
   rw: {
@@ -266,5 +274,14 @@ export const translations = {
       "Iraboneka igihe cyose ahantu hose mu gihugu.",
     ],
     learnMore: "Menya Byinshi",
+    //footer
+    quickLinks: "Imyirondoro Yihuse",
+    home: "Ahabanza",
+    ussd: "Kwifashisha USSD",
+    requests: "Ububiko bw'ibyifuzo",
+    contact: "Twandikire",
+    description:
+      "Porogaramu yo gutanga inguzanyo y’ibikoresho ku bahinzi b’u Rwanda",
+    copyright: "Uburenganzira bwose burabitswe.",
   },
 };
