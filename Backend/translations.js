@@ -38,6 +38,7 @@ module.exports = {
       fertilizer: "Fertilizer",
       pesticides: "Pesticides",
     },
+    back: "Back",
   },
 
   rw: {
@@ -80,5 +81,6 @@ module.exports = {
       fertilizer: "Ifumbire",
       pesticides: "Imiti yica udukoko",
     },
+    back: "Garuka",
   },
 };

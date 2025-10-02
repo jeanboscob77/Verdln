@@ -2,6 +2,7 @@
 const twilio = require("twilio");
 const pool = require("./config/db");
 const express = require("express");
+const { v4: uuidv4 } = require("uuid");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -155,14 +156,14 @@ app.post("/ussd", async (req, res) => {
 
     const start = page * pageSize;
     const [paged] = await pool.query(
-      "SELECT * FROM loan_requests WHERE farmer_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+      "SELECT * FROM repayments WHERE farmer_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
       [session.userId, pageSize, page * pageSize]
     );
 
     let resp = `CON ${messages[session.lang].repaymentHistory}\n`;
     paged.forEach((r, i) => {
       resp += `${start + i + 1}. ${r.amount} via ${r.method} on ${
-        r.date.toISOString().split("T")[0]
+        r.created_at.toISOString().split("T")[0]
       }\n`;
     });
 
@@ -213,7 +214,7 @@ app.post("/ussd", async (req, res) => {
 
         if (!user) return res.send(`END ${messages[lang].notRegistered}`);
         session.step = "menu";
-        session.userId = user._id;
+        session.userId = user.id;
         session.role = user.role || "farmer";
         return res.send(
           `CON ${messages[lang].welcome}\n${
@@ -243,8 +244,12 @@ app.post("/ussd", async (req, res) => {
           case "1":
             session.history.push("menu");
             session.step = "loan_inputType";
+            // Build menu dynamically from translations
+            const menuText = Object.entries(messages[lang].inputTypes)
+              .map(([key, value], index) => `${index + 1}. ${value}`)
+              .join("\n");
             return res.send(
-              `CON ${messages[lang].selectInputType}\n1. Seeds\n2. Fertilizer\n3. Pesticides\n0. Back`
+              `CON ${messages[lang].selectInputType}\n${menuText}\n0. ${messages[lang].back}`
             );
           case "2":
             session.history.push("menu");
