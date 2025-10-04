@@ -1,20 +1,20 @@
 {
   "pages": {
     "/_not-found/page": [
-      "static/chunks/c0ad5_next_dist_560e5ba5._.js",
-      "static/chunks/Desktop_FullStack_Verdln_verdln_frotend_app_favicon_ico_mjs_449ca4f5._.js",
-      "static/chunks/[root-of-the-server]__23f3b73b._.css",
-      "static/chunks/Desktop_FullStack_Verdln_verdln_frotend_250b50f7._.js",
-      "static/chunks/Desktop_FullStack_Verdln_verdln_frotend_app_layout_44c4f8f1.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_b7e6188a._.js",
-      "static/chunks/c0ad5_next_dist_compiled_react-dom_f8f5b800._.js",
-      "static/chunks/c0ad5_next_dist_compiled_next-devtools_index_c808b8ef.js",
-      "static/chunks/c0ad5_next_dist_compiled_79a499f9._.js",
-      "static/chunks/c0ad5_next_dist_client_c66cd84a._.js",
-      "static/chunks/c0ad5_next_dist_7b5b7de8._.js",
-      "static/chunks/c0ad5_@swc_helpers_cjs_ae1f4ae9._.js",
-      "static/chunks/Desktop_FullStack_Verdln_verdln_frotend_a0ff3932._.js",
-      "static/chunks/turbopack-Desktop_FullStack_Verdln_verdln_frotend_76193311._.js"
+      "static/chunks/07c97_next_dist_1f13c4eb._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_app_favicon_ico_mjs_d797bad9._.js",
+      "static/chunks/[root-of-the-server]__6cff81b0._.css",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_ad341647._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_app_layout_72850bd9.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_92f58470._.js",
+      "static/chunks/07c97_next_dist_compiled_react-dom_b3ca4c9e._.js",
+      "static/chunks/07c97_next_dist_compiled_next-devtools_index_083f1f1f.js",
+      "static/chunks/07c97_next_dist_compiled_50df46a6._.js",
+      "static/chunks/07c97_next_dist_client_9a35fee8._.js",
+      "static/chunks/07c97_next_dist_653b2f64._.js",
+      "static/chunks/07c97_@swc_helpers_cjs_29a82373._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_a0ff3932._.js",
+      "static/chunks/turbopack-Desktop_FullStack_Verdln_Verdln_verdln_frotend_2c29130d._.js"
     ]
   }
 }

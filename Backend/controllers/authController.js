@@ -77,6 +77,7 @@ exports.register = async (req, res) => {
 };
 
 // Login user (unchanged except still works with UUID id)
+
 exports.login = async (req, res) => {
   try {
     const { national_id, phone_number } = req.body;

@@ -33,7 +33,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const data = await apiPost("/auth/login", {
+      const data = await apiPost("/users/login", {
         national_id: nationalId,
         phone_number: phone,
       });
@@ -52,11 +52,8 @@ export default function LoginPage() {
         login(data.user, data.token);
 
         // Redirect based on role
-        if (data.user.role === "farmer") {
-          router.push("/farmer/dashboard");
-        } else if (data.user.role === "admin") {
-          router.push("/admin/dashboard");
-        } else {
+        if (data.user) {
+          alert("Login successful!");
           router.push("/");
         }
 

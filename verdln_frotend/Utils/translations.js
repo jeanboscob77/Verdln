@@ -5,10 +5,10 @@ export const translations = {
     home: "Home",
     farmer: "Farmer",
     admin: "Admin",
-    ussd: "USSD",
-
+    supplier: "Supplier",
     login: "Login",
     register: "Register",
+    name: "Name",
 
     registerTitle: "Register as Farmer",
     nationalId: "National ID",
@@ -19,6 +19,36 @@ export const translations = {
     invalidPhone: "Invalid phone number",
     loginTitle: "Login to Your Account",
     loginButtonLabel: "Login",
+    fullName: "Full Name",
+
+    // view loan requests
+    price: "Price",
+    loanAmount: "Loan Amount",
+    interest: "Interest",
+    totalLoanWithInterest: "Total Loan with Interest",
+    status: "Status",
+    veiwPaymentProof: "View Payment Proof",
+    repaymentSummary: "Repayment Summary",
+    paid: "Paid",
+    remaining: "Remaining",
+    recordPayment: "Record Payment",
+    viewHistory: "View History",
+    hideHistory: "Hide History",
+    noPaymentmentsMade: "No payments made yet.",
+    cancel: "Cancel",
+    saving: "Saving...",
+    savePayment: "Save Payment",
+    pending: "Pending",
+    delivered: "Delivered",
+    farmerInfo: "Farmer Info",
+    loanDetails: "Loan Details",
+    total: "Total",
+    delivery: "Delivery",
+    uploading: "Uploading...",
+    proofs: "Delivered Loans & Proofs",
+    assignedLoans: "Assigned Loans",
+    //create supplier
+    createSupplier: "Create Supplier",
 
     //farmer dashboard
     farmerDashboard: "Farmer Dashboard",
@@ -37,6 +67,24 @@ export const translations = {
     noRepayments: "No repayment history available.",
     required: "All fields are required.",
     notes: "Admin Notes",
+    loanRequestLink: "Request Loan",
+    viewRequestedLoans: "View Requested Loans",
+    all: "All",
+
+    //farmer loan request
+    selectProvince: "Select Province",
+    selectDistrict: "Select District",
+    selectSector: "Select Sector",
+    selectCell: "Select Cell",
+    selectSupplier: "Select Supplier",
+    submitLoanRequest: "Submit Loan Request",
+    selectSupplier: "Select Supplier",
+    repaymentDate: "Repayment Date",
+    inputType: "Input Type (Seeds/Fertilizer/Pesticides)",
+    subType: "Select Option",
+    Type: "Input Type",
+    action: "Action",
+    viewDetails: "Menya Byishi",
     //admin dashboard
     adminDashboardTitle: "Admin Dashboard",
     totalLoans: "Total Loans",
@@ -55,7 +103,12 @@ export const translations = {
     submitRepayment: "Submit Repayment",
     cash: "Cash",
     mobileMoney: "Mobile Money",
-
+    bankTransfer: "Bank Transfer",
+    noLoans: "No loans available.",
+    deliveredON: "Delivered on",
+    proofDocument: "Proof Document",
+    viewDocument: "View Document",
+    noDocumentProvided: "No Document Provided",
     //Home page
     welcomeTitle: "Welcome to VerdIn",
     welcomeSubtitle:
@@ -72,24 +125,13 @@ export const translations = {
       "Join our platform today and make your farming journey easier.",
     joinNow: "Join Now",
 
-    // --- USSD PAGE ---
-    ussdTitle: "Access via USSD",
-    ussdDescription:
-      "Our platform is accessible even without internet. Farmers can use the USSD code below to submit requests and view updates directly from their phone.",
-    howToAccess: "How to Access",
-    step1: "Dial *123# on your phone.",
-    step2: "Select the option you want (Request, Check Status, Repayment).",
-    step3: "Follow the instructions step by step.",
-    step4: "Submit and you will receive confirmation instantly.",
-    ussdCodeInfo: "Dial this code anytime, anywhere:",
-
     //logout
     logout: "Logout",
 
     // input type
     choice: "Select an option",
-    seeds: "Seeds",
-    fertilizer: "Fertilizer",
+    Seeds: "Seeds",
+    Fertilizers: "Fertilizer",
     pesticides: "Pesticides",
     statusLabels: {
       pending: "pending",
@@ -138,6 +180,34 @@ export const translations = {
     contact: "Contact",
     description: "Digital input credit platform for Rwandan farmers",
     copyright: "All rights reserved.",
+
+    //loan request
+    subType: "Select Option", // for Seeds/Fertilizer/Pesticides sub-options
+    province: "Province",
+    district: "District",
+    sector: "Sector",
+    cell: "Cell",
+    // for Seeds/Fertilizer/Pesticides sub-options
+
+    //tabs
+    tabs: {
+      all: "All",
+      paid: "Paid",
+      partial: "Partial",
+      unpaid: "Unpaid",
+    },
+    loanStatus: {
+      pending: "Pending",
+      approved: "Approved",
+      rejected: "Rejected",
+    },
+    repaymentStatus: {
+      paid: "Paid",
+      partial: "Partial",
+      unpaid: "Unpaid",
+    },
+    paymentHistory: "Payment History",
+    noPaymentMade: "No payment yet",
   },
 
   rw: {
@@ -146,8 +216,9 @@ export const translations = {
     home: "Ahabanza",
     farmer: "Umuhinzi",
     admin: "Ubuyobozi",
-    ussd: "USSD",
-
+    supplier: "Umucuruzi",
+    name: "Amazina",
+    deliveredON: "Byatanzwe Taliki",
     login: "Injira",
     register: "Iyandikishe",
 
@@ -160,7 +231,45 @@ export const translations = {
     invalidPhone: "Numero ya telefoni ntabwo ari nziza",
     loginTitle: "Injira muri Konti yawe",
     loginButtonLabel: "Injira",
+    fullName: "Amazina Yuzuye",
 
+    // view loan requests
+    price: "Igiciro",
+    loanAmount: "Ingano y'Inguzanyo",
+    interest: "Inyungu",
+    totalLoanWithInterest: "Inguzanyo Yose n'Inyungu",
+    status: "Imiterere",
+    veiwPaymentProof: "Reba Icyemezo cyo Kwishyura",
+    repaymentSummary: "Incamake y'Imyishyurire",
+    paid: "Ayishyuwe",
+    remaining: "Asigaye",
+    recordPayment: "Ishyura",
+    viewHistory: "Reba Amateka",
+    hideHistory: "Funga Amateka",
+    noPaymentmentsMade: "Nta myishyurire yakozwe.",
+    cancel: "Hagarika",
+    pending: "Itegereje",
+    delivered: "Byatanzwe",
+    farmerInfo: "Amakuru y'Umuhinzi",
+    loanDetails: "Amakuru y'Inguzanyo",
+    total: "Igiteranyo",
+    delivery: "Itangwa",
+    uploading: "Birimo koherezwa...",
+    proofDocument: "urupapuro ruhamya",
+    viewDocument: "Soma Urupapuro",
+    noDocumentProvided: "Nta Rupapuro Rwashyizweho",
+    saving: "Birikwishurwa....",
+    savePayment: "Ishyura",
+    all: "Byose",
+    assignedLoans: "Inguzanyo Zashyizweho",
+
+    ///create supplier
+    createSupplier: "Shiraho Umucuruzi",
+    nationalIdError: "Indangamuntu imaze gukoreshwa",
+    supplierCreated: "Umucuruzi yashyizweho neza",
+    nationalId: "Indangamuntu",
+    phoneNumber: "Numero ya Telefoni",
+    langauge: "Ururimi",
     //farmer dashboard
     farmerDashboard: "Dashboard y’Umuhinzi",
     submitRequest: "Ohereza Gusaba",
@@ -178,6 +287,31 @@ export const translations = {
     noRepayments: "Nta mateka yo kugarura aboneka.",
     required: "Uzuza ibisabwa byose.",
     notes: "Inyandiko y'Ubuyobozi",
+    loanRequestLink: "Saba Inguzanyo",
+    viewRequestedLoans: "Reba Inguzanyo Wasabye",
+    proofs: "Ibikoresho Byatanzwe Nibihamya",
+
+    //create supplier
+    createSupplier: "Shiraho Umucuruzi",
+    nationalIdError: "Indangamuntu imaze gukoreshwa",
+    supplierCreated: "Umucuruzi yashyizweho neza",
+    nationalId: "Indangamuntu",
+    phoneNumber: "Numero ya Telefoni",
+    langauge: "Ururimi",
+
+    //farmer loan request
+    selectProvince: "Hitamo Intara",
+    selectDistrict: "Hitamo Akarere",
+    selectSector: "Hitamo Umurenge",
+    selectCell: "Hitamo Akagali",
+    selectSupplier: "Hitamo Umucuruzi",
+    submitLoanRequest: "Saba Inguzanyo",
+    repaymentDate: "Itariki yo Kwishyura",
+    inputType: "Hitamo Ubwoko bw'Inyongeramusaruro cyangwa Imbuto",
+    subType: "Hitamo Icyiciro", // for Seeds/Fertilizer/Pesticides sub-options
+    Type: "Ubwo Bw'Imbuto",
+    action: "Action",
+    viewDetails: "Menya Byishi",
     //admin dashboard
     adminDashboardTitle: "Dashboard y'Ubuyobozi",
     totalLoans: "Inguzanyo zose",
@@ -195,6 +329,9 @@ export const translations = {
     submitRepayment: "Ohereza Subiza",
     cash: "Amafaranga",
     mobileMoney: "Mobile Money",
+    bankTransfer: "Kuhererekanya kuri Banki",
+    noLoans: "Nta nguzanyo ziriho.",
+    deliveredOn: "Delivered on",
 
     //home page in kinyarwanda
     welcomeTitle: "Murakaza neza kuri Verdln",
@@ -215,31 +352,15 @@ export const translations = {
       "Injira ku rubuga rwacu uyu munsi, byorohereze urugendo rwawe mu buhinzi.",
     joinNow: "Injira Ubu",
 
-    // --- USSD PAGE ---
-    ussdTitle: "Koresha USSD",
-    ussdDescription:
-      "Urubuga rwacu rwagerwaho n’udafite murandasi. Abahinzi bashobora gukoresha kode ya USSD ikurikira kugirango batange ubusabe cyangwa barebe amakuru ku byabo bakoresheje telefoni isanzwe.",
-    howToAccess: "Uko bikorwa",
-    step1: "Kanda *123# kuri telefoni yawe.",
-    step2:
-      "Hitamo icyo ushaka (Gutanga ubusabe, Kugenzura uko byakiriwe, Kwishyura).",
-    step3: "Kurikiza amabwiriza by’itonaniza.",
-    step4: "Ohereza, hanyuma uzahita ubona ubutumwa bwo kubyemeza.",
-    ussdCodeInfo: "Hamagara iyi kode igihe cyose, ahantu hose:",
-
     //logout
     logout: "Sohoka",
 
     //input type
     choice: "Hitamo icyiciro",
-    seeds: "Imbuto",
-    fertilizer: "Ifumbire",
+    Seeds: "Imbuto",
+    Fertilizers: "Ifumbire",
     pesticides: "Imiti yica udukoko",
-    statusLabels: {
-      Pending: "Itegereje",
-      Approved: "Byemejwe",
-      Rejected: "Byanzwe",
-    },
+
     // Details
     // Farmer Details
     farmer_details:
@@ -283,5 +404,33 @@ export const translations = {
     description:
       "Porogaramu yo gutanga inguzanyo y’ibikoresho ku bahinzi b’u Rwanda",
     copyright: "Uburenganzira bwose burabitswe.",
+    //loan request
+    subType: "Hitamo Icyiciro", // for Seeds/Fertilizer/Pesticides sub-options
+    province: "Intara",
+    district: "Akarere",
+    sector: "Umurenge",
+    cell: "Akagali",
+    selectSupplier: "Hitamo Utanga Ibikoresho",
+
+    //tabs
+    tabs: {
+      all: "Byose",
+      paid: "Yishyuwe",
+      partial: "Igice",
+      unpaid: "Ntabwo Yishyuwe",
+    },
+
+    loanStatus: {
+      pending: "Bitegereje",
+      approved: "Byemejwe",
+      rejected: "Byanzwe",
+    },
+    repaymentStatus: {
+      paid: "Yishyuwe",
+      partial: "Yishyuwe Igice",
+      unpaid: "Ntabwo Yishyuwe",
+    },
+    paymentHistory: "Uko Ubwishyu bwakozwe",
+    noPaymentMade: "Nta Bwishyu burakorwa",
   },
 };
