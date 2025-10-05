@@ -102,6 +102,11 @@ export default function ViewLoans() {
 
   const tabs = ["All", "Pending", "Approved", "Rejected"];
 
+  const openDocument = (url) => {
+    if (!url) return;
+    window.open(`http://localhost:4000${url}`, "_blank");
+  };
+
   const fetchHistory = async (loanId) => {
     try {
       const res = await apiGet(`/repayments/${loanId}/history`);
@@ -250,75 +255,74 @@ export default function ViewLoans() {
               {r.document_url && (
                 <p
                   className="flex items-center gap-2 cursor-pointer"
-                  onClick={() =>
-                    window.open(
-                      `${process.env.NEXT_PUBLIC_API_URL}${r.document_url}`,
-                      "_blank"
-                    )
-                  }
+                  onClick={() => openDocument(r.document_url)}
                 >
                   <FileText className="w-5 h-5 text-blue-600" />{" "}
                   {t.veiwPaymentProof || "View Request Document"}
                 </p>
               )}
 
-              {/* Repayment Summary */}
-              <div className="mt-2">
-                <h2 className="font-semibold">{t.repaymentSummary}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-                  <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-green-600" /> {t.paid}:{" "}
-                    {r.paid_amount || 0}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-red-600" />{" "}
-                    {t.remaining}:{" "}
-                    {parseFloat(r.remaining_amount) ||
-                      parseFloat(r.loan_amount) +
-                        parseFloat(r.interest_amount || 0)}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" /> {t.status}:{" "}
-                    <span
-                      className={`px-2 py-1 rounded text-white ${
-                        r.payment_status === "Paid"
-                          ? "bg-green-600"
-                          : r.payment_status === "Partial"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {
-                        t.repaymentStatus[
-                          r.payment_status?.toLowerCase() || "unpaid"
-                        ]
-                      }
-                    </span>
-                  </p>
-                </div>
+              {r.status !== "Pending" &&
+                r.status !== "Rejected" &&
+                r.document_url && (
+                  /* Repayment Summary */
+                  <div className="mt-2">
+                    <h2 className="font-semibold">{t.repaymentSummary}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                      <p className="flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-green-600" />{" "}
+                        {t.paid}: {r.paid_amount || 0}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-red-600" />{" "}
+                        {t.remaining}:{" "}
+                        {parseFloat(r.remaining_amount) ||
+                          parseFloat(r.loan_amount) +
+                            parseFloat(r.interest_amount || 0)}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5" /> {t.status}:{" "}
+                        <span
+                          className={`px-2 py-1 rounded text-white ${
+                            r.payment_status === "Paid"
+                              ? "bg-green-600"
+                              : r.payment_status === "Partial"
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {
+                            t.repaymentStatus[
+                              r.payment_status?.toLowerCase() || "unpaid"
+                            ]
+                          }
+                        </span>
+                      </p>
+                    </div>
 
-                <div className="flex gap-3 mt-3">
-                  {r.payment_status !== "Paid" && (
-                    <button
-                      onClick={() => openPaymentModal(r)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 flex items-center gap-2"
-                    >
-                      <Upload className="w-4 h-4" />{" "}
-                      {t.recordPayment || "Record Payment"}
-                    </button>
-                  )}
-                  <button
-                    onClick={() => toggleHistory(r.id)}
-                    className="px-4 py-2 bg-gray-600 text-white rounded shadow hover:bg-gray-700 flex items-center gap-2"
-                  >
-                    <History className="w-5 h-5" />{" "}
-                    {histories[r.id] ? t.hideHistory : t.viewHistory}
-                  </button>
-                </div>
-              </div>
-
+                    <div className="flex gap-3 mt-3">
+                      {r.payment_status !== "Paid" && (
+                        <button
+                          onClick={() => openPaymentModal(r)}
+                          className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 flex items-center gap-2"
+                        >
+                          <Upload className="w-4 h-4" />{" "}
+                          {t.recordPayment || "Record Payment"}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => toggleHistory(r.id)}
+                        className="px-4 py-2 bg-gray-600 text-white rounded shadow hover:bg-gray-700 flex items-center gap-2"
+                      >
+                        <History className="w-5 h-5" />{" "}
+                        {histories[r.id] ? t.hideHistory : t.viewHistory}
+                      </button>
+                    </div>
+                  </div>
+                )}
               {/* Payment History */}
-              {histories[r.id] && (
+
+              {r.status !== "Pending" && histories[r.id] && (
                 <div className="mt-4 border-t pt-3">
                   <h3 className="font-semibold mb-2">{t.paymentHistory}</h3>
                   {histories[r.id].length === 0 ? (
@@ -371,7 +375,7 @@ export default function ViewLoans() {
                 {t.loanAmount}: <strong>{selectedLoan.loan_amount}</strong>
               </p>
               <p>
-                {t.remainig}:{" "}
+                {t.remaining}:{" "}
                 <strong>
                   {selectedLoan.remaining_amount || selectedLoan.loan_amount}
                 </strong>
@@ -392,7 +396,7 @@ export default function ViewLoans() {
                 >
                   <option value="Cash">{t.cash}</option>
                   <option value="Mobile Money">{t.mobileMoney}</option>
-                  <option value="Bank Transfer">{t.bankTransfer}</option>
+                  <option value="Bank">{t.bankTransfer}</option>
                 </select>
                 <input
                   type="file"

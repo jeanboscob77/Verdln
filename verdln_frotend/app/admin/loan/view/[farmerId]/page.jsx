@@ -111,8 +111,8 @@ export default function AdminLoansPage({ params }) {
               {loan.input_subtype}
             </p>
             <p className="flex items-center gap-1">
-              <Package className="w-5 h-5 text-gray-500" /> {loan.package_size}{" "}
-              ({t.price}: {loan.price || "N/A"})
+              <Package className="w-5 h-5 text-gray-500" /> ({t.quantity}:
+              {loan.package_size}) ({t.price}: {loan.price || "N/A"})
             </p>
             <p>
               {t.loanAmount}: {loan.loan_amount}

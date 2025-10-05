@@ -20,7 +20,9 @@ export const translations = {
     loginTitle: "Login to Your Account",
     loginButtonLabel: "Login",
     fullName: "Full Name",
-
+    viewloanRequests: "View Loan Requests",
+    DeliveredPayments: "Delivered & Payments",
+    reports: "Reports",
     // view loan requests
     price: "Price",
     loanAmount: "Loan Amount",
@@ -214,6 +216,13 @@ export const translations = {
     },
     paymentHistory: "Payment History",
     noPaymentMade: "No payment yet",
+    totalLoanSummary: "Total Loan Summary",
+    total: "Total",
+    paid: "Paid",
+    remaining: "Remaining",
+    loansBySupplier: "Loans by Supplier",
+    loansByInputType: "Loans by Input Type",
+    loadingReports: "Loading reports...",
   },
 
   rw: {
@@ -240,7 +249,10 @@ export const translations = {
     fullName: "Amazina Yuzuye",
     language: "Ururimi",
     create: "Andika Umucuruzi",
-
+    quantity: "Quantity",
+    viewloanRequests: "Reba Inguzanyo Zasabwe",
+    DeliveredPayments: "Ibyakiriwe n'Ubwishyu",
+    reports: "Raporo",
     // view loan requests
     price: "Igiciro",
     loanAmount: "Ingano y'Inguzanyo",
@@ -324,6 +336,7 @@ export const translations = {
     Type: "Ubwo Bw'Imbuto",
     action: "Igikorwa",
     viewDetails: "Menya Byishi",
+    quantity: "Ingano",
     //admin dashboard
     adminDashboardTitle: "Dashboard y'Ubuyobozi",
     totalLoans: "Inguzanyo zose",
@@ -444,5 +457,12 @@ export const translations = {
     },
     paymentHistory: "Uko Ubwishyu bwakozwe",
     noPaymentMade: "Nta Bwishyu burakorwa",
+    totalLoanSummary: "Isuzuma ry’Imyenda Rusange",
+    total: "Rusange",
+    paid: "Yishyuwe",
+    remaining: "Isigaye",
+    loansBySupplier: "Imyenda ku Mutanga",
+    loansByInputType: "Imyenda ku bwoko bw'Ifumbire",
+    loadingReports: "Gutunganya raporo...",
   },
 };

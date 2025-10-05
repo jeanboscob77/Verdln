@@ -1,7 +1,10 @@
 const express = require("express");
+const db = require("./config/db");
 const cors = require("cors");
+const http = require("http");
 require("dotenv").config();
 const path = require("path");
+const { Server } = require("socket.io");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -15,6 +18,11 @@ const supplierRoutes = require("./routes/suppliers");
 
 const repaymentRoutes = require("./routes/repayments");
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" }, // allow frontend connection
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/inputs", inputRoutes);
@@ -24,6 +32,49 @@ app.use("/api/suppliers", supplierRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/repayments", repaymentRoutes);
+// Function to fetch dashboard data
+const getDashboardData = async () => {
+  const [summaryRows] = await db.query(`
+    SELECT 
+      SUM(lr.total_amount) AS total_loan,
+      COALESCE(SUM(r.amount), 0) AS total_paid,
+      SUM(lr.total_amount) - COALESCE(SUM(r.amount), 0) AS total_remaining
+    FROM loan_requests lr
+    LEFT JOIN repayments r ON lr.id = r.loan_request_id
+  `);
+
+  const [bySupplier] = await db.query(`
+    SELECT u.full_name AS supplier, SUM(lr.total_amount) AS total
+    FROM loan_requests lr
+    JOIN users u ON u.id = lr.supplier_id
+    GROUP BY u.full_name
+  `);
+
+  const [byInput] = await db.query(`
+    SELECT i.type AS input_type, SUM(lr.total_amount) AS total
+    FROM loan_requests lr
+    JOIN input_types i ON i.id = lr.input_type_id
+    GROUP BY i.type
+  `);
+
+  return {
+    summary: summaryRows[0],
+    bySupplier,
+    byInput,
+  };
+};
+
+// Emit dashboard updates every X seconds
+setInterval(async () => {
+  const data = await getDashboardData();
+  io.emit("dashboard-update", data);
+}, 3000); // every 5 seconds, adjust as needed
+
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+  // Send initial data on connection
+  getDashboardData().then((data) => socket.emit("dashboard-update", data));
+});
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

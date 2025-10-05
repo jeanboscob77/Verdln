@@ -59,22 +59,22 @@ export default function Navbar() {
       icon: <Shield className="w-4 h-4" />,
       children: [
         {
-          label: "Create Supplier",
+          label: t.createSupplier,
           href: "/admin/create-supplier",
           icon: <PlusCircle className="w-4 h-4" />,
         },
         {
-          label: "View Loan Requests",
+          label: t.viewloanRequests,
           href: "/admin/loan/view",
           icon: <FileText className="w-4 h-4" />,
         },
         {
-          label: "Delivered & Payments",
+          label: t.DeliveredPayments,
           href: "/admin/delivered",
           icon: <FileText className="w-4 h-4" />,
         },
         {
-          label: "Reports",
+          label: t.reports,
           href: "/admin/reports",
           icon: <FileText className="w-4 h-4" />,
         },

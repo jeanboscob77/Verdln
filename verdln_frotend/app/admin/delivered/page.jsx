@@ -62,7 +62,7 @@ export default function AdminProofsPage() {
 
   const openDocument = (url) => {
     if (!url) return;
-    window.open(`${process.env.NEXT_PUBLIC_API_URL}${url}`, "_blank");
+    window.open(`http://localhost:4000${url}`, "_blank");
   };
 
   console.log(loans);
