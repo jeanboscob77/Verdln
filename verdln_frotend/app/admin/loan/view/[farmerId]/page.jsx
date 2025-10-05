@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/Context/AuthContext";
 import { useLanguage } from "@/Context/LanguageContext";
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 export default function AdminLoansPage({ params }) {
-  const { farmerId } = params;
+  const { farmerId } = use(params);
   const router = useRouter();
   const { user, loading } = useAuth();
   const { t } = useLanguage();
@@ -59,6 +59,8 @@ export default function AdminLoansPage({ params }) {
     }
   };
 
+  console.log(loans);
+
   if (loading || loadingData)
     return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
 
@@ -83,7 +85,7 @@ export default function AdminLoansPage({ params }) {
         >
           {/* Farmer Identification */}
           <h2 className="font-bold text-lg text-gray-700 border-b pb-1">
-            Farmer Identification
+            {t.farmerIdentification}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
             <p className="flex items-center gap-1">
@@ -91,7 +93,7 @@ export default function AdminLoansPage({ params }) {
             </p>
             <p className="flex items-center gap-1">
               <Phone className="w-5 h-5 text-gray-500" />{" "}
-              {loan.phone_number || "N/A"}
+              {loan.farmer_phone || "N/A"}
             </p>
             <p className="flex items-center gap-1">
               <CreditCard className="w-5 h-5 text-gray-500" />{" "}
@@ -101,7 +103,7 @@ export default function AdminLoansPage({ params }) {
 
           {/* Loan Details */}
           <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-            Loan Details
+            {t.loanDetails}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
             <p className="flex items-center gap-1">
@@ -110,17 +112,23 @@ export default function AdminLoansPage({ params }) {
             </p>
             <p className="flex items-center gap-1">
               <Package className="w-5 h-5 text-gray-500" /> {loan.package_size}{" "}
-              (Price: {loan.price || "N/A"})
+              ({t.price}: {loan.price || "N/A"})
             </p>
-            <p>Loan Amount: {loan.loan_amount}</p>
-            <p>Interest: {loan.interest_amount}</p>
-            <p>Total: {loan.total_amount}</p>
+            <p>
+              {t.loanAmount}: {loan.loan_amount}
+            </p>
+            <p>
+              {t.interest}: {loan.interest_amount}
+            </p>
+            <p>
+              {t.totalLoanWithInterest}: {loan.total_amount}
+            </p>
             <p className="flex items-center gap-1">
               <Calendar className="w-5 h-5 text-gray-500" />{" "}
               {loan.repayment_date}
             </p>
             <p>
-              Status:{" "}
+              {t.status}:{" "}
               <span
                 className={`font-semibold ${
                   loan.status === "Approved"
@@ -130,14 +138,14 @@ export default function AdminLoansPage({ params }) {
                     : "text-yellow-600"
                 }`}
               >
-                {loan.status}
+                {t.loanStatus[loan.status]}
               </span>
             </p>
           </div>
 
           {/* Location & Supplier */}
           <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-            Location & Supplier
+            {t.locationAndSupplier}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
             <p className="flex items-center gap-1">
@@ -152,7 +160,7 @@ export default function AdminLoansPage({ params }) {
 
           {/* Update Status & Notes */}
           <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-            Update Status & Notes
+            {t.updateStatusAndNotes}
           </h2>
           <div className="flex flex-col md:flex-row md:items-center md:gap-4 mt-2">
             <select
@@ -163,9 +171,9 @@ export default function AdminLoansPage({ params }) {
               }
               disabled={updatingLoanId === loan.id}
             >
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
+              <option value="Pending">{t.loanStatus["Pending"]}</option>
+              <option value="Approved">{t.loanStatus["Approved"]}</option>
+              <option value="Rejected">{t.loanStatus["Rejected"]}</option>
             </select>
             <input
               type="text"

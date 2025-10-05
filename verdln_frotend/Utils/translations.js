@@ -9,7 +9,7 @@ export const translations = {
     login: "Login",
     register: "Register",
     name: "Name",
-
+    language: "Language",
     registerTitle: "Register as Farmer",
     nationalId: "National ID",
     phoneNumber: "Phone Number",
@@ -84,7 +84,13 @@ export const translations = {
     subType: "Select Option",
     Type: "Input Type",
     action: "Action",
-    viewDetails: "Menya Byishi",
+    viewDetails: " view Details",
+    allLoans: "All Loan Requests",
+    farmerIdentification: "Farmer Identification",
+    locationAndSupplier: "Location & Supplier",
+    updateStatusAndNotes: "Update Status & Notes",
+    create: "Create Supplier",
+
     //admin dashboard
     adminDashboardTitle: "Admin Dashboard",
     totalLoans: "Total Loans",
@@ -197,9 +203,9 @@ export const translations = {
       unpaid: "Unpaid",
     },
     loanStatus: {
-      pending: "Pending",
-      approved: "Approved",
-      rejected: "Rejected",
+      Pending: "Pending",
+      Approved: "Approved",
+      Rejected: "Rejected",
     },
     repaymentStatus: {
       paid: "Paid",
@@ -232,6 +238,8 @@ export const translations = {
     loginTitle: "Injira muri Konti yawe",
     loginButtonLabel: "Injira",
     fullName: "Amazina Yuzuye",
+    language: "Ururimi",
+    create: "Andika Umucuruzi",
 
     // view loan requests
     price: "Igiciro",
@@ -262,6 +270,10 @@ export const translations = {
     savePayment: "Ishyura",
     all: "Byose",
     assignedLoans: "Inguzanyo Zashyizweho",
+    allLoans: "Inguzanyo Zose Zasabwe",
+    farmerIdentification: "Irangamuntu y’Umuhinzi",
+    locationAndSupplier: "Ahantu n’utangwa ibicuruzwa",
+    updateStatusAndNotes: "Hindura Icyemezo n'Inyandiko",
 
     ///create supplier
     createSupplier: "Shiraho Umucuruzi",
@@ -310,7 +322,7 @@ export const translations = {
     inputType: "Hitamo Ubwoko bw'Inyongeramusaruro cyangwa Imbuto",
     subType: "Hitamo Icyiciro", // for Seeds/Fertilizer/Pesticides sub-options
     Type: "Ubwo Bw'Imbuto",
-    action: "Action",
+    action: "Igikorwa",
     viewDetails: "Menya Byishi",
     //admin dashboard
     adminDashboardTitle: "Dashboard y'Ubuyobozi",
@@ -421,9 +433,9 @@ export const translations = {
     },
 
     loanStatus: {
-      pending: "Bitegereje",
-      approved: "Byemejwe",
-      rejected: "Byanzwe",
+      Pending: "Bitegereje",
+      Approved: "Byemejwe",
+      Rejected: "Byanzwe",
     },
     repaymentStatus: {
       paid: "Yishyuwe",

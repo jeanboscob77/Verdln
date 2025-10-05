@@ -36,6 +36,8 @@ export default function AdminLoansPage() {
     fetchLoans();
   }, []);
 
+  console.log(loans);
+
   if (loading || loadingData) {
     return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
   }
@@ -73,7 +75,9 @@ export default function AdminLoansPage() {
                 <td className="p-2">{loan.farmer_name}</td>
                 <td className="p-2">{loan.phone_number}</td>
                 <td className="p-2">{loan.national_id}</td>
-                <td className="p-2">{loan.input_type}</td>
+                <td className="p-2">
+                  {loan.input_type}/{loan.input_subtype}
+                </td>
                 <td className="p-2">
                   <button
                     className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"

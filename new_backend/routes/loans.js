@@ -253,4 +253,36 @@ router.put("/:loanId/deliver", upload.single("document"), async (req, res) => {
   }
 });
 
+// get all loans for farmers
+
+router.get("/all", async (req, res) => {
+  try {
+    const [requests] = await pool.query(
+      `SELECT 
+      lr.id,
+      lr.farmer_id,
+      lr.input_type_id,
+      lr.input_subtype_id,
+      lr.loan_amount,
+      lr.created_at,
+      lr.status,
+      u.national_id,
+      u.phone_number,
+      u.role,
+      u.full_name AS farmer_name,
+      it.type AS input_type,
+      st.name AS input_subtype
+   FROM loan_requests lr
+   INNER JOIN users u ON lr.farmer_id = u.id
+   LEFT JOIN input_types it ON lr.input_type_id = it.id
+   LEFT JOIN input_subtypes st ON lr.input_subtype_id = st.id
+   ORDER BY lr.created_at DESC`
+    );
+
+    res.json({ success: true, requests });
+  } catch (err) {
+    console.error("Get all requests error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 module.exports = router;
