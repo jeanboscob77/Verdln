@@ -2,12 +2,15 @@ const express = require("express");
 const db = require("./config/db");
 const cors = require("cors");
 const http = require("http");
+const bodyParser = require("body-parser");
 require("dotenv").config();
 const path = require("path");
 const { Server } = require("socket.io");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Routes
 const userRoutes = require("./routes/users");
@@ -15,12 +18,22 @@ const locationRoutes = require("./routes/locations");
 const inputRoutes = require("./routes/inputs");
 const loanRoutes = require("./routes/loans");
 const supplierRoutes = require("./routes/suppliers");
-
 const repaymentRoutes = require("./routes/repayments");
+const ussdRoutes = require("./ussd/ussd");
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }, // allow frontend connection
+});
+
+console.log({
+  userRoutes: typeof userRoutes,
+  locationRoutes: typeof locationRoutes,
+  inputRoutes: typeof inputRoutes,
+  loanRoutes: typeof loanRoutes,
+  supplierRoutes: typeof supplierRoutes,
+  repaymentRoutes: typeof repaymentRoutes,
+  ussdRoutes: typeof ussdRoutes,
 });
 
 app.use("/api/users", userRoutes);
@@ -32,6 +45,7 @@ app.use("/api/suppliers", supplierRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/repayments", repaymentRoutes);
+app.use("/api", ussdRoutes);
 // Function to fetch dashboard data
 const getDashboardData = async () => {
   const [summaryRows] = await db.query(`
