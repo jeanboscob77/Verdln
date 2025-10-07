@@ -7,6 +7,34 @@ const {
 } = require("../handlers/handleInputs");
 const { saveStep, deleteSession } = require("../handlers/sessions");
 
+// kinyarwanda for locations
+
+const levelNames = {
+  province: "Intara",
+  district: "Akarere",
+  sector: "Umurenge",
+  cell: "Akagari",
+  supplier: "Umucuruzi",
+};
+
+const inputTypeNames = {
+  Seeds: "Imbuto",
+  Fertilizers: "Ifumbire",
+  Pesticides: "Imiti yo kurwanya udukoko",
+};
+
+const inputSubtypeNames = {
+  NPK: "NPK",
+  UREA: "UREA",
+  DAP: "DAP",
+  Insecticide: "Imiti irwanya udukoko",
+  Herbicide: "Imiti irwanya ibyatsi bibi",
+  Fungicide: "Imiti irwanya udukoko tw’indwara z’ibimera",
+  "Rice Seeds": "Imbuto z’umuceri",
+  "Beans Seeds": "Imbuto z’ibishyimbo",
+  "Maize Seeds": "Imbuto z’ibigori",
+};
+
 // ------------------- LOAN REQUEST (FARMER) -------------------
 async function handleLoanRequest(session, input) {
   const lang = session.lang || "en";
@@ -14,10 +42,10 @@ async function handleLoanRequest(session, input) {
   if (session.step === "loan_inputType") {
     const types = await getInputTypes();
     if (!input) {
-      let msg = `${
-        lang === "en" ? "Select input type:" : "Hitamo Ibyo ushaka:"
-      }\n`;
-      types.forEach((t, i) => (msg += `${i + 1}. ${t.type}\n`));
+      let msg = "Hitamo Ibyo ushaka:\n";
+      types.forEach(
+        (t, i) => (msg += `${i + 1}. ${inputTypeNames[t.type] || t.type}\n`)
+      );
       return { type: "CON", message: msg };
     }
     const idx = parseInt(input) - 1;
@@ -29,10 +57,10 @@ async function handleLoanRequest(session, input) {
   if (session.step === "loan_inputSubtype") {
     const subtypes = await getInputSubtypes(session.input_type_id);
     if (!input) {
-      let msg = `${
-        lang === "en" ? "Select subtype" : "Hitamo Ibyo ushaka"
-      }:\n"`;
-      subtypes.forEach((s, i) => (msg += `${i + 1}. ${s.name}\n`));
+      let msg = "Hitamo Ibyo ushaka:\n";
+      subtypes.forEach(
+        (s, i) => (msg += `${i + 1}. ${inputSubtypeNames[s.name] || s.name}\n`)
+      );
       return { type: "CON", message: msg };
     }
     const idx = parseInt(input) - 1;
@@ -41,9 +69,7 @@ async function handleLoanRequest(session, input) {
     saveStep(session, "loan_packageSize");
     return {
       type: "CON",
-      message: `${
-        lang === "en" ? "Enter package size" : "Shyiramo Ingano yibyushaka"
-      }:`,
+      message: "Shyiramo Ingano yibyushaka:",
     };
   }
 
@@ -81,19 +107,22 @@ async function handleLoanRequest(session, input) {
 
       const locations = await getLocations(level, parent);
       if (!locations.length)
-        return { type: "CON", message: `No ${level} found. Try again.` };
+        return {
+          type: "CON",
+          message: `Nta ${levelNames[level]} wabonetse. subiramo.`,
+        };
 
       if (!input) {
-        let msg = `${lang === "en" ? "Select" : "Hitamo"} ${level}:\n`;
+        let msg = `Hitamo ${levelNames[level]}:\n`;
         locations.forEach((l, i) => {
-          msg += `${i + 1}. ${l.name || l.full_name}\n`;
+          msg += `${i + 1}. ${l.name_rw || l.name || l.full_name}\n`;
         });
         return { type: "CON", message: msg };
       }
 
       const idx = parseInt(input) - 1;
       const selected = locations[idx];
-      if (!selected) return { type: "CON", message: "Invalid choice." };
+      if (!selected) return { type: "CON", message: "wahisemo nabii." };
 
       if (level === "province") session.province_id = selected.id;
       if (level === "district") session.district_id = selected.id;
@@ -109,11 +138,7 @@ async function handleLoanRequest(session, input) {
         saveStep(session, "loan_repaymentDate");
         return {
           type: "CON",
-          message: `${
-            lang === en
-              ? "Enter repayment date (YYYY-MM-DD)"
-              : "Shyiramo Igihe cyo Kwishyura (YYYY-MM-DD)"
-          }:`,
+          message: "Shyiramo Igihe cyo Kwishyura (YYYY-MM-DD)",
         };
       }
     }
@@ -131,13 +156,7 @@ async function handleLoanRequest(session, input) {
     if (!input)
       return {
         type: "CON",
-        message: `${
-          lang === "en"
-            ? "Confirm loan request?"
-            : "Uremeza Gasaba Inguzanyo Kwawe?"
-        }\n1.${lang === "en" ? "Yes" : "Yego"}\n2. ${
-          lang === "en" ? "No" : "Oya"
-        }`,
+        message: `Uremeza Gasaba Inguzanyo Kwawe?\n1. Yego\n2. Oya`,
       };
     if (input === "1") {
       const loan_amount = session.package_size * session.selected_subtype_price;
@@ -170,28 +189,20 @@ async function handleLoanRequest(session, input) {
       deleteSession(session.sessionId);
       return {
         type: "END",
-        message: `${
-          lang === "en"
-            ? "Loan request submitted!"
-            : "Gusaba Inguzanyo byagenze neza"
-        }`,
+        message: "Gusaba Inguzanyo byagenze neza",
       };
     } else {
       deleteSession(session.sessionId);
       return {
         type: "END",
-        message: `${
-          lang === "en" ? "Loan request cancelled." : "Gusaba Inguzanyo Byanze"
-        }`,
+        message: "Gusaba Inguzanyo Byanze",
       };
     }
   }
 
   return {
     type: "END",
-    message: `${
-      lang === "en" ? "Unexpected step." : "Iyi ntambwe niyari yitenzwe"
-    }`,
+    message: "Wahisemo nabi pe!!",
   };
 }
 

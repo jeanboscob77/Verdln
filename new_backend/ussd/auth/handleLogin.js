@@ -1,13 +1,14 @@
-const pool = require("../../config/db");
-const { normalizeForDB } = require("../handlers/phoneFormatting");
-const { saveStep } = require("../handlers/sessions");
-const { handleLoanRequest } = require("../loan/handleLoanRequest");
-const { handleWelcome } = require("../handlers/handleWelcome");
-const { handleFarmerLoans } = require("../farmer/handleFarmerLoans");
-const { handleAdminLoans } = require("../admin/handleAdminLoans");
 // ------------------- LOGIN -------------------
 async function handleLogin(session, phoneNumber, input = null) {
-  const lang = session.lang || "en";
+  const pool = require("../../config/db");
+  const { normalizeForDB } = require("../handlers/phoneFormatting");
+  const { saveStep, goBack } = require("../handlers/sessions");
+  const { handleLoanRequest } = require("../loan/handleLoanRequest");
+  const { handleFarmerLoans } = require("../farmer/handleFarmerLoans");
+  const { handleAdminLoans } = require("../admin/handleAdminLoans");
+  const { handleAuth } = require("./handleAuth");
+  const { handleRoleMenu } = require("./handleRoleMenu");
+
   const phone = normalizeForDB(phoneNumber);
 
   const [rows] = await pool.query(
@@ -19,10 +20,7 @@ async function handleLogin(session, phoneNumber, input = null) {
     session.step = "mainMenu";
     return {
       type: "END",
-      message:
-        lang === "en"
-          ? "Your number is not registered. Please register first."
-          : "Numero yawe ntabwo yanditswe. Nyamuneka wiyandikishe mbere.",
+      message: "Numero yawe ntabwo yanditswe. Nyamuneka wiyandikishe mbere.",
     };
   }
 
@@ -36,9 +34,7 @@ async function handleLogin(session, phoneNumber, input = null) {
       return {
         type: "CON",
         message:
-          lang === "en"
-            ? "1. Request Loan\n2. Repayment\n3. View Loan Requests\n0. Back"
-            : "1. Saba Inguzanyo\n2. Kishyura\n3. Reba Inguzanyo\n0. Subira inyuma",
+          "1. Saba Inguzanyo\n2. Kwishyura\n3. Reba Inguzanyo\n0. Subira inyuma",
       };
     }
     if (input === "1") {
@@ -48,10 +44,7 @@ async function handleLogin(session, phoneNumber, input = null) {
       saveStep(session, "repayment");
       return {
         type: "CON",
-        message:
-          lang === "en"
-            ? "Enter repayment amount:"
-            : "Injiza amafaranga yo kwishyura:",
+        message: "Injiza amafaranga yo kwishyura:",
       };
     } else if (input === "3") {
       saveStep(session, "farmer_viewLoans");
@@ -59,14 +52,54 @@ async function handleLogin(session, phoneNumber, input = null) {
       return await handleFarmerLoans(session, null);
     } else if (input === "0") {
       goBack(session);
-      return await handleWelcome(session, null);
+
+      switch (session.step) {
+        case "authMenu":
+          return await handleAuth(session, null); // correct handler
+        case "roleMenu":
+          return await handleRoleMenu(session, null); // correct handler
+        case "loan_inputType":
+        case "loan_inputSubtype":
+        case "loan_packageSize":
+        case "loan_province":
+        case "loan_district":
+        case "loan_sector":
+        case "loan_cell":
+        case "loan_supplier":
+        case "loan_repaymentDate":
+        case "loan_confirm":
+          return await handleLoanRequest(session, null); // correct handler
+        default:
+          return { type: "END", message: "Unknown step." };
+      }
     }
   }
-
   if (session.role === "admin") {
     saveStep(session, "adminMenu");
     session.loanPage = 0;
-    return await handleAdminLoans(session, null);
+    session.stepDetail = false;
+
+    if (!input) {
+      return {
+        type: "CON",
+        message: "1. Inguzanyo zose\n2. Izitegereje\n0. Subira inyuma",
+      };
+    }
+
+    if (input === "0") {
+      goBack(session);
+      return await handleRoleMenu(session, null);
+    }
+
+    // set mode based on choice
+    let mode = input === "1" ? "view" : input === "2" ? "approve" : null;
+    if (!mode) return { type: "CON", message: "Wahisemo nabi." };
+
+    session.step = "adminLoan";
+    session.loanPage = 0;
+    session.stepDetail = false;
+
+    return await handleAdminLoans(session, null, mode);
   }
 
   return { type: "END", message: "Unknown role." };

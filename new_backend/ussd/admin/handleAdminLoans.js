@@ -1,25 +1,56 @@
 const pool = require("../../config/db");
 const { goBack } = require("../handlers/sessions");
 
-// ------------------- ADMIN VIEW & APPROVE LOANS -------------------
-async function handleAdminLoans(session, input) {
+const inputTypeNames = {
+  Seeds: "Imbuto",
+  Fertilizers: "Ifumbire",
+  Pesticides: "Imiti yo kurwanya udukoko",
+};
+
+const inputSubtypeNames = {
+  NPK: "NPK",
+  UREA: "UREA",
+  DAP: "DAP",
+  Insecticide: "Imiti irwanya udukoko",
+  Herbicide: "Imiti irwanya ibyatsi bibi",
+  Fungicide: "Imiti irwanya udukoko tw’indwara z’ibimera",
+  "Rice Seeds": "Imbuto z’umuceri",
+  "Beans Seeds": "Imbuto z’ibishyimbo",
+  "Maize Seeds": "Imbuto z’ibigori",
+};
+
+const loanStatus = {
+  pending: "Bitegereje",
+  approved: "Byemejwe",
+  rejected: "Byanzwe",
+};
+
+async function handleAdminLoans(session, input, mode = "view") {
   const { handleRoleMenu } = require("../auth/handleRoleMenu");
-  const lang = session.lang || "en";
   const pageSize = 5;
 
-  const [loans] = await pool.query(
-    `SELECT lr.id, u.full_name AS farmer_name, it.type AS input_type, st.name AS input_subtype, lr.package_size, lr.repayment_date, lr.loan_amount, lr.total_amount, lr.status
-     FROM loan_requests lr
-     JOIN users u ON lr.farmer_id = u.id
-     JOIN input_types it ON lr.input_type_id = it.id
-     JOIN input_subtypes st ON lr.input_subtype_id = st.id
-     ORDER BY lr.created_at DESC`
-  );
+  // ------------------- Fetch loans -------------------
+  let query = `
+    SELECT lr.id, u.full_name AS farmer_name, it.type AS input_type,
+      st.name AS input_subtype, st.price, lr.interest_amount, lr.package_size,
+      lr.repayment_date, lr.loan_amount, lr.total_amount, lr.status
+    FROM loan_requests lr
+    JOIN users u ON lr.farmer_id = u.id
+    JOIN input_types it ON lr.input_type_id = it.id
+    JOIN input_subtypes st ON lr.input_subtype_id = st.id
+  `;
+  if (mode === "approve") query += " WHERE LOWER(lr.status)='pending'";
+  query += " ORDER BY lr.created_at DESC";
+
+  const [loans] = await pool.query(query);
 
   if (!loans.length)
     return {
       type: "CON",
-      message: lang === "en" ? "No loan requests." : "Nta nguzanyo.",
+      message:
+        mode === "approve"
+          ? "Nta nguzanyo zitegereje kwemezwa."
+          : "Nta nguzanyo zabonetse.",
     };
 
   if (!session.loanPage) session.loanPage = 0;
@@ -28,44 +59,35 @@ async function handleAdminLoans(session, input) {
   const end = start + pageSize;
   const loansPage = loans.slice(start, end);
 
-  const translations = {
-    loanStatus: {
-      Pending: "Pending",
-      Approved: "Approved",
-      Rejected: "Rejected",
-    },
-
-    loanStatus: {
-      Pending: "Bitegereje",
-      Approved: "Byemejwe",
-      Rejected: "Byanzwe",
-    },
-  };
-
+  // ------------------- Loan list -------------------
   if (!session.stepDetail) {
-    let msg;
-    lang === "en" ? (msg = "Loan Requests:\n") : (msg = "Inguzanyo Zasabwe:\n");
+    let msg =
+      mode === "approve"
+        ? "Hitamo Inguzanyo yemezwa:\n"
+        : "Inguzanyo Zasabwe:\n";
+
     loansPage.forEach((l, i) => {
-      msg += `${i + 1}. ${l.farmer_name} - ${l.input_type} - ${
-        translations.loanStatus[l.status]
-      }\n`;
+      msg += `${i + 1}. ${l.farmer_name} - ${
+        inputTypeNames[l.input_type] || l.input_type
+      } - ${loanStatus[l.status.toLowerCase()] || l.status}\n`;
     });
-    if (session.loanPage > 0)
-      msg += lang === "en" ? "P. Previous\n" : "P. Ahabanza";
-    if (end < loans.length) msg += lang === "en" ? "N. Next\n" : "N. Komeza";
-    msg += lang === "en" ? " 0. Back" : " 0. Garuka";
+
+    if (session.loanPage > 0) msg += "P. Ahabanza\n";
+    if (end < loans.length) msg += "N. Komeza\n";
+    msg += "0. Garuka";
 
     if (!input) return { type: "CON", message: msg };
 
     if (input.toUpperCase() === "N") {
       session.loanPage++;
-      return await handleAdminLoans(session, null);
+      return await handleAdminLoans(session, null, mode);
     }
     if (input.toUpperCase() === "P") {
       session.loanPage = Math.max(0, session.loanPage - 1);
-      return await handleAdminLoans(session, null);
+      return await handleAdminLoans(session, null, mode);
     }
     if (input === "0") {
+      session.stepDetail = false;
       goBack(session);
       return await handleRoleMenu(session, null);
     }
@@ -74,62 +96,57 @@ async function handleAdminLoans(session, input) {
     if (idx >= 0 && idx < loansPage.length) {
       session.selected_loan_id = loansPage[idx].id;
       session.stepDetail = true;
-      return await handleAdminLoans(session, null);
+      return await handleAdminLoans(session, null, mode);
     }
 
-    return { type: "CON", message: "Invalid choice." };
+    return { type: "CON", message: "Wahisemo nabi." };
   }
 
+  // ------------------- Loan detail -------------------
   const loan = loans.find((l) => l.id === session.selected_loan_id);
-  let detail = `${lang === "en" ? "Loan Detail:" : "Amakuru Yinguzanyo:"}\n${
-    lang === "en" ? "Farmer:" : "Umuhinzi:"
-  } ${loan.farmer_name}\nType: ${loan.input_type}\nSubtype: ${
-    loan.input_subtype
-  }\nPackage: ${loan.package_size}\nLoan: ${loan.loan_amount}\nTotal: ${
-    loan.total_amount
-  }\nDue: ${loan.repayment_date.toISOString().split("T")[0]}\n${
-    lang === "en" ? "Status:" : "Imiterere:"
-  } ${translations.loanStatus[loan.status]}\n1. ${
-    lang === "en" ? "Approve" : "Yemeze"
-  }\n2. ${lang === "en" ? "Reject" : "Yange"}\n0. ${
-    lang === "en" ? "Back" : "Garuka"
-  }`;
+  let detail = `Amakuru y'Inguzanyo:\n
+Umuhinzi: ${loan.farmer_name}
+Icyo yasabye: ${inputTypeNames[loan.input_type] || loan.input_type}
+Ibyo yasabye: ${inputSubtypeNames[loan.input_subtype] || loan.input_subtype}
+Ingano: ${loan.package_size}
+Igiciro: ${loan.price || "N/A"}
+Inguzanyo: ${loan.loan_amount}
+Inyungu: ${loan.interest_amount}
+Inguzanyo hamwe n’inyungu: ${loan.total_amount}
+Igihe izishyurirwa: ${loan.repayment_date.toISOString().split("T")[0]}
+Imiterere: ${loanStatus[loan.status.toLowerCase()] || loan.status}`;
+
+  // Menu yemeza / yanga gusa kuri pending loans + mode approve
+  if (mode === "approve" && loan.status.toLowerCase() === "pending") {
+    detail += `\n\n1. Yemeza\n2. Yange\n0. Garuka`;
+  } else {
+    detail += `\n\n0. Garuka`;
+  }
 
   if (!input) return { type: "CON", message: detail };
 
-  if (input === "1") {
+  // ------------------- Approval / Reject -------------------
+  if (input === "1" && mode === "approve") {
     await pool.query("UPDATE loan_requests SET status='approved' WHERE id=?", [
       loan.id,
     ]);
     session.stepDetail = false;
-    return {
-      type: "CON",
-      message: `${
-        lang === "en" ? "Loan approved!" : "Inguzanyo Yemejwe!"
-      }\n0. ${lang === "en" ? "Back" : "Garuka"}`,
-    };
+    return await handleAdminLoans(session, null, mode);
   }
-  if (input === "2") {
+  if (input === "2" && mode === "approve") {
     await pool.query("UPDATE loan_requests SET status='rejected' WHERE id=?", [
       loan.id,
     ]);
     session.stepDetail = false;
-    return {
-      type: "CON",
-      message: `${lang === "en" ? "Loan rejected!" : "Inguzanyo Yanzwe"}\n0. ${
-        lang === "en" ? "Back" : "Garuka"
-      }`,
-    };
-  }
-  if (input === "0") {
-    session.stepDetail = false;
-    return await handleAdminLoans(session, null);
+    return await handleAdminLoans(session, null, mode);
   }
 
-  return {
-    type: "CON",
-    message: `${lang === "en" ? "Invalid choice." : "Wahisemo nabi."}`,
-  };
+  if (input === "0") {
+    session.stepDetail = false;
+    return await handleAdminLoans(session, null, mode);
+  }
+
+  return { type: "CON", message: "Wahisemo nabi." };
 }
 
 module.exports = { handleAdminLoans };

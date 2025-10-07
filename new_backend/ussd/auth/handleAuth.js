@@ -3,14 +3,10 @@ const { saveStep } = require("../handlers/sessions");
 
 // ------------------- AUTH -------------------
 async function handleAuth(session, input) {
-  const lang = session.lang || "en";
   if (!input)
     return {
       type: "CON",
-      message:
-        lang === "en"
-          ? "1. Login\n2. Register"
-          : "1. Kwinjira\n2. Kwiyandikisha",
+      message: "Murakaza neza kuri Verdln\n1. Kwinjira\n2. Kwiyandikisha",
     };
   if (input === "1") {
     return await handleLogin(session, session.phone, null);
@@ -18,12 +14,12 @@ async function handleAuth(session, input) {
     saveStep(session, "register_name");
     return {
       type: "CON",
-      message: lang === "en" ? "Enter full name:" : "Shyiramo amazina yose:",
+      message: "Shyiramo amazina yose:",
     };
   }
   return {
     type: "CON",
-    message: `${lang === "en" ? "Invalid choice." : "Wahisemo nabi"}`,
+    message: "Wahisemo nabi",
   };
 }
 

@@ -5,13 +5,11 @@ const { normalizePhone } = require("../handlers/phoneFormatting");
 
 // ------------------- REGISTRATION -------------------
 async function handleRegistration(session, input) {
-  const lang = session.lang || "en";
-
   if (session.step === "register_name") {
     if (!input)
       return {
         type: "CON",
-        message: lang === "en" ? "Enter full name:" : "Shyiramo amazina yose:",
+        message: "Shyiramo amazina yose:",
       };
     session.full_name = input;
 
@@ -19,7 +17,7 @@ async function handleRegistration(session, input) {
     saveStep(session, "register_national");
     return {
       type: "CON",
-      message: lang === "en" ? "Enter National ID:" : "Shyiramo indangamuntu:",
+      message: "Shyiramo indangamuntu:",
     };
   }
 
@@ -27,8 +25,7 @@ async function handleRegistration(session, input) {
     if (!input)
       return {
         type: "CON",
-        message:
-          lang === "en" ? "Enter National ID:" : "Shyiramo indangamuntu:",
+        message: "Shyiramo indangamuntu:",
       };
     session.national_id = input;
 
@@ -42,10 +39,7 @@ async function handleRegistration(session, input) {
     if (exists.length)
       return {
         type: "END",
-        message:
-          lang === "en"
-            ? "This phone number or National ID is already registered."
-            : "Iyi numero cyangwa indangamuntu byamaze kwandikwa.",
+        message: "Iyi numero cyangwa indangamuntu byamaze kwandikwa.",
       };
 
     const id = uuidv4();
@@ -56,10 +50,7 @@ async function handleRegistration(session, input) {
     deleteSession(session.sessionId);
     return {
       type: "END",
-      message:
-        lang === "en"
-          ? "Registration successful!"
-          : "Kwiyandikisha byagenze neza!",
+      message: "Kwiyandikisha byagenze neza!",
     };
   }
 

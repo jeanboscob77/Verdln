@@ -1,9 +1,34 @@
 const pool = require("../../config/db");
 const { goBack } = require("../handlers/sessions");
 const { handleRoleMenu } = require("../auth/handleRoleMenu");
+
+//dsfndsfsdfsdfd
+
+const inputTypeNames = {
+  Seeds: "Imbuto",
+  Fertilizers: "Ifumbire",
+  Pesticides: "Imiti yo kurwanya udukoko",
+};
+
+const inputSubtypeNames = {
+  NPK: "NPK",
+  UREA: "UREA",
+  DAP: "DAP",
+  Insecticide: "Imiti irwanya udukoko",
+  Herbicide: "Imiti irwanya ibyatsi bibi",
+  Fungicide: "Imiti irwanya udukoko tw’indwara z’ibimera",
+  "Rice Seeds": "Imbuto z’umuceri",
+  "Beans Seeds": "Imbuto z’ibishyimbo",
+  "Maize Seeds": "Imbuto z’ibigori",
+};
+
+const loanStatus = {
+  Pending: "Bitegereje",
+  Approved: "Byemejwe",
+  Rejected: "Byanzwe",
+};
 // ------------------- FARMER VIEW LOANS -------------------
 async function handleFarmerLoans(session, input) {
-  const lang = session.lang || "en";
   const pageSize = 5;
 
   const [loans] = await pool.query(
@@ -19,25 +44,27 @@ async function handleFarmerLoans(session, input) {
   if (!loans.length)
     return {
       type: "CON",
-      message: lang === "en" ? "No loans yet." : "Nta nguzanyo.",
+      message: "Nta nguzanyo Wasabye.",
     };
 
   const start = session.loanPage * pageSize;
   const end = start + pageSize;
   const loansPage = loans.slice(start, end);
 
-  let msg = lang === "en" ? "Your Loans:\n" : "Inguzanyo zawe:\n";
+  let msg = "Inguzanyo wasabye:\n";
   loansPage.forEach((l, i) => {
-    msg += `${i + 1}. ${l.input_type} - ${l.input_subtype} - ${
-      l.package_size
-    } units - Due: ${l.repayment_date.toISOString().split("T")[0]} - Loan: ${
-      l.loan_amount
-    } - Total: ${l.total_amount} - ${l.status}\n`;
+    msg += `${i + 1}. ${inputTypeNames[l.input_type] || l.input_type} - ${
+      inputSubtypeNames[l.input_subtype] || l.input_subtype
+    } - ${l.package_size} units - Igihe uzushyurira: ${
+      l.repayment_date.toISOString().split("T")[0]
+    } - Inguzanyo: ${l.loan_amount} - (inguzanyo + inyungu): ${
+      l.total_amount
+    } - Imiterere: ${loanStatus[l.status] || l.status}\n`;
   });
 
-  if (session.loanPage > 0) msg += "P. Previous\n";
-  if (end < loans.length) msg += "N. Next\n";
-  msg += "0. Back";
+  if (session.loanPage > 0) msg += "P. Ahabanza\n";
+  if (end < loans.length) msg += "N. Ahakurikira\n";
+  msg += "0. Garuka";
 
   if (!input) return { type: "CON", message: msg };
 
@@ -57,27 +84,22 @@ async function handleFarmerLoans(session, input) {
   const idx = parseInt(input) - 1;
   if (idx >= 0 && idx < loansPage.length) {
     const loan = loansPage[idx];
-    const detail = `${lang === en ? "Loan Detail:" : "Amakuru Yinguzanyo"}\n ${
-      lang === "en" ? "what you requested:" : "Ibyo wasabye"
-    } ${loan.input_type}\n${
-      lang === en ? "Type you requested:" : "Ibyo wasabye"
-    } ${loan.input_subtype}\n${lang === "en" ? "Package Size" : "Ingano"}: ${
+    const detail = `Amakuru Yinguzanyo\n Ibyo wasabye: ${
+      inputTypeNames[loan.input_type] || loan.input_type
+    }\n Ibyo wasabye
+     ${inputSubtypeNames[loan.input_subtype] || loan.input_subtype}\nIngano: ${
       loan.package_size
-    }\n${lang === "en" ? "Amount of Loan" : "Ingano Yinguzanyo"}: ${
-      loan.loan_amount
-    }\n${
-      lang === "en" ? "Total of loan and Interest" : "Inguzanyo hamwe ninyungu"
-    }: ${loan.total_amount}\n${lang === en ? "Due" : "Igihe azishyurirwa"}: ${
+    }\nIngano Yinguzanyo: ${loan.loan_amount}\nInguzanyo hamwe ninyungu: ${
+      loan.total_amount
+    }\nIgihe azishyurirwa: ${
       loan.repayment_date.toISOString().split("T")[0]
-    }\n${lang === "en" ? "Status" : "Imiterere"}: ${loan.status}\n0. ${
-      lang === "en" ? "Back" : "Garuka"
-    }`;
+    }\nImiterere: ${loanStatus[loan.status] || loan.status}\n0. Garuka`;
     return { type: "CON", message: detail };
   }
 
   return {
     type: "CON",
-    message: `${lang === "en" ? "Invalid choice." : "Wahisemo nabi"} `,
+    message: "Wahisemo nabi",
   };
 }
 
