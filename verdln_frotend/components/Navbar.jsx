@@ -307,7 +307,7 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       <select
         value={lang}
         onChange={(e) => setLang(e.target.value)}
-        className="px-2 py-1 border rounded text-sm text-green-700 focus:outline-none focus:ring-1 focus:ring-yellow-300"
+        className="px-2 py-1 border rounded border-b-blue-700 text-sm text-green-700 bg-white focus:outline-none focus:ring-1 focus:ring-yellow-300"
       >
         {languages.map((lng) => (
           <option key={lng.code} value={lng.code}>
