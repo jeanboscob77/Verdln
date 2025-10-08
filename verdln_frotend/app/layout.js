@@ -1,10 +1,13 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/Context/LanguageContext";
 import { AuthProvider } from "@/Context/AuthContext";
 import LanguageSetter from "@/components/LanguageSetter";
+import ScrollToTop from "@/components/ScrollToTop";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,7 +32,9 @@ export default function RootLayout({ children }) {
             <Navbar />
             <LanguageSetter />
             {children}
+            <ScrollToTop />
             <Footer />
+            <Toaster position="top-right" reverseOrder={false} />
           </LanguageProvider>
         </AuthProvider>
       </body>

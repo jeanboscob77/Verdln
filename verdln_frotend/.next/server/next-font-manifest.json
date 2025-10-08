@@ -4,26 +4,6 @@
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/admin/create-supplier/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/admin/delivered/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/admin/loan/view/[farmerId]/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/admin/loan/view/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/admin/reports/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
     "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/auth/login/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
@@ -32,19 +12,7 @@
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/farmer/loan/request/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/farmer/loan/view/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
     "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/page": [
-      "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
-      "static/media/797e433ab948586e-s.p.dbea232f.woff2"
-    ],
-    "[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/supplier/dashboard/page": [
       "static/media/caa3a2e1cccd8315-s.p.853070df.woff2",
       "static/media/797e433ab948586e-s.p.dbea232f.woff2"
     ]

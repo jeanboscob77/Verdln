@@ -1,4 +1,5 @@
 "use client";
+import toast from "react-hot-toast";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
@@ -52,6 +53,7 @@ export default function RegisterPage() {
           localStorage.setItem("authToken", data.token);
           router.push("/farmer/dashboard");
         } else {
+          toast.success("Registration Successful");
           router.push("/auth/login");
         }
       } else {

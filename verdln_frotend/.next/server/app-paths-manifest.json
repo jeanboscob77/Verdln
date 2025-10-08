@@ -1,15 +1,7 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/admin/create-supplier/page": "app/admin/create-supplier/page.js",
-  "/admin/delivered/page": "app/admin/delivered/page.js",
-  "/admin/loan/view/[farmerId]/page": "app/admin/loan/view/[farmerId]/page.js",
-  "/admin/loan/view/page": "app/admin/loan/view/page.js",
-  "/admin/reports/page": "app/admin/reports/page.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/auth/register/page": "app/auth/register/page.js",
-  "/farmer/loan/request/page": "app/farmer/loan/request/page.js",
-  "/farmer/loan/view/page": "app/farmer/loan/view/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js",
-  "/supplier/dashboard/page": "app/supplier/dashboard/page.js"
+  "/page": "app/page.js"
 }

@@ -162,7 +162,13 @@ export default function ViewLoans() {
   };
 
   if (loading || !user)
-    return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
+    return (
+      <div className="min-h-screen">
+        <div className="flex items-start justify-center text-2xl text-center mt-10">
+          {t.loading || "Loading..."}
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50">

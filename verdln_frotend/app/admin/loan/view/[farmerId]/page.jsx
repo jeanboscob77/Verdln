@@ -19,7 +19,7 @@ export default function AdminLoansPage({ params }) {
   const { farmerId } = use(params);
   const router = useRouter();
   const { user, loading } = useAuth();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const [loans, setLoans] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -107,8 +107,9 @@ export default function AdminLoansPage({ params }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
             <p className="flex items-center gap-1">
-              <Layers className="w-5 h-5 text-gray-500" /> {loan.input_type} /{" "}
-              {loan.input_subtype}
+              <Layers className="w-5 h-5 text-gray-500" />{" "}
+              {t.inputTypeNames[loan.input_type] || loan.input_type} /{" "}
+              {t.inputSubtypeNames[loan.input_subtype]}
             </p>
             <p className="flex items-center gap-1">
               <Package className="w-5 h-5 text-gray-500" /> ({t.quantity}:
@@ -149,7 +150,8 @@ export default function AdminLoansPage({ params }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
             <p className="flex items-center gap-1">
-              <MapPin className="w-5 h-5 text-gray-500" /> {loan.province},{" "}
+              <MapPin className="w-5 h-5 text-gray-500" />{" "}
+              {lang === "en" ? loan.province : loan.province_rw},{" "}
               {loan.district}, {loan.sector}, {loan.cell}
             </p>
             <p className="flex items-center gap-1">

@@ -132,6 +132,7 @@ router.get("/farmer/:farmerId", async (req, res) => {
       s.full_name AS supplier_name, 
       s.phone_number AS supplier_phone,
       p.name AS province,
+      p.name_rw AS province_rw,
       d.name AS district,
       sec.name AS sector,
       c.name AS cell,

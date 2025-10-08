@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
 import { useAuth } from "@/Context/AuthContext"; // <-- import Auth context
 import { apiPost } from "@/Utils/api";
-
+import toast from "react-hot-toast";
 export default function LoginPage() {
   const router = useRouter();
   const { t, setLang } = useLanguage();
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
         // Redirect based on role
         if (data.user) {
-          alert("Login successful!");
+          toast.success("Login successful!");
           router.push("/");
         }
 
@@ -62,7 +62,8 @@ export default function LoginPage() {
         setError("Login failed: missing token or user data");
       }
     } catch (err) {
-      setError(err.message || "Login failed");
+      console.error("Login error:", err);
+      setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }

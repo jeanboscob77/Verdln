@@ -41,7 +41,12 @@ export default function ReportsPage() {
     return () => socket.disconnect();
   }, []);
 
-  if (loading) return <p className="p-6 text-center">{t.loadingReports}</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="p-6 text-center">{t.loadingReports}</p>
+      </div>
+    );
 
   const paidVsRemaining = [
     { name: "Paid", value: Number(summary.total_paid) || 0 },

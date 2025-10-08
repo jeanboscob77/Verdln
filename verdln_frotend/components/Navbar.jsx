@@ -330,7 +330,7 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-gray-300 rounded-md shadow-lg border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-40 bg-slate-800 rounded-md shadow-lg border border-gray-200 z-50">
           {languages.map((lng) => (
             <button
               key={lng.code}
@@ -338,8 +338,8 @@ function LangSwitcher({ lang, setLang, compact = false }) {
                 setLang(lng.code);
                 setOpen(false);
               }}
-              className={`flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-yellow-100 transition ${
-                lang === lng.code ? "bg-yellow-200 font-semibold" : ""
+              className={`flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-yellow-500 transition ${
+                lang === lng.code ? "bg-yellow-700 font-semibold" : ""
               }`}
             >
               {lng.label}
@@ -382,7 +382,7 @@ function AuthButtons({ stacked = false, t, user, logout }) {
       </Link>
       <Link
         href="/auth/register"
-        className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-300 text-green-800 hover:bg-yellow-400 flex items-center gap-2"
+        className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-300 text-green-900 hover:bg-yellow-400 flex items-center gap-2"
       >
         <UserPlus className="w-4 h-4" />
         {t.register}

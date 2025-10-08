@@ -181,15 +181,21 @@ export default function RequestLoan() {
       setCell("");
       setSupplier("");
     } catch (err) {
-      console.error("Loan submission error:", err);
-      setError(err.message || "Failed to submit request");
+      console.error("Registration error:", err);
+      setError(
+        err.response?.data?.message || err.message || "Registration failed"
+      );
     } finally {
       setLoadingRequest(false);
     }
   };
 
   if (loading || !user)
-    return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center mt-10">{t.loading || "Loading..."}</div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">

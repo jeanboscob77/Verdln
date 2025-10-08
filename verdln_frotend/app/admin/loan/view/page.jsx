@@ -76,7 +76,9 @@ export default function AdminLoansPage() {
                 <td className="p-2">{loan.phone_number}</td>
                 <td className="p-2">{loan.national_id}</td>
                 <td className="p-2">
-                  {loan.input_type}/{loan.input_subtype}
+                  {t.inputTypeNames[loan.input_type] || loan.input_type}/
+                  {t.inputSubtypeNames[loan.input_subtype] ||
+                    loan.input_subtype}
                 </td>
                 <td className="p-2">
                   <button
@@ -116,7 +118,7 @@ export default function AdminLoansPage() {
             </p>
             <p className="flex items-center gap-1 text-sm text-gray-600">
               <Layers className="w-4 h-4 text-gray-500" />
-              {loan.input_type || "N/A"}
+              {t.inputTypeNames[loan.input_type] || loan.input_type || "N/A"}
             </p>
             <button className="mt-2 bg-green-600 text-white text-sm py-1 rounded hover:bg-green-700 transition">
               {t.viewDetails || "View Details"}

@@ -108,6 +108,7 @@ export const translations = {
     approve: "Approve",
     reject: "Reject",
     repay: "Repay",
+
     submitRepayment: "Submit Repayment",
     cash: "Cash",
     mobileMoney: "Mobile Money",
@@ -126,11 +127,7 @@ export const translations = {
     register: "Register",
     adminDesc:
       "Manage farmer requests, approve or reject, and track repayments.",
-    ussd: "USSD Access",
-    ussdDesc: "Easily connect using your phone without internet.",
-    ctaTitle: "Ready to transform farming?",
-    ctaSubtitle:
-      "Join our platform today and make your farming journey easier.",
+
     joinNow: "Join Now",
 
     //logout
@@ -146,48 +143,8 @@ export const translations = {
       approved: "approved",
       rejected: "rejected",
     },
-    // Details
-    // Farmer Details
-    farmer_details:
-      "The farmer form empowers farmers to connect directly with cooperatives and lenders. It simplifies access to financial services and allows farmers to take control of their journey.",
-    farmer_points: [
-      "Submit loan requests with just a few clicks.",
-      "Track loan approval progress in real-time.",
-      "View repayment history and outstanding balances.",
-      "Generate downloadable reports for your records.",
-      "Communicate directly with your cooperative.",
-    ],
 
-    // Dashboard Details
-    dashboard_details:
-      "The admin dashboard is designed for cooperatives, SACCOs, and local leaders to monitor, approve, and support farmers. It ensures transparency and accountability.",
-    dashboard_points: [
-      "Approve or reject farmer loan requests with clear criteria.",
-      "Monitor repayment performance for each farmer.",
-      "Generate detailed financial and progress reports.",
-      "Support farmers by providing tailored guidance.",
-      "Track community-wide repayment statistics.",
-    ],
-
-    // USSD Details
-    ussd_details:
-      "USSD services allow farmers without smartphones or internet access to benefit from digital systems. By dialing a short code, farmers stay connected and informed.",
-    ussd_points: [
-      "Apply for loans using a basic mobile phone.",
-      "Check loan approval and repayment status instantly.",
-      "Receive SMS reminders for repayment deadlines.",
-      "No internet or smartphone required.",
-      "Available 24/7 anywhere in the country.",
-    ],
     learnMore: "Learn More",
-    //footer
-    quickLinks: "Quick Links",
-    home: "Home",
-    ussd: "USSD Access",
-    requests: "Requests",
-    contact: "Contact",
-    description: "Digital input credit platform for Rwandan farmers",
-    copyright: "All rights reserved.",
 
     //loan request
     subType: "Select Option", // for Seeds/Fertilizer/Pesticides sub-options
@@ -223,6 +180,119 @@ export const translations = {
     loansBySupplier: "Loans by Supplier",
     loansByInputType: "Loans by Input Type",
     loadingReports: "Loading reports...",
+
+    inputTypeNames: {
+      Seeds: "Seeds",
+      Fertilizers: "Fertilizers",
+      Pesticides: "Pesticides",
+    },
+
+    inputSubtypeNames: {
+      NPK: "NPK",
+      UREA: "UREA",
+      DAP: "DAP",
+      Insecticide: "Insecticide",
+      Herbicide: "Herbicide",
+      Fungicide: "Fungicide",
+      "Rice Seeds": "Rice Seeds",
+      "Beans Seeds": "Beans Seeds",
+      "Maize Seeds": "Maize Seeds",
+    },
+
+    //this is for home page that make more decriptive
+
+    hero: {
+      title: "Empowering Farmers Through Digital Innovation",
+      subtitle:
+        "Digital tools that connect farmers, cooperatives, and suppliers — creating smarter, more sustainable agriculture.",
+      getStarted: "Get Started",
+      login: "Login",
+    },
+
+    overview: {
+      about: {
+        title: "About Us",
+        desc: "Discover our mission to digitalize agriculture and empower local farmers.",
+      },
+      services: {
+        title: "Our Services",
+        desc: "From loans to input management, see how our digital tools help farmers thrive.",
+      },
+      partners: {
+        title: "Our Partners",
+        desc: "We collaborate with cooperatives, banks, and agri-businesses to scale impact.",
+      },
+      testimonials: {
+        title: "Testimonials",
+        desc: "Hear from real farmers and cooperative leaders benefiting from our platform.",
+      },
+    },
+
+    about: {
+      title: "About Us",
+      text: "We are building the digital bridge between farmers and the resources they need. Our mission is to simplify agriculture through access to finance, inputs, and transparent information systems.",
+    },
+
+    services: {
+      title: "Our Services",
+      items: {
+        loan: {
+          title: "Loan Application & Tracking",
+          desc: "Apply and follow up agricultural loans transparently with digital tools.",
+        },
+        input: {
+          title: "Input Management",
+          desc: "Access verified seeds, fertilizers, and equipment from trusted suppliers.",
+        },
+        dashboard: {
+          title: "Cooperative Dashboard",
+          desc: "Monitor members, finances, and requests with advanced reporting features.",
+        },
+        analytics: {
+          title: "Smart Analytics",
+          desc: "Data-driven insights for farmers and cooperatives to plan better yields.",
+        },
+      },
+    },
+
+    partners: {
+      title: "Our Partners",
+      desc: "Collaboration drives our mission. Our partners include development agencies, financial institutions, and technology providers who share our agricultural vision.",
+    },
+
+    testimonials: {
+      title: "What Farmers Say",
+      items: {
+        t1: {
+          name: "Jean Claude",
+          text: "Applying for a loan has never been this easy. I got updates on my phone instantly!",
+        },
+        t2: {
+          name: "Aline Uwimana",
+          text: "Our cooperative management became paperless and organized. We work smarter now.",
+        },
+        t3: {
+          name: "Emmanuel Ndayisenga",
+          text: "As a supplier, I now reach many farmers directly through the platform.",
+        },
+      },
+    },
+
+    cta: {
+      title: "Ready to Grow With Us?",
+      desc: "Join thousands of farmers and cooperatives using our platform to build a smarter, connected future for agriculture.",
+      button: "Join Now",
+    },
+    footer: {
+      description: "Empowering farmers with digital tools and insights.",
+      quickLinks: "Quick Links",
+      about: "About Us",
+      services: "Our Services",
+      partners: "Our Partners",
+      testimonials: "Testimonials",
+      contact: "Contact",
+      copyright: "All rights reserved.",
+    },
   },
 
   rw: {
@@ -409,26 +479,8 @@ export const translations = {
       "Kugenzura uko imirenge yose yishyura mu buryo rusange.",
     ],
 
-    // USSD Details
-    ussd_details:
-      "Serivisi za USSD zifasha abahinzi badafite smartphone cyangwa internet kugira ngo nabo babone serivisi z’ikoranabuhanga. Bakoresheje kode ngufi, bahorana amakuru kandi bahuzwa.",
-    ussd_points: [
-      "Gusaba inguzanyo ukoresheje telefoni isanzwe.",
-      "Kureba aho gusaba inguzanyo bigeze n’imyishyurire.",
-      "Kwakira ubutumwa bubibutsa igihe cyo kwishyura.",
-      "Nta internet cyangwa smartphone ikenewe.",
-      "Iraboneka igihe cyose ahantu hose mu gihugu.",
-    ],
     learnMore: "Menya Byinshi",
-    //footer
-    quickLinks: "Imyirondoro Yihuse",
-    home: "Ahabanza",
-    ussd: "Kwifashisha USSD",
-    requests: "Ububiko bw'ibyifuzo",
-    contact: "Twandikire",
-    description:
-      "Porogaramu yo gutanga inguzanyo y’ibikoresho ku bahinzi b’u Rwanda",
-    copyright: "Uburenganzira bwose burabitswe.",
+
     //loan request
     subType: "Hitamo Icyiciro", // for Seeds/Fertilizer/Pesticides sub-options
     province: "Intara",
@@ -464,5 +516,119 @@ export const translations = {
     loansBySupplier: "Imyenda ku Mutanga",
     loansByInputType: "Imyenda ku bwoko bw'Ifumbire",
     loadingReports: "Gutunganya raporo...",
+
+    inputTypeNames: {
+      Seeds: "Imbuto",
+      Fertilizers: "Ifumbire",
+      Pesticides: "Imiti yo kurwanya udukoko",
+    },
+
+    inputSubtypeNames: {
+      NPK: "NPK",
+      UREA: "UREA",
+      DAP: "DAP",
+      Insecticide: "Imiti irwanya udukoko",
+      Herbicide: "Imiti irwanya ibyatsi bibi",
+      Fungicide: "Imiti irwanya udukoko tw’indwara z’ibimera",
+      "Rice Seeds": "Imbuto z’umuceri",
+      "Beans Seeds": "Imbuto z’ibishyimbo",
+      "Maize Seeds": "Imbuto z’ibigori",
+    },
+
+    //this for home page that make more descriptive
+
+    hero: {
+      title: "Guhesha Abahinzi Imbaraga Binyuze mu Ikoranabuhanga",
+      subtitle:
+        "Ibikoresho by’ikoranabuhanga bihuriza hamwe abahinzi, amakoperative n’abacuruzi b’ibikoresho by’ubuhinzi — mu buryo bugezweho kandi burambye.",
+      getStarted: "Tangira",
+      login: "Injira",
+    },
+
+    overview: {
+      about: {
+        title: "Ibyerekeye Twebwe",
+        desc: "Menya intumbero yacu yo guteza imbere ubuhinzi hifashishijwe ikoranabuhanga no guha abahinzi ubushobozi.",
+      },
+      services: {
+        title: "Serivisi Zacu",
+        desc: "Uhereye ku nguzanyo kugeza ku micungire y’inyongeramusaruro, reba uko ikoranabuhanga ryacu rifasha abahinzi gutera imbere.",
+      },
+      partners: {
+        title: "Abafatanyabikorwa Bacu",
+        desc: "Dukorana n’amakoperative, amabanki n’ibigo by’ubucuruzi mu rwego rwo kugera kuri byinshi.",
+      },
+      testimonials: {
+        title: "Ubuhamya",
+        desc: "Soma ibitekerezo by’abahinzi n’abayobozi b’amakoperative bakoresha urubuga rwacu.",
+      },
+    },
+
+    about: {
+      title: "Ibyerekeye Twebwe",
+      text: "Turi kubaka ikiraro gihuza abahinzi n’amahirwe bakeneye. Intego yacu ni ugufasha ubuhinzi kuba bworoshye binyuze mu kubona inguzanyo, inyongeramusaruro n’amakuru afatika.",
+    },
+
+    services: {
+      title: "Serivisi Zacu",
+      items: {
+        loan: {
+          title: "Gusaba no Gukurikirana Inguzanyo",
+          desc: "Saba inguzanyo z’ubuhinzi kandi ukurikirane uko zikorwa ukoresheje ikoranabuhanga.",
+        },
+        input: {
+          title: "Imicungire y’Inyongeramusaruro",
+          desc: "Geraho imbuto, ifumbire n’ibikoresho byizewe bitangwa n’abacuruzi bemewe.",
+        },
+        dashboard: {
+          title: "Ikibaho cy’Amakoperative",
+          desc: "Kurikira abanyamuryango, imari n’ubusabe ukoresheje raporo zinoze.",
+        },
+        analytics: {
+          title: "Isesengura rishingiye ku Makuru",
+          desc: "Habwa amakuru y’ubuhinzi y’ubwenge agufasha gutegura umusaruro mwiza.",
+        },
+      },
+    },
+
+    partners: {
+      title: "Abafatanyabikorwa Bacu",
+      desc: "Ubufatanye ni bwo butuma tugera ku ntego. Abafatanyabikorwa bacu barimo ibigo by’imari, amasosiyete y’ikoranabuhanga n’imiryango ifasha mu iterambere ry’ubuhinzi.",
+    },
+
+    testimonials: {
+      title: "Ibyo Abahinzi Bavuga",
+      items: {
+        t1: {
+          name: "Jean Claude",
+          text: "Gusaba inguzanyo byoroshye cyane. Nahise mbona ubutumwa ku murongo!",
+        },
+        t2: {
+          name: "Aline Uwimana",
+          text: "Imicungire y’amakoperative yacu yabaye iy’ikoranabuhanga. Ubu dukora neza kandi twihuse.",
+        },
+        t3: {
+          name: "Emmanuel Ndayisenga",
+          text: "Nka mucuruzi, ubu mbasha kugera ku bahinzi benshi binyuze ku rubuga.",
+        },
+      },
+    },
+
+    cta: {
+      title: "Witeguye Gutera Imbere Natwe?",
+      desc: "Jya mu bihumbi by’abahinzi n’amakoperative bakoresha uru rubuga kugira ngo bashyire ubuhinzi ku rwego rwo hejuru.",
+      button: "Iyandikishe Ubu",
+    },
+    footer: {
+      description:
+        "Gufasha abahinzi binyuze mu bikoresho by’ikoranabuhanga n’ubumenyi.",
+      quickLinks: "Amalinki yihuse",
+      about: "Ibyerekeye Twebwe",
+      services: "Serivisi Zacu",
+      partners: "Abafatanyabikorwa",
+      testimonials: "Ibitekerezo by’Abakiriya",
+      contact: "Hamagara / Ohereza Email",
+      copyright: "Uburenganzira bwose burabitswe.",
+    },
   },
 };

@@ -51,7 +51,20 @@ router.post("/register", async (req, res) => {
           .json({ error: "Supplier must have full location assigned" });
       }
     }
+    //✅ Check if national_id or phone_number already exist
+    const [existing] = await pool.query(
+      "SELECT * FROM users WHERE national_id = ? OR phone_number = ?",
+      [national_id, phone_number]
+    );
 
+    if (existing.length > 0) {
+      const msg =
+        existing[0].national_id === national_id
+          ? "National ID already exists"
+          : "Phone number already exists";
+
+      return res.status(400).json({ success: false, message: msg });
+    }
     // Farmer/admin location optional
     const id = uuidv4();
 
@@ -94,18 +107,31 @@ router.post("/login", async (req, res) => {
         message: "National ID and Phone are required",
       });
     }
+    // 1️⃣ Check if National ID exists
+    const [userById] = await pool.query(
+      "SELECT * FROM users WHERE national_id = ?",
+      [national_id]
+    );
 
+    if (userById.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "National ID not found",
+      });
+    }
+
+    // 2️⃣ Check if phone matches that National ID
     const [user] = await pool.query(
       "SELECT * FROM users WHERE national_id = ? AND phone_number = ?",
       [national_id, phone_number]
     );
 
     if (user.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect phone number for this National ID",
+      });
     }
-
     const token = generateToken(user[0]);
 
     res.json({
