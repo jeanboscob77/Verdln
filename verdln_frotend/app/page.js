@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/Context/LanguageContext";
@@ -25,10 +26,12 @@ export default function HomePage() {
       {/* 🌾 HERO SECTION */}
       <section className="relative py-32 px-6 bg-[#edf2ea] overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/images/farmer.jpg"
             alt=""
             className="w-full h-full object-cover opacity-20"
+            width={1920}
+            height={1080}
           />
         </div>
 
@@ -65,8 +68,8 @@ export default function HomePage() {
       {/* 🌾 FLOATING IMAGE STRIP */}
       <section className="relative bg-[#f0f4ec] py-10 overflow-hidden">
         <motion.div
-          className="flex gap-8 animate-scroll-x"
-          style={{ width: "200%", animation: "scrollLeft 40s linear infinite" }}
+          className="flex gap-8"
+          style={{ width: "200%", animation: "scrollLeft 30s linear infinite" }}
         >
           {[
             "/images/farmer1.jpg",
@@ -78,11 +81,13 @@ export default function HomePage() {
             "/images/irrigation.jpg",
             "/images/market-day.jpg",
           ].map((src, i) => (
-            <img
+            <Image
               key={i}
               src={src}
               alt={`agri-${i}`}
-              className="w-72 h-44 object-cover rounded-xl shadow-md"
+              className="w-72 h-44 object-cover rounded-xl shadow-md animate-scroll-x"
+              width={288}
+              height={176}
             />
           ))}
           {/* Duplicate for seamless looping */}
@@ -149,23 +154,30 @@ export default function HomePage() {
       {/* 🏢 About Section */}
       <section id="about-section" className="py-28 px-6 bg-[#f9fbf6]">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <motion.img
-            src="/images/farmer_in_field.jpg"
-            alt="Farmers working in the field"
-            className="rounded-2xl shadow-2xl object-cover w-full h-[450px]"
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-          />
+          >
+            <Image
+              src="/images/farmer_in_field.jpg"
+              alt="Farmers working in the field"
+              className="rounded-2xl shadow-2xl object-cover w-full h-[450px]"
+              width={800}
+              height={450}
+            />
+          </motion.div>
           <div>
             <h2 className="text-4xl font-bold text-green-700 mb-6">
               {t.about.title}
             </h2>
             <p className="text-gray-700 mb-6 leading-relaxed">{t.about.text}</p>
-            <img
+            <Image
               src="/images/map.jpg"
               alt="Digital agriculture map"
               className="rounded-xl mt-4 shadow-md"
+              width={800}
+              height={600}
             />
           </div>
         </div>
@@ -206,10 +218,12 @@ export default function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
             >
-              <img
+              <Image
                 src={s.img}
                 alt={s.title}
                 className="w-full h-52 object-cover"
+                width={600}
+                height={400}
               />
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-green-700 mb-3">
@@ -241,15 +255,21 @@ export default function HomePage() {
             "/images/partner4.png",
             "/images/partner5.jpg",
           ].map((src, i) => (
-            <motion.img
+            <motion.div
               key={i}
-              src={src}
-              alt={`Partner ${i + 1}`}
               className="w-32 h-16 object-contain opacity-70 hover:opacity-100 transition"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-            />
+            >
+              <Image
+                key={i}
+                src={src}
+                alt={`Partner ${i + 1}`}
+                width={64}
+                height={64}
+              />
+            </motion.div>
           ))}
         </div>
       </section>
@@ -284,12 +304,14 @@ export default function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
             >
-              <img
+              <Image
                 src={t.img}
                 alt={t.name}
                 className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
+                width={80}
+                height={80}
               />
-              <p className="text-gray-600 italic mb-4">"{t.text}"</p>
+              <p className="text-gray-600 italic mb-4">&quot;{t.text}&quot;</p>
               <h4 className="font-semibold text-green-700">{t.name}</h4>
             </motion.div>
           ))}
@@ -325,10 +347,12 @@ function OverviewCard({ title, desc, img, onClick }) {
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
     >
-      <img
+      <Image
         src={img}
         alt={title}
         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+        width={400}
+        height={300}
       />
       <div className="p-6">
         <h3 className="text-xl font-bold text-green-700 mb-2">{title}</h3>
