@@ -101,11 +101,13 @@ export default function HomePage() {
             "/images/irrigation.jpg",
             "/images/market-day.jpg",
           ].map((src, i) => (
-            <img
+            <Image
               key={`dup-${i}`}
               src={src}
               alt={`agri-${i}`}
-              className="w-72 h-44 object-cover rounded-xl shadow-md"
+              width={288}
+              height={176}
+              className="w-72 h-44 object-cover rounded-xl shadow-md animate-scroll-x"
             />
           ))}
         </motion.div>
