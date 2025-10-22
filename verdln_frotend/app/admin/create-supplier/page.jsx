@@ -19,7 +19,7 @@ import {
 
 export default function CreateSupplierPage() {
   useProtectedPage();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { user, loading } = useAuth();
 
   const [fullName, setFullName] = useState("");
