@@ -1,13 +1,35 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import DynamicHead from "./app";
 import Link from "next/link";
-import Head from "next/head";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/Context/LanguageContext";
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  // 🌍 Localized metadata
+  const meta = {
+    en: {
+      title: "Home | Smart Agri-Loan Platform",
+      description:
+        "Empowering farmers through accessible loans, input management, and cooperative insights. Discover digital solutions for modern agriculture and financial growth.",
+      keywords:
+        "agriculture loans, farm financing, digital farming, cooperatives, smart agriculture, loan management",
+      image: "/images/og/homepage-preview.png",
+      url: `https://yourdomain.com/en`,
+    },
+    rw: {
+      title: "Ahabanza | Urubuga rw’Imari y’Abahinzi",
+      description:
+        "Dufasha abahinzi kubona inguzanyo zoroshye, gukurikirana inyongeramusaruro no guteza imbere amashyirahamwe y’ubuhinzi hifashishijwe ikoranabuhanga.",
+      keywords:
+        "inguzanyo z’abahinzi, imari y’ubuhinzi, ubuhinzi bw’ikoranabuhanga, amashyirahamwe, ubuhinzi bw’iterambere, ubuyobozi bw’inguzanyo",
+      image: "/images/og/homepage-preview.png",
+      url: `https://yourdomain.com/rw`,
+    },
+  }[lang || "en"];
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -20,9 +42,14 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
-        <title>Verdln</title>
-      </Head>
+      {/* 🌐 Dynamic SEO Metadata */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
       <motion.div
         className="min-h-screen bg-[#f5f7f2] text-gray-800"
         initial="hidden"

@@ -6,11 +6,11 @@ import { useLanguage } from "@/Context/LanguageContext";
 import { apiGet } from "@/Utils/api";
 import { useProtectedPage } from "@/components/useProtectedPage";
 import { User, Phone, CreditCard, Layers } from "lucide-react";
-
+import DynamicHead from "@/app/app";
 export default function AdminLoansPage() {
   useProtectedPage();
   const { user, loading } = useAuth();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const router = useRouter();
 
   const [loans, setLoans] = useState([]);
@@ -36,7 +36,25 @@ export default function AdminLoansPage() {
     fetchLoans();
   }, []);
 
-  console.log(loans);
+  // --- Meta for SEO ---
+  const meta = {
+    en: {
+      title: "All Loan Requests | Smart Agri-Loan",
+      description:
+        "View and manage all loan requests on Smart Agri-Loan platform.",
+      keywords: "loans, loan requests, agri-loan, smart farming",
+      url: "https://yourdomain.com/admin/loans",
+      image: "/images/og/admin-loans.png",
+    },
+    rw: {
+      title: "Inyandiko z’Inguzanyo | Urubuga rw’Inguzanyo",
+      description:
+        "Reba kandi uyobore inyandiko zose z’inguzanyo kuri Smart Agri-Loan.",
+      keywords: "inguzanyo, inyandiko z’inguzanyo, ubuhinzi, agri-loan",
+      url: "https://yourdomain.com/admin/loans",
+      image: "/images/og/admin-loans.png",
+    },
+  }[lang || "en"];
 
   if (loading || loadingData) {
     return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
@@ -49,83 +67,94 @@ export default function AdminLoansPage() {
   //   console.log(loans);
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4 text-green-700">
-        {t.allLoans || "All Loan Requests"}
-      </h1>
+    <>
+      {/* Dynamic Head */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
 
-      {/* Table for large screens */}
-      <div className="hidden lg:block">
-        <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
-          <thead className="bg-green-600 text-white">
-            <tr>
-              <th className="p-2 text-left">{t.name}</th>
-              <th className="p-2 text-left">{t.phoneNumber}</th>
-              <th className="p-2 text-left">{t.nationalId}</th>
-              <th className="p-2 text-left">{t.Type}</th>
-              <th className="p-2 text-left">{t.action}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loans.map((loan) => (
-              <tr
-                key={loan.id}
-                className="border-b hover:bg-gray-100 cursor-pointer"
-              >
-                <td className="p-2">{loan.farmer_name}</td>
-                <td className="p-2">{loan.phone_number}</td>
-                <td className="p-2">{loan.national_id}</td>
-                <td className="p-2">
-                  {t.inputTypeNames[loan.input_type] || loan.input_type}/
-                  {t.inputSubtypeNames[loan.input_subtype] ||
-                    loan.input_subtype}
-                </td>
-                <td className="p-2">
-                  <button
-                    className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
-                    onClick={() =>
-                      router.push(`/admin/loan/view/${loan.farmer_id}`)
-                    }
-                  >
-                    {t.viewDetails || "View Details"}
-                  </button>
-                </td>
+      <div className="p-4 min-h-screen bg-gray-50">
+        <h1 className="text-2xl font-bold mb-4 text-green-700">
+          {t.allLoans || "All Loan Requests"}
+        </h1>
+
+        {/* Table for large screens */}
+        <div className="hidden lg:block">
+          <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
+            <thead className="bg-green-600 text-white">
+              <tr>
+                <th className="p-2 text-left">{t.name}</th>
+                <th className="p-2 text-left">{t.phoneNumber}</th>
+                <th className="p-2 text-left">{t.nationalId}</th>
+                <th className="p-2 text-left">{t.Type}</th>
+                <th className="p-2 text-left">{t.action}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {loans.map((loan) => (
+                <tr
+                  key={loan.id}
+                  className="border-b hover:bg-gray-100 cursor-pointer"
+                >
+                  <td className="p-2">{loan.farmer_name}</td>
+                  <td className="p-2">{loan.phone_number}</td>
+                  <td className="p-2">{loan.national_id}</td>
+                  <td className="p-2">
+                    {t.inputTypeNames[loan.input_type] || loan.input_type}/
+                    {t.inputSubtypeNames[loan.input_subtype] ||
+                      loan.input_subtype}
+                  </td>
+                  <td className="p-2">
+                    <button
+                      className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition"
+                      onClick={() =>
+                        router.push(`/admin/loan/view/${loan.farmer_id}`)
+                      }
+                    >
+                      {t.viewDetails || "View Details"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Cards for small devices */}
-      <div className="grid grid-cols-1 gap-4 lg:hidden">
-        {loans.map((loan) => (
-          <div
-            key={loan.id}
-            className="bg-white shadow rounded-lg p-4 flex flex-col gap-2 cursor-pointer hover:shadow-lg transition"
-            onClick={() => router.push(`/admin/loans/view/${loan.farmer_id}`)}
-          >
-            <p className="flex items-center gap-1">
-              <User className="w-4 h-4 text-gray-500" />
-              <span className="font-semibold">{loan.farmer_name}</span>
-            </p>
-            <p className="flex items-center gap-1 text-sm text-gray-600">
-              <Phone className="w-4 h-4 text-gray-500" />
-              {loan.phone_number || "N/A"}
-            </p>
-            <p className="flex items-center gap-1 text-sm text-gray-600">
-              <CreditCard className="w-4 h-4 text-gray-500" />
-              {loan.national_id || "N/A"}
-            </p>
-            <p className="flex items-center gap-1 text-sm text-gray-600">
-              <Layers className="w-4 h-4 text-gray-500" />
-              {t.inputTypeNames[loan.input_type] || loan.input_type || "N/A"}
-            </p>
-            <button className="mt-2 bg-green-600 text-white text-sm py-1 rounded hover:bg-green-700 transition">
-              {t.viewDetails || "View Details"}
-            </button>
-          </div>
-        ))}
+        {/* Cards for small devices */}
+        <div className="grid grid-cols-1 gap-4 lg:hidden">
+          {loans.map((loan) => (
+            <div
+              key={loan.id}
+              className="bg-white shadow rounded-lg p-4 flex flex-col gap-2 cursor-pointer hover:shadow-lg transition"
+              onClick={() => router.push(`/admin/loans/view/${loan.farmer_id}`)}
+            >
+              <p className="flex items-center gap-1">
+                <User className="w-4 h-4 text-gray-500" />
+                <span className="font-semibold">{loan.farmer_name}</span>
+              </p>
+              <p className="flex items-center gap-1 text-sm text-gray-600">
+                <Phone className="w-4 h-4 text-gray-500" />
+                {loan.phone_number || "N/A"}
+              </p>
+              <p className="flex items-center gap-1 text-sm text-gray-600">
+                <CreditCard className="w-4 h-4 text-gray-500" />
+                {loan.national_id || "N/A"}
+              </p>
+              <p className="flex items-center gap-1 text-sm text-gray-600">
+                <Layers className="w-4 h-4 text-gray-500" />
+                {t.inputTypeNames[loan.input_type] || loan.input_type || "N/A"}
+              </p>
+              <button className="mt-2 bg-green-600 text-white text-sm py-1 rounded hover:bg-green-700 transition">
+                {t.viewDetails || "View Details"}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

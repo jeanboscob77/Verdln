@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/Context/AuthContext";
 import { apiGet, apiPost } from "@/Utils/api";
 import { useProtectedPage } from "@/components/useProtectedPage";
+import DynamicHead from "@/app/app";
 // icons
 import {
   Package,
@@ -17,9 +18,30 @@ import {
 
 export default function RequestLoan() {
   useProtectedPage();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const router = useRouter();
   const { user, loading } = useAuth();
+  // --- Meta for SEO ---
+  const meta = {
+    en: {
+      title: "Request Loan | Smart Agri-Loan Platform",
+      description:
+        "Submit a loan request to access agricultural inputs, manage repayment, and connect with suppliers.",
+      keywords:
+        "loan request, farmer loan, agricultural inputs, smart farming, cooperative support",
+      image: "/images/og/request-loan.png",
+      url: `https://yourdomain.com/request-loan`,
+    },
+    rw: {
+      title: "Saba Inguzanyo | Urubuga rw’Imari y’Abahinzi",
+      description:
+        "Saba inguzanyo kugirango ugere ku nyongeramusaruro, utegure kwishyura, kandi uhuze n’abatanga ibikoresho.",
+      keywords:
+        "saba inguzanyo, inguzanyo y’umuhinzi, ibikoresho by’ubuhinzi, ubuhinzi bw’ikoranabuhanga",
+      image: "/images/og/request-loan.png",
+      url: `https://yourdomain.com/request-loan`,
+    },
+  }[lang || "en"];
 
   // Form states
   const [inputTypes, setInputTypes] = useState([]);
@@ -198,179 +220,190 @@ export default function RequestLoan() {
     );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-6 space-y-5">
-        <h1 className="text-2xl font-bold text-center text-green-700 flex items-center justify-center gap-2">
-          <Factory className="w-6 h-6" />
-          {t.submitLoanRequest}
-        </h1>
+    <>
+      {/* 🌐 Meta for SEO */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
 
-        {error && <p className="text-red-600 text-center">{error}</p>}
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-6 space-y-5">
+          <h1 className="text-2xl font-bold text-center text-green-700 flex items-center justify-center gap-2">
+            <Factory className="w-6 h-6" />
+            {t.submitLoanRequest}
+          </h1>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Input Type */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <Layers className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={inputType}
-              onChange={(e) => setInputType(e.target.value)}
+          {error && <p className="text-red-600 text-center">{error}</p>}
+
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Input Type */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <Layers className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={inputType}
+                onChange={(e) => setInputType(e.target.value)}
+              >
+                <option value="">{t.inputType}</option>
+                {inputTypes.map((i) => (
+                  <option key={i.id} value={i.id}>
+                    {i.type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Subtype */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <Boxes className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={inputSubType}
+                onChange={(e) => setInputSubType(e.target.value)}
+                disabled={!subTypeOptions.length}
+              >
+                <option value="">{t.subType}</option>
+                {subTypeOptions.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Package Size */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <Package className="w-5 h-5 text-gray-500" />
+              <input
+                className="flex-1 outline-none"
+                placeholder={t.packageSize}
+                value={packageSize}
+                onChange={(e) => setPackageSize(e.target.value)}
+              />
+            </div>
+
+            {/* Repayment Date with Floating Label */}
+            <div className="relative w-full">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <input
+                type="date"
+                id="repaymentDate"
+                className="peer block w-full border rounded px-10 py-2 placeholder-transparent focus:ring-2 focus:ring-green-500 focus:outline-none"
+                placeholder="Repayment Date"
+                value={repaymentDate}
+                onChange={(e) => setRepaymentDate(e.target.value)}
+              />
+              <label
+                htmlFor="repaymentDate"
+                className="absolute  left-40 top-2 text-gray-700 text-md transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:text-green-600"
+              >
+                {t.repaymentDate}
+              </label>
+            </div>
+
+            {/* Province */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+                disabled={!provinces.length}
+              >
+                <option value="">{t.selectProvince}</option>
+                {provinces.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* District */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                disabled={!districts.length}
+              >
+                <option value="">{t.selectDistrict}</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sector */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={sector}
+                onChange={(e) => setSector(e.target.value)}
+                disabled={!sectors.length}
+              >
+                <option value="">{t.selectSector}</option>
+                {sectors.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Cell */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={cell}
+                onChange={(e) => setCell(e.target.value)}
+                disabled={!cells.length}
+              >
+                <option value="">{t.selectCell}</option>
+                {cells.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Supplier */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <Factory className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={supplier}
+                onChange={(e) => setSupplier(e.target.value)}
+              >
+                <option value="">{t.SelectSupplier}</option>
+                {suppliers.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition"
+              disabled={loadingRequest}
             >
-              <option value="">{t.inputType}</option>
-              {inputTypes.map((i) => (
-                <option key={i.id} value={i.id}>
-                  {i.type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Subtype */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <Boxes className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={inputSubType}
-              onChange={(e) => setInputSubType(e.target.value)}
-              disabled={!subTypeOptions.length}
-            >
-              <option value="">{t.subType}</option>
-              {subTypeOptions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Package Size */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <Package className="w-5 h-5 text-gray-500" />
-            <input
-              className="flex-1 outline-none"
-              placeholder={t.packageSize}
-              value={packageSize}
-              onChange={(e) => setPackageSize(e.target.value)}
-            />
-          </div>
-
-          {/* Repayment Date with Floating Label */}
-          <div className="relative w-full">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-            <input
-              type="date"
-              id="repaymentDate"
-              className="peer block w-full border rounded px-10 py-2 placeholder-transparent focus:ring-2 focus:ring-green-500 focus:outline-none"
-              placeholder="Repayment Date"
-              value={repaymentDate}
-              onChange={(e) => setRepaymentDate(e.target.value)}
-            />
-            <label
-              htmlFor="repaymentDate"
-              className="absolute  left-40 top-2 text-gray-700 text-md transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:text-green-600"
-            >
-              {t.repaymentDate}
-            </label>
-          </div>
-
-          {/* Province */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={province}
-              onChange={(e) => setProvince(e.target.value)}
-              disabled={!provinces.length}
-            >
-              <option value="">{t.selectProvince}</option>
-              {provinces.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* District */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              disabled={!districts.length}
-            >
-              <option value="">{t.selectDistrict}</option>
-              {districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sector */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={sector}
-              onChange={(e) => setSector(e.target.value)}
-              disabled={!sectors.length}
-            >
-              <option value="">{t.selectSector}</option>
-              {sectors.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Cell */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={cell}
-              onChange={(e) => setCell(e.target.value)}
-              disabled={!cells.length}
-            >
-              <option value="">{t.selectCell}</option>
-              {cells.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Supplier */}
-          <div className="flex items-center border rounded p-2 gap-2">
-            <Factory className="w-5 h-5 text-gray-500" />
-            <select
-              className="flex-1 outline-none"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-            >
-              <option value="">{t.SelectSupplier}</option>
-              {suppliers.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition"
-            disabled={loadingRequest}
-          >
-            {loadingRequest ? "..." : t.submit}
-          </button>
-        </form>
+              {loadingRequest ? "..." : t.submit}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiGet, apiPostUpload } from "@/Utils/api"; // for multipart/form-data
 import { useAuth } from "@/Context/AuthContext";
 import { useProtectedPage } from "@/components/useProtectedPage";
+import DynamicHead from "@/app/app";
 import {
   FileText,
   Calendar,
@@ -45,7 +46,27 @@ export default function ViewLoans() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  console.log(user);
+  // --- Meta for SEO ---
+  const meta = {
+    en: {
+      title: "My Loan Requests | Smart Agri-Loan Platform",
+      description:
+        "View your agricultural loan requests, track repayment status, and manage payments.",
+      keywords:
+        "farmer loans, loan tracking, repayment status, agricultural inputs, smart farming",
+      image: "/images/og/view-loans.png",
+      url: `https://yourdomain.com/view-loans`,
+    },
+    rw: {
+      title: "Inguzanyo Zanjye | Urubuga rw’Imari y’Abahinzi",
+      description:
+        "Reba inguzanyo zawe z’ubuhinzi, ugenzure uko kwishyura bihagaze, kandi utegure kwishyura.",
+      keywords:
+        "inguzanyo y’umuhinzi, kugenzura inguzanyo, uko kwishyura bihagaze, ibikoresho by’ubuhinzi",
+      image: "/images/og/view-loans.png",
+      url: `https://yourdomain.com/view-loans`,
+    },
+  }[lang || "en"];
 
   const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
@@ -171,265 +192,275 @@ export default function ViewLoans() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-5xl mx-auto p-4 space-y-6">
-        <h1 className="text-2xl font-bold mb-4">{t.myRequests}</h1>
+    <>
+      {/* 🌐 Dynamic Meta */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-5xl mx-auto p-4 space-y-6">
+          <h1 className="text-2xl font-bold mb-4">{t.myRequests}</h1>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-4">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-md font-medium transition ${
-                activeTab === tab
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              }`}
-            >
-              {tab === "All"
-                ? t.all || "All"
-                : statusLabels[tab]?.[lang] || tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Requests */}
-        {filteredRequests.length === 0 && (
-          <div className="text-center text-gray-500 mt-10">
-            {t.noRequests || "No requests found"}
+          {/* Tabs */}
+          <div className="flex gap-2 mb-4">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-md font-medium transition ${
+                  activeTab === tab
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                {tab === "All"
+                  ? t.all || "All"
+                  : statusLabels[tab]?.[lang] || tab}
+              </button>
+            ))}
           </div>
-        )}
 
-        <div className="space-y-4">
-          {filteredRequests.map((r) => (
-            <section
-              key={r.id}
-              className="bg-white shadow rounded-lg p-4 flex flex-col gap-4"
-            >
-              {/* Product Info */}
-              <p className="flex items-center gap-2">
-                <FileText className="w-5 h-5" /> {t.Type}:{" "}
-                {inputTypeTranslations[r.input_type]?.[lang] || r.input_type}/{" "}
-                {inputSubTypeTranslations[r.input_type]?.[r.input_subtype]?.[
-                  lang
-                ] || r.input_subtype}
-              </p>
-              <p className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />{" "}
-                {t.packageSize}: {r.package_size}
-              </p>
-              {/* Loan Info */}
-              <div className="space-y-2">
-                {/* Loan & Interest Info */}
-                <p className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" /> {t.price}: {r.price || 0}
-                </p>
+          {/* Requests */}
+          {filteredRequests.length === 0 && (
+            <div className="text-center text-gray-500 mt-10">
+              {t.noRequests || "No requests found"}
+            </div>
+          )}
 
+          <div className="space-y-4">
+            {filteredRequests.map((r) => (
+              <section
+                key={r.id}
+                className="bg-white shadow rounded-lg p-4 flex flex-col gap-4"
+              >
+                {/* Product Info */}
                 <p className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" /> {t.loanAmount}:{" "}
-                  {r.loan_amount}
+                  <FileText className="w-5 h-5" /> {t.Type}:{" "}
+                  {inputTypeTranslations[r.input_type]?.[lang] || r.input_type}/{" "}
+                  {inputSubTypeTranslations[r.input_type]?.[r.input_subtype]?.[
+                    lang
+                  ] || r.input_subtype}
                 </p>
                 <p className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" /> {t.interest}:{" "}
-                  {r.interest_amount || 0}
+                  <CheckCircle className="w-5 h-5 text-green-600" />{" "}
+                  {t.packageSize}: {r.package_size}
                 </p>
-                <p className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" /> {t.totalLoanWithInterest}:{" "}
-                  {r.total_loan_amount}
-                </p>
+                {/* Loan Info */}
+                <div className="space-y-2">
+                  {/* Loan & Interest Info */}
+                  <p className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" /> {t.price}: {r.price || 0}
+                  </p>
 
-                {/* Other Details */}
-                <p className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" /> {t.repaymentDate}:{" "}
-                  {new Date(r.repayment_date).toLocaleDateString()}
-                </p>
-                <p
-                  className={`flex items-center gap-2 px-2 py-1 rounded ${statusColor(
-                    r.status
-                  )}`}
-                >
-                  {t.status}:{" "}
-                  {statusLabels[
-                    r.status?.trim()?.charAt(0).toUpperCase() +
-                      r.status?.trim()?.slice(1)
-                  ]?.[lang] || r.status}
-                </p>
-              </div>
+                  <p className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" /> {t.loanAmount}:{" "}
+                    {r.loan_amount}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" /> {t.interest}:{" "}
+                    {r.interest_amount || 0}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" /> {t.totalLoanWithInterest}
+                    : {r.total_loan_amount}
+                  </p>
 
-              {/* Request Document */}
-              {r.document_url && (
-                <p
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => openDocument(r.document_url)}
-                >
-                  <FileText className="w-5 h-5 text-blue-600" />{" "}
-                  {t.veiwPaymentProof || "View Request Document"}
-                </p>
-              )}
+                  {/* Other Details */}
+                  <p className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5" /> {t.repaymentDate}:{" "}
+                    {new Date(r.repayment_date).toLocaleDateString()}
+                  </p>
+                  <p
+                    className={`flex items-center gap-2 px-2 py-1 rounded ${statusColor(
+                      r.status
+                    )}`}
+                  >
+                    {t.status}:{" "}
+                    {statusLabels[
+                      r.status?.trim()?.charAt(0).toUpperCase() +
+                        r.status?.trim()?.slice(1)
+                    ]?.[lang] || r.status}
+                  </p>
+                </div>
 
-              {r.status !== "Pending" &&
-                r.status !== "Rejected" &&
-                r.document_url && (
-                  /* Repayment Summary */
-                  <div className="mt-2">
-                    <h2 className="font-semibold">{t.repaymentSummary}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-                      <p className="flex items-center gap-2">
-                        <DollarSign className="w-5 h-5 text-green-600" />{" "}
-                        {t.paid}: {r.paid_amount || 0}
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <DollarSign className="w-5 h-5 text-red-600" />{" "}
-                        {t.remaining}:{" "}
-                        {parseFloat(r.remaining_amount) ||
-                          parseFloat(r.loan_amount) +
-                            parseFloat(r.interest_amount || 0)}
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <Calendar className="w-5 h-5" /> {t.status}:{" "}
-                        <span
-                          className={`px-2 py-1 rounded text-white ${
-                            r.payment_status === "Paid"
-                              ? "bg-green-600"
-                              : r.payment_status === "Partial"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {
-                            t.repaymentStatus[
-                              r.payment_status?.toLowerCase() || "unpaid"
-                            ]
-                          }
-                        </span>
-                      </p>
-                    </div>
+                {/* Request Document */}
+                {r.document_url && (
+                  <p
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => openDocument(r.document_url)}
+                  >
+                    <FileText className="w-5 h-5 text-blue-600" />{" "}
+                    {t.veiwPaymentProof || "View Request Document"}
+                  </p>
+                )}
 
-                    <div className="flex gap-3 mt-3">
-                      {r.payment_status !== "Paid" && (
+                {r.status !== "Pending" &&
+                  r.status !== "Rejected" &&
+                  r.document_url && (
+                    /* Repayment Summary */
+                    <div className="mt-2">
+                      <h2 className="font-semibold">{t.repaymentSummary}</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                        <p className="flex items-center gap-2">
+                          <DollarSign className="w-5 h-5 text-green-600" />{" "}
+                          {t.paid}: {r.paid_amount || 0}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <DollarSign className="w-5 h-5 text-red-600" />{" "}
+                          {t.remaining}:{" "}
+                          {parseFloat(r.remaining_amount) ||
+                            parseFloat(r.loan_amount) +
+                              parseFloat(r.interest_amount || 0)}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <Calendar className="w-5 h-5" /> {t.status}:{" "}
+                          <span
+                            className={`px-2 py-1 rounded text-white ${
+                              r.payment_status === "Paid"
+                                ? "bg-green-600"
+                                : r.payment_status === "Partial"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                            }`}
+                          >
+                            {
+                              t.repaymentStatus[
+                                r.payment_status?.toLowerCase() || "unpaid"
+                              ]
+                            }
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="flex gap-3 mt-3">
+                        {r.payment_status !== "Paid" && (
+                          <button
+                            onClick={() => openPaymentModal(r)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 flex items-center gap-2"
+                          >
+                            <Upload className="w-4 h-4" />{" "}
+                            {t.recordPayment || "Record Payment"}
+                          </button>
+                        )}
                         <button
-                          onClick={() => openPaymentModal(r)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 flex items-center gap-2"
+                          onClick={() => toggleHistory(r.id)}
+                          className="px-4 py-2 bg-gray-600 text-white rounded shadow hover:bg-gray-700 flex items-center gap-2"
                         >
-                          <Upload className="w-4 h-4" />{" "}
-                          {t.recordPayment || "Record Payment"}
+                          <History className="w-5 h-5" />{" "}
+                          {histories[r.id] ? t.hideHistory : t.viewHistory}
                         </button>
-                      )}
-                      <button
-                        onClick={() => toggleHistory(r.id)}
-                        className="px-4 py-2 bg-gray-600 text-white rounded shadow hover:bg-gray-700 flex items-center gap-2"
-                      >
-                        <History className="w-5 h-5" />{" "}
-                        {histories[r.id] ? t.hideHistory : t.viewHistory}
-                      </button>
+                      </div>
                     </div>
+                  )}
+                {/* Payment History */}
+
+                {r.status !== "Pending" && histories[r.id] && (
+                  <div className="mt-4 border-t pt-3">
+                    <h3 className="font-semibold mb-2">{t.paymentHistory}</h3>
+                    {histories[r.id].length === 0 ? (
+                      <p className="text-gray-500">{t.noPaymentmentsMade}</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {histories[r.id].map((p) => (
+                          <li
+                            key={p.id}
+                            className="flex justify-between bg-gray-100 px-3 py-2 rounded"
+                          >
+                            <span>
+                              {p.method} - <strong>{p.amount}</strong>{" "}
+                              {p.document_url && (
+                                <span
+                                  className="text-blue-600 cursor-pointer"
+                                  onClick={() =>
+                                    window.open(
+                                      `${process.env.NEXT_PUBLIC_API_URL}${p.document_url}`,
+                                      "_blank"
+                                    )
+                                  }
+                                >
+                                  [Proof]
+                                </span>
+                              )}
+                            </span>
+                            <span>
+                              {new Date(p.payment_date).toLocaleDateString()}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 )}
-              {/* Payment History */}
+              </section>
+            ))}
+          </div>
 
-              {r.status !== "Pending" && histories[r.id] && (
-                <div className="mt-4 border-t pt-3">
-                  <h3 className="font-semibold mb-2">{t.paymentHistory}</h3>
-                  {histories[r.id].length === 0 ? (
-                    <p className="text-gray-500">{t.noPaymentmentsMade}</p>
-                  ) : (
-                    <ul className="space-y-2">
-                      {histories[r.id].map((p) => (
-                        <li
-                          key={p.id}
-                          className="flex justify-between bg-gray-100 px-3 py-2 rounded"
-                        >
-                          <span>
-                            {p.method} - <strong>{p.amount}</strong>{" "}
-                            {p.document_url && (
-                              <span
-                                className="text-blue-600 cursor-pointer"
-                                onClick={() =>
-                                  window.open(
-                                    `${process.env.NEXT_PUBLIC_API_URL}${p.document_url}`,
-                                    "_blank"
-                                  )
-                                }
-                              >
-                                [Proof]
-                              </span>
-                            )}
-                          </span>
-                          <span>
-                            {new Date(p.payment_date).toLocaleDateString()}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+          {/* Payment Modal */}
+          {modalOpen && selectedLoan && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4">
+                <h2 className="text-xl font-bold">{t.recordPayment}</h2>
+                <p>
+                  {t.farmer}: <strong>{selectedLoan.farmer_name}</strong>
+                </p>
+                <p>
+                  {t.loanAmount}: <strong>{selectedLoan.loan_amount}</strong>
+                </p>
+                <p>
+                  {t.remaining}:{" "}
+                  <strong>
+                    {selectedLoan.remaining_amount || selectedLoan.loan_amount}
+                  </strong>
+                </p>
+
+                <div className="space-y-3">
+                  <input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                  <select
+                    value={method}
+                    onChange={(e) => setMethod(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                  >
+                    <option value="Cash">{t.cash}</option>
+                    <option value="Mobile Money">{t.mobileMoney}</option>
+                    <option value="Bank">{t.bankTransfer}</option>
+                  </select>
+                  <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    className="w-full border rounded px-3 py-2"
+                  />
                 </div>
-              )}
-            </section>
-          ))}
-        </div>
 
-        {/* Payment Modal */}
-        {modalOpen && selectedLoan && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4">
-              <h2 className="text-xl font-bold">{t.recordPayment}</h2>
-              <p>
-                {t.farmer}: <strong>{selectedLoan.farmer_name}</strong>
-              </p>
-              <p>
-                {t.loanAmount}: <strong>{selectedLoan.loan_amount}</strong>
-              </p>
-              <p>
-                {t.remaining}:{" "}
-                <strong>
-                  {selectedLoan.remaining_amount || selectedLoan.loan_amount}
-                </strong>
-              </p>
-
-              <div className="space-y-3">
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-                <select
-                  value={method}
-                  onChange={(e) => setMethod(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                >
-                  <option value="Cash">{t.cash}</option>
-                  <option value="Mobile Money">{t.mobileMoney}</option>
-                  <option value="Bank">{t.bankTransfer}</option>
-                </select>
-                <input
-                  type="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                >
-                  {t.cancel || "Cancel"}
-                </button>
-                <button
-                  onClick={handlePayment}
-                  disabled={submitting}
-                  className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-                >
-                  {submitting ? "Saving..." : "Save Payment"}
-                </button>
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    onClick={() => setModalOpen(false)}
+                    className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                  >
+                    {t.cancel || "Cancel"}
+                  </button>
+                  <button
+                    onClick={handlePayment}
+                    disabled={submitting}
+                    className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+                  >
+                    {submitting ? "Saving..." : "Save Payment"}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </main>
-    </div>
+          )}
+        </main>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import DynamicHead from "@/app/app";
 import { useLanguage } from "@/Context/LanguageContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -22,7 +23,29 @@ export default function ReportsPage() {
   const [bySupplier, setBySupplier] = useState([]);
   const [byInput, setByInput] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  // 🌍 Localized metadata
+  const meta = {
+    en: {
+      title: "Reports | Smart Agri-Loan Platform",
+      description:
+        "View real-time reports on farmers’ loans, payments, and input distribution. Analyze data by suppliers and input types for smarter agricultural decisions.",
+      keywords:
+        "agriculture loans reports, loan payments, supplier analytics, input management, farmer statistics, smart agriculture dashboard",
+      image: "/images/og/reports-preview.png",
+      url: `https://yourdomain.com/reports`,
+    },
+    rw: {
+      title: "Raporo | Urubuga rw’Imari y’Abahinzi",
+      description:
+        "Reba raporo z’igihe nyacyo ku nguzanyo z’abahinzi, ubwishyu n’itangwa ry’inyongeramusaruro. Sobanukirwa amakuru ku batanga inyongeramusaruro n’ubwoko bw’inyongeramusaruro.",
+      keywords:
+        "raporo z’inguzanyo z’abahinzi, ubwishyu bw’inguzanyo, isesengura ry’abatanga, imicungire y’inyongeramusaruro, imibare y’abahinzi, dashboard y’ubuhinzi",
+      image: "/images/og/reports-preview.png",
+      url: `https://yourdomain.com/reports`,
+    },
+  }[lang || "en"];
 
   useEffect(() => {
     // Connect to Socket.IO server
@@ -54,83 +77,94 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Total Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.totalLoanSummary}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-lg font-semibold">
-            {t.total}: {summary.total_loan?.toLocaleString() || 0} RWF
-          </p>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={paidVsRemaining}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {paidVsRemaining.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+    <>
+      {/* SEO Meta for Reports Page */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
 
-          {/* Custom legend */}
-          <div className="flex justify-center mt-2 gap-4">
-            {paidVsRemaining.map((entry, index) => (
-              <div key={entry.name} className="flex items-center gap-1">
-                <span
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                ></span>
-                <span>{entry.name === "Paid" ? t.paid : t.remaining}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        {/* Total Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.totalLoanSummary}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-semibold">
+              {t.total}: {summary.total_loan?.toLocaleString() || 0} RWF
+            </p>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={paidVsRemaining}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label
+                >
+                  {paidVsRemaining.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
 
-      {/* By Supplier */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.loansBySupplier}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={bySupplier}>
-              <XAxis dataKey="supplier" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" fill="#0088FE" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+            {/* Custom legend */}
+            <div className="flex justify-center mt-2 gap-4">
+              {paidVsRemaining.map((entry, index) => (
+                <div key={entry.name} className="flex items-center gap-1">
+                  <span
+                    className="w-4 h-4 rounded"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  ></span>
+                  <span>{entry.name === "Paid" ? t.paid : t.remaining}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* By Input Type */}
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <CardTitle>{t.loansByInputType}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={byInput}>
-              <XAxis dataKey="input_type" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" fill="#00C49F" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
+        {/* By Supplier */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.loansBySupplier}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={bySupplier}>
+                <XAxis dataKey="supplier" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#0088FE" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* By Input Type */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>{t.loansByInputType}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={byInput}>
+                <XAxis dataKey="input_type" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#00C49F" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
