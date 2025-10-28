@@ -25,6 +25,11 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const { t, lang } = useLanguage();
 
+  //for downloadable files
+  // Add these states at the top
+  const [exportInfo, setExportInfo] = useState(null);
+  const [exportReady, setExportReady] = useState(false);
+
   // 🌍 Localized metadata
   const meta = {
     en: {
@@ -61,6 +66,11 @@ export default function ReportsPage() {
       setLoading(false);
     });
 
+    // 🔹 Listen for export updates
+    socket.on("export-update", (data) => {
+      setExportInfo(data); // contains { message, count, timestamp }
+      setExportReady(true);
+    });
     return () => socket.disconnect();
   }, []);
 
@@ -162,6 +172,36 @@ export default function ReportsPage() {
                 <Bar dataKey="total" fill="#00C49F" />
               </BarChart>
             </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>{t.downloadExportedData}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex-1">
+              <p>{t.exportDescription}</p>
+              {exportInfo && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {t.rowsExported}: {exportInfo.count} (
+                  {new Date(exportInfo.timestamp).toLocaleTimeString()})
+                </p>
+              )}
+            </div>
+            <a
+              href="http://localhost:4000/api/export/download"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`px-4 py-2 rounded text-white ${
+                exportReady
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              download
+              onClick={() => setExportReady(false)} // reset until next export
+            >
+              {t.downloadButton}
+            </a>
           </CardContent>
         </Card>
       </div>

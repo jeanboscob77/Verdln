@@ -3,6 +3,7 @@ const db = require("./config/db");
 const cors = require("cors");
 const http = require("http");
 const bodyParser = require("body-parser");
+const cron = require("node-cron");
 require("dotenv").config();
 const path = require("path");
 const { Server } = require("socket.io");
@@ -20,21 +21,19 @@ const loanRoutes = require("./routes/loans");
 const supplierRoutes = require("./routes/suppliers");
 const repaymentRoutes = require("./routes/repayments");
 const ussdRoutes = require("./ussd/ussd");
+// Export route and function
+const {
+  router: exportRouter,
+  exportRecentData,
+  setIO,
+} = require("./routes/exportRoute");
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }, // allow frontend connection
 });
 
-console.log({
-  userRoutes: typeof userRoutes,
-  locationRoutes: typeof locationRoutes,
-  inputRoutes: typeof inputRoutes,
-  loanRoutes: typeof loanRoutes,
-  supplierRoutes: typeof supplierRoutes,
-  repaymentRoutes: typeof repaymentRoutes,
-  ussdRoutes: typeof ussdRoutes,
-});
+setIO(io); // 🔹 inject io instance into exportRoute
 
 app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);
@@ -46,6 +45,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/repayments", repaymentRoutes);
 app.use("/api", ussdRoutes);
+
+//this is endpoint for downloading exported files
+// ✅ Use export routes
+app.use("/api/export", exportRouter);
+
+// ✅ Schedule hourly export
+cron.schedule("0 * * * *", () => {
+  console.log("🕐 Running hourly export for recent data...");
+  exportRecentData();
+});
+
+// ✅ Run once when server starts
+exportRecentData();
 // Function to fetch dashboard data
 const getDashboardData = async () => {
   const [summaryRows] = await db.query(`

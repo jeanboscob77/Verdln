@@ -153,7 +153,12 @@ export const translations = {
     sector: "Sector",
     cell: "Cell",
     // for Seeds/Fertilizer/Pesticides sub-options
-
+    // English
+    downloadExportedData: "Download Exported Users Data",
+    exportDescription:
+      "Click below to download the latest exported Excel file.",
+    downloadButton: "Download Excel",
+    rowsExported: "Rows exported",
     //tabs
     tabs: {
       all: "All",
@@ -535,6 +540,12 @@ export const translations = {
       "Maize Seeds": "Imbuto z’ibigori",
     },
 
+    // Kinyarwanda
+    downloadExportedData: "Kuramo Amakuru Yoherejwe",
+    exportDescription:
+      "Kanda hasi kugira ngo ukureho dosiye ya Excel iheruka koherezwa.",
+    downloadButton: "Kuramo Excel",
+    rowsExported: "Imirongo yoherejwe",
     //this for home page that make more descriptive
 
     hero: {
