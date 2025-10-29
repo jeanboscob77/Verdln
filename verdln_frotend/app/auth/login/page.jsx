@@ -1,26 +1,50 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DynamicHead from "@/app/app";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
-import { useAuth } from "@/Context/AuthContext"; // <-- import Auth context
+import { useAuth } from "@/Context/AuthContext";
 import { apiPost } from "@/Utils/api";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, lang, setLang } = useLanguage();
-  const { login } = useAuth(); // <-- get login function from context
+  const { login } = useAuth();
 
   const [nationalId, setNationalId] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 🌍 Localized meta for LoginPage
+  // 🌟 Get role from query string (selected from Navbar)
+  const queryRole = searchParams.get("role");
+  const [role, setRole] = useState(queryRole || "farmer");
+
+  useEffect(() => {
+    if (queryRole) setRole(queryRole);
+  }, [queryRole]);
+
+  // Translate roles to Kinyarwanda
+  const roleNamesRW = {
+    farmer: "Umuhinzi",
+    supplier: "Umucuruzi",
+    investor: "Umushoramari",
+    admin: "Umuyobozi",
+  };
+
+  const displayRole =
+    lang === "rw"
+      ? roleNamesRW[role]
+      : role.charAt(0).toUpperCase() + role.slice(1);
+
+  // 🌍 Meta for SEO
   const meta = {
     en: {
-      title: "Login | Smart Agri-Loan Platform",
+      title: `Login as ${
+        role.charAt(0).toUpperCase() + role.slice(1)
+      } | Smart Agri-Loan Platform`,
       description:
         "Login to access your account and manage agricultural loans, payments, and cooperative insights.",
       keywords: "login, agriculture loans, farmer account, smart agriculture",
@@ -28,7 +52,7 @@ export default function LoginPage() {
       url: `https://yourdomain.com/login`,
     },
     rw: {
-      title: "Injira | Urubuga rw’Imari y’Abahinzi",
+      title: `Injira nka ${displayRole} | Urubuga rw’Imari y’Abahinzi`,
       description:
         "Injira mu rubuga rwawe kugirango ugere ku nguzanyo z’abahinzi, ubwishyu n’amakuru y’amashyirahamwe.",
       keywords:
@@ -55,32 +79,42 @@ export default function LoginPage() {
     setError("");
     if (!validate()) return;
     setLoading(true);
+
     try {
       const data = await apiPost("/users/login", {
         national_id: nationalId,
         phone_number: phone,
+        role,
       });
 
-      // Set preferred language
       if (data.preferred_language) {
         setLang(data.preferred_language);
         localStorage.setItem("preferredLang", data.preferred_language);
       }
 
       if (data.token && data.user) {
-        // Save token in localStorage
         localStorage.setItem("authToken", data.token);
-
-        // Update Auth context
         login(data.user, data.token);
 
-        // Redirect based on role
-        if (data.user) {
-          toast.success("Login successful!");
-          router.push("/");
-        }
+        toast.success("Login successful!");
 
-        console.log("Logged in user:", data.user);
+        // Redirect based on role
+        switch (data.user.role) {
+          case "farmer":
+            router.push("/farmer/loan/view");
+            break;
+          case "supplier":
+            router.push("/supplier/dashboard");
+            break;
+          case "investor":
+            router.push("/investor/dashboard");
+            break;
+          case "admin":
+            router.push("/admin/dashboard");
+            break;
+          default:
+            router.push("/");
+        }
       } else {
         setError("Login failed: missing token or user data");
       }
@@ -94,7 +128,6 @@ export default function LoginPage() {
 
   return (
     <>
-      {/* 🌐 Meta for SEO */}
       <DynamicHead
         title={meta.title}
         description={meta.description}
@@ -103,7 +136,11 @@ export default function LoginPage() {
         url={meta.url}
       />
       <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-        <h1 className="text-xl font-bold mb-4">{t.loginTitle}</h1>
+        <h1 className="text-xl font-bold mb-4">
+          {lang === "rw"
+            ? `Injira nka ${displayRole}`
+            : `Login as ${displayRole}`}
+        </h1>
 
         {error && <div className="mb-3 text-red-600">{error}</div>}
 
@@ -130,7 +167,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-500 hover:transition-300"
+            className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-500 transition"
           >
             {loading ? "..." : t.loginButtonLabel}
           </button>

@@ -5,6 +5,12 @@ import {
   EnvelopeIcon,
   GlobeAltIcon,
 } from "@heroicons/react/24/outline";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaLinkedinIn,
+  FaInstagram,
+} from "react-icons/fa";
 import { useLanguage } from "@/Context/LanguageContext";
 
 const Footer = () => {
@@ -25,6 +31,41 @@ const Footer = () => {
               Verdln
             </h2>
             <p className="text-green-200">{t.footer.description}</p>
+            {/* Social Media Icons */}
+            <div className="flex items-center gap-4 mt-2">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-green-300 transition-colors"
+              >
+                <FaFacebookF className="w-5 h-5" />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-green-300 transition-colors"
+              >
+                <FaTwitter className="w-5 h-5" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-green-300 transition-colors"
+              >
+                <FaLinkedinIn className="w-5 h-5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-green-300 transition-colors"
+              >
+                <FaInstagram className="w-5 h-5" />
+              </a>
+            </div>
           </div>
 
           {/* Navigation */}

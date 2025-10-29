@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
 import { useAuth } from "@/Context/AuthContext";
-
-// Icons
 import {
   Home,
   User,
@@ -31,7 +29,7 @@ export default function Navbar() {
     {
       label: t.home,
       href: "/",
-      roles: ["guest", "farmer", "admin", "supplier"],
+      roles: ["guest", "farmer", "admin", "supplier", "investor"],
       icon: <Home className="w-4 h-4" />,
     },
     {
@@ -85,6 +83,12 @@ export default function Navbar() {
       href: "/supplier/dashboard",
       roles: ["supplier"],
       icon: <Truck className="w-4 h-4" />,
+    },
+    {
+      label: "Investor",
+      href: "/investor/dashboard",
+      roles: ["investor"],
+      icon: <Users className="w-4 h-4" />,
     },
   ];
 
@@ -182,7 +186,6 @@ function NavLink({ label, href, pathname, icon, children }) {
     (children && children.some((c) => c.href === pathname));
 
   if (!children) {
-    // Direct link for items without dropdown
     return (
       <Link
         href={href}
@@ -198,7 +201,6 @@ function NavLink({ label, href, pathname, icon, children }) {
     );
   }
 
-  // Dropdown link for items with children
   return (
     <div className="relative">
       <button
@@ -235,65 +237,91 @@ function NavLink({ label, href, pathname, icon, children }) {
   );
 }
 
-/* -------------------- Mobile NavLink -------------------- */
-function MobileNavLink({ label, href, pathname, icon, children }) {
-  const [open, setOpen] = useState(false);
-  const isActive =
-    pathname === href ||
-    (children && children.some((c) => c.href === pathname));
+/* -------------------- Auth Buttons -------------------- */
+function AuthButtons({ stacked = false, t, user, logout }) {
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
 
-  if (!children) {
+  if (user) {
     return (
-      <Link
-        href={href}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-          isActive
-            ? "bg-white text-green-700 font-semibold"
-            : "text-white hover:text-yellow-200"
-        }`}
+      <button
+        onClick={logout}
+        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
+        bg-red-600 text-white hover:bg-red-700 flex items-center gap-2
+        ${stacked ? "mt-2" : ""}`}
       >
-        {icon}
-        {label}
-      </Link>
+        <LogOut className="w-4 h-4" />
+        {t.logout || "Logout"}
+      </button>
     );
   }
 
   return (
-    <div className="flex flex-col">
-      <button
-        onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-          isActive
-            ? "bg-white text-green-700 font-semibold"
-            : "text-white hover:text-yellow-200"
-        }`}
-      >
-        {icon}
-        {label}
-        <ChevronDown className="w-4 h-4" />
-      </button>
-      {children && open && (
-        <div className="flex flex-col ml-4 mt-1 gap-1">
-          {children.map((child) => (
-            <Link
-              key={child.href}
-              href={child.href}
-              className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-yellow-100 ${
-                pathname === child.href ? "bg-yellow-200 font-semibold" : ""
-              }`}
-              onClick={() => setOpen(false)}
-            >
-              {child.icon}
-              {child.label}
-            </Link>
-          ))}
-        </div>
-      )}
+    <div
+      className={
+        stacked ? "flex flex-col gap-2 mt-2" : "flex items-center gap-3"
+      }
+    >
+      {/* Login dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setLoginOpen(!loginOpen)}
+          className="px-3 py-2 rounded-md text-sm font-medium border border-white text-white hover:bg-white hover:text-green-700 flex items-center gap-2"
+        >
+          <LogIn className="w-4 h-4" />
+          {t.login}
+          <ChevronDown className="w-4 h-4" />
+        </button>
+        {loginOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white text-green-800 rounded-md shadow-lg border z-50">
+            {["farmer", "admin", "supplier", "investor"].map((role) => (
+              <Link
+                key={role}
+                href={`/auth/login?role=${role}`}
+                className="block px-4 py-2 text-sm hover:bg-yellow-100"
+                onClick={() => setLoginOpen(false)}
+              >
+                {t.LoginAs}
+                {t.roleNamesRW[role] ||
+                  role.charAt(0).toUpperCase() + role.slice(1)}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Register dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setRegisterOpen(!registerOpen)}
+          className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-300 text-green-900 hover:bg-yellow-400 flex items-center gap-2"
+        >
+          <UserPlus className="w-4 h-4" />
+          {t.register}
+          <ChevronDown className="w-4 h-4" />
+        </button>
+        {registerOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white text-green-800 rounded-md shadow-lg border z-50">
+            {["farmer", "investor"].map((role) => (
+              <Link
+                key={role}
+                href={`/auth/register?role=${role}`}
+                className="block px-4 py-2 text-sm hover:bg-yellow-100"
+                onClick={() => setRegisterOpen(false)}
+              >
+                {t.RegisterAs}{" "}
+                {t.roleNamesRW[role] ||
+                  role.charAt(0).toUpperCase() + role.slice(1)}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-/* -------------------- LangSwitcher -------------------- */
+/* -------------------- Language Switcher -------------------- */
 function LangSwitcher({ lang, setLang, compact = false }) {
   const [open, setOpen] = useState(false);
   const languages = [
@@ -307,7 +335,7 @@ function LangSwitcher({ lang, setLang, compact = false }) {
       <select
         value={lang}
         onChange={(e) => setLang(e.target.value)}
-        className="px-2 py-1 border rounded border-b-blue-700 text-sm text-green-700 bg-white focus:outline-none focus:ring-1 focus:ring-yellow-300"
+        className="px-2 py-1 border rounded text-sm text-green-700 bg-white focus:outline-none"
       >
         {languages.map((lng) => (
           <option key={lng.code} value={lng.code}>
@@ -347,46 +375,6 @@ function LangSwitcher({ lang, setLang, compact = false }) {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-/* -------------------- AuthButtons -------------------- */
-function AuthButtons({ stacked = false, t, user, logout }) {
-  if (user) {
-    return (
-      <button
-        onClick={logout}
-        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
-          bg-red-600 text-white hover:bg-red-700 flex items-center gap-2
-          ${stacked ? "mt-2" : ""}`}
-      >
-        <LogOut className="w-4 h-4" />
-        {t.logout || "Logout"}
-      </button>
-    );
-  }
-
-  return (
-    <div
-      className={
-        stacked ? "flex flex-col gap-2 mt-2" : "flex items-center gap-2"
-      }
-    >
-      <Link
-        href="/auth/login"
-        className="px-3 py-2 rounded-md text-sm font-medium border border-white text-white hover:bg-white hover:text-green-700 flex items-center gap-2"
-      >
-        <LogIn className="w-4 h-4" />
-        {t.login}
-      </Link>
-      <Link
-        href="/auth/register"
-        className="px-3 py-2 rounded-md text-sm font-medium bg-yellow-300 text-green-900 hover:bg-yellow-400 flex items-center gap-2"
-      >
-        <UserPlus className="w-4 h-4" />
-        {t.register}
-      </Link>
     </div>
   );
 }

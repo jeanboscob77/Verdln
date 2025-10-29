@@ -151,6 +151,8 @@ export default function RequestLoan() {
     fetchSuppliers();
   }, [province, district, sector, cell]);
 
+  const selectedUnit = inputTypes.find((i) => i.id === inputType)?.unit || "";
+
   // --- SUBMIT ---
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -280,7 +282,9 @@ export default function RequestLoan() {
               <Package className="w-5 h-5 text-gray-500" />
               <input
                 className="flex-1 outline-none"
-                placeholder={t.packageSize}
+                placeholder={
+                  t.packageSize + (selectedUnit ? ` (${selectedUnit})` : "")
+                }
                 value={packageSize}
                 onChange={(e) => setPackageSize(e.target.value)}
               />
@@ -385,7 +389,7 @@ export default function RequestLoan() {
                 value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
               >
-                <option value="">{t.SelectSupplier}</option>
+                <option value="">{t.selectSupplier}</option>
                 {suppliers.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.full_name}

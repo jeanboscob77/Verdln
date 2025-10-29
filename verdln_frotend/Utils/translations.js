@@ -152,7 +152,19 @@ export const translations = {
     district: "District",
     sector: "Sector",
     cell: "Cell",
+    selectSupplier: "Select Supplier",
     // for Seeds/Fertilizer/Pesticides sub-options
+
+    //role to login page meta description
+
+    roleNamesRW: {
+      farmer: "Farmer",
+      supplier: "Supplier",
+      investor: "Investor",
+      admin: "Admin",
+    },
+    LoginAs: "Login as ",
+    RegisterAs: "Register as",
     // English
     downloadExportedData: "Download Exported Users Data",
     exportDescription:
@@ -492,7 +504,7 @@ export const translations = {
     district: "Akarere",
     sector: "Umurenge",
     cell: "Akagali",
-    selectSupplier: "Hitamo Utanga Ibikoresho",
+    selectSupplier: "Hitamo Umucuruzi",
 
     //tabs
     tabs: {
@@ -540,6 +552,15 @@ export const translations = {
       "Maize Seeds": "Imbuto z’ibigori",
     },
 
+    //role to login page meta description
+    roleNamesRW: {
+      farmer: "Umuhinzi",
+      supplier: "Umucuruzi",
+      investor: "Umushoramari",
+      admin: "Umuyobozi",
+    },
+    LoginAs: "Injira nk'",
+    RegisterAs: "Iyandikishe nk'",
     // Kinyarwanda
     downloadExportedData: "Kuramo Amakuru Yoherejwe",
     exportDescription:
