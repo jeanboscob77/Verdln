@@ -296,19 +296,7 @@ export default function AdminLoansPage({ params }) {
                   }
                   className="border rounded px-2 py-1 flex-1 mt-2 md:mt-0"
                   value={currentNote}
-                  onChange={(e) =>
-                    setNotesMap((prev) => ({
-                      ...prev,
-                      [loan.id]: e.target.value,
-                    }))
-                  }
-                  onBlur={async () => {
-                    await handleStatusUpdate(
-                      loan.id,
-                      statusMap[loan.id] ?? loan.status,
-                      notesMap[loan.id] ?? ""
-                    );
-                  }}
+                  onChange={(e) => handleNotesChange(loan.id, e.target.value)}
                   disabled={updatingLoanId === loan.id}
                 />
               </div>
