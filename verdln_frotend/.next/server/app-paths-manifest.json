@@ -1,10 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/auth/login/page": "app/auth/login/page.js",
-  "/auth/register/page": "app/auth/register/page.js",
-  "/farmer/loan/request/page": "app/farmer/loan/request/page.js",
-  "/farmer/loan/view/page": "app/farmer/loan/view/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js",
-  "/supplier/dashboard/page": "app/supplier/dashboard/page.js"
+  "/page": "app/page.js"
 }
