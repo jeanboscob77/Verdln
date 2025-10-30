@@ -72,7 +72,7 @@ function LoginContent() {
             router.push("/investor/dashboard");
             break;
           case "admin":
-            router.push("/admin/dashboard");
+            router.push("/admin/view");
             break;
           default:
             router.push("/");
