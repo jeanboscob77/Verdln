@@ -153,6 +153,7 @@ export const translations = {
     sector: "Sector",
     cell: "Cell",
     selectSupplier: "Select Supplier",
+    reason: "Explanation notes",
     // for Seeds/Fertilizer/Pesticides sub-options
 
     //role to login page meta description
@@ -444,6 +445,7 @@ export const translations = {
     bankTransfer: "Kuhererekanya kuri Banki",
     noLoans: "Nta nguzanyo ziriho.",
     deliveredOn: "Delivered on",
+    reason: "Ibisobanuro",
 
     //home page in kinyarwanda
     welcomeTitle: "Murakaza neza kuri Verdln",

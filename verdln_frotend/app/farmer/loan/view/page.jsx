@@ -247,26 +247,23 @@ export default function ViewLoans() {
                 </p>
                 <p className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />{" "}
-                  {t.packageSize}: {r.package_size}
+                  {t.packageSize}: {r.package_size} {r.unit}
                 </p>
                 {/* Loan Info */}
                 <div className="space-y-2">
                   {/* Loan & Interest Info */}
                   <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5" /> {t.price}: {r.price || 0}
+                    {t.price}: {r.price || 0} FRW
                   </p>
 
                   <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5" /> {t.loanAmount}:{" "}
-                    {r.loan_amount}
+                    {t.loanAmount}: {r.loan_amount} FRW
                   </p>
                   <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5" /> {t.interest}:{" "}
-                    {r.interest_amount || 0}
+                    {t.interest}: {r.interest_amount || 0} FRW
                   </p>
                   <p className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5" /> {t.totalLoanWithInterest}
-                    : {r.total_loan_amount}
+                    {t.totalLoanWithInterest}: {r.total_loan_amount} FRW
                   </p>
 
                   {/* Other Details */}
@@ -286,7 +283,12 @@ export default function ViewLoans() {
                     ]?.[lang] || r.status}
                   </p>
                 </div>
-
+                <p className="bg-slate-200 p-1">
+                  <span className="font-bold text-gray-500 bg-blue-200 p-1 rounded">
+                    {t.reason}:
+                  </span>{" "}
+                  {r.notes}
+                </p>
                 {/* Request Document */}
                 {r.document_url && (
                   <p
@@ -306,15 +308,14 @@ export default function ViewLoans() {
                       <h2 className="font-semibold">{t.repaymentSummary}</h2>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
                         <p className="flex items-center gap-2">
-                          <DollarSign className="w-5 h-5 text-green-600" />{" "}
-                          {t.paid}: {r.paid_amount || 0}
+                          {t.paid}: {r.paid_amount || 0} FRW
                         </p>
                         <p className="flex items-center gap-2">
-                          <DollarSign className="w-5 h-5 text-red-600" />{" "}
                           {t.remaining}:{" "}
                           {parseFloat(r.remaining_amount) ||
                             parseFloat(r.loan_amount) +
-                              parseFloat(r.interest_amount || 0)}
+                              parseFloat(r.interest_amount || 0)}{" "}
+                          FRW
                         </p>
                         <p className="flex items-center gap-2">
                           <Calendar className="w-5 h-5" /> {t.status}:{" "}

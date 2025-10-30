@@ -6,7 +6,7 @@ import { useLanguage } from "@/Context/LanguageContext";
 import { useAuth } from "@/Context/AuthContext";
 import { apiPost } from "@/Utils/api";
 import toast from "react-hot-toast";
-// import DynamicHead from "@/components/DynamicHead"; // optional if you added it
+import DynamicHead from "@/app/app";
 
 function LoginContent() {
   const router = useRouter();
@@ -25,18 +25,6 @@ function LoginContent() {
   useEffect(() => {
     if (queryRole) setRole(queryRole);
   }, [queryRole]);
-
-  const roleNamesRW = {
-    farmer: "Umuhinzi",
-    supplier: "Umucuruzi",
-    investor: "Umushoramari",
-    admin: "Umuyobozi",
-  };
-
-  const displayRole =
-    lang === "rw"
-      ? roleNamesRW[role]
-      : role.charAt(0).toUpperCase() + role.slice(1);
 
   function validate() {
     if (!nationalId || !phone) {
@@ -103,9 +91,8 @@ function LoginContent() {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h1 className="text-xl font-bold mb-4">
-        {lang === "rw"
-          ? `Injira nka ${displayRole}`
-          : `Login as ${displayRole}`}
+        {t.LoginAs}
+        {t.roleNamesRW[role]}
       </h1>
 
       {error && <div className="mb-3 text-red-600">{error}</div>}
@@ -143,9 +130,43 @@ function LoginContent() {
 }
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role") || "farmer";
+  const { t, lang } = useLanguage();
+  // --- Meta for SEO ---
+  const meta = {
+    en: {
+      title: `${t.LoginAs} ${
+        role.charAt(0).toUpperCase() + role.slice(1)
+      } | Smart Agri-Loan Platform`,
+      description: `Login as a ${role} to access your Smart Agri-Loan account, manage your profile, track agricultural activities, and connect with cooperatives.`,
+      keywords: `login, ${role} account, agriculture loans, smart farming, agri platform`,
+      image: "/images/og/login-preview.png",
+      url: `https://yourdomain.com/auth/login?role=${role}`,
+    },
+    rw: {
+      title: `${t.LoginAs}${t.roleNamesRW[role]} | Urubuga rw’Imari y’Abahinzi`,
+      description: `Injira nk’${t.roleNamesRW[role]} kugira ngo ugere kuri konti yawe, urebe amakuru ajyanye n’ubuhinzi, inguzanyo n’amashyirahamwe.`,
+      keywords: `injira, konti y’${t.roleNamesRW[role]}, inguzanyo z’abahinzi, ubuhinzi bw’ikoranabuhanga`,
+      image: "/images/og/login-preview.png",
+      url: `https://yourdomain.com/auth/login?role=${role}`,
+    },
+  }[lang || "en"];
+
   return (
-    <Suspense fallback={<div>Loading login page...</div>}>
-      <LoginContent />
-    </Suspense>
+    <>
+      {/* 🌐 Meta for SEO */}
+      <DynamicHead
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        imageUrl={meta.image}
+        url={meta.url}
+      />
+
+      <Suspense fallback={<div>Loading login page...</div>}>
+        <LoginContent />
+      </Suspense>
+    </>
   );
 }

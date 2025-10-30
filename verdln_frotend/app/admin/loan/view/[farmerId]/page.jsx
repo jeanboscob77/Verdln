@@ -1,10 +1,12 @@
 "use client";
-import React, { useEffect, useState, use } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/Context/AuthContext";
 import { useLanguage } from "@/Context/LanguageContext";
 import { apiGet, apiPut } from "@/Utils/api";
 import DynamicHead from "@/app/app";
+import Swal from "sweetalert2";
 import {
   User,
   Phone,
@@ -17,7 +19,7 @@ import {
 } from "lucide-react";
 
 export default function AdminLoansPage({ params }) {
-  const { farmerId } = use(params);
+  const farmerId = params?.farmerId;
   const router = useRouter();
   const { user, loading } = useAuth();
   const { t, lang } = useLanguage();
@@ -26,6 +28,12 @@ export default function AdminLoansPage({ params }) {
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState("");
   const [updatingLoanId, setUpdatingLoanId] = useState(null);
+
+  const [statusMap, setStatusMap] = useState({});
+  const [notesMap, setNotesMap] = useState({});
+
+  const typingTimeoutRef = useRef({}); // For debouncing note updates
+
   // --- Meta for SEO ---
   const meta = {
     en: {
@@ -55,7 +63,18 @@ export default function AdminLoansPage({ params }) {
     try {
       setLoadingData(true);
       const res = await apiGet(`/loans/farmer/${farmerId}`);
-      setLoans(res.requests || []);
+      const fetched = res.requests || [];
+      setLoans(fetched);
+
+      // initialize status and notes maps
+      const status = {};
+      const notes = {};
+      fetched.forEach((l) => {
+        status[l.id] = l.status;
+        notes[l.id] = l.notes || "";
+      });
+      setStatusMap(status);
+      setNotesMap(notes);
     } catch (err) {
       setError(err.message || "Failed to fetch loans");
     } finally {
@@ -71,15 +90,34 @@ export default function AdminLoansPage({ params }) {
     try {
       setUpdatingLoanId(loanId);
       await apiPut(`/loans/${loanId}/status`, { status, notes });
-      fetchLoans();
+      await fetchLoans();
     } catch (err) {
-      alert(err.message || "Failed to update status");
+      Swal.fire({
+        icon: "error",
+        title: lang === "rw" ? "Byanze!" : "Failed!",
+        text: err.message || "Failed to update status",
+      });
+      await fetchLoans();
     } finally {
       setUpdatingLoanId(null);
     }
   };
 
-  console.log(loans);
+  const handleNotesChange = (loanId, value) => {
+    setNotesMap((prev) => ({ ...prev, [loanId]: value }));
+
+    // Debounce updates: wait 1s after last typing
+    if (typingTimeoutRef.current[loanId])
+      clearTimeout(typingTimeoutRef.current[loanId]);
+
+    typingTimeoutRef.current[loanId] = setTimeout(() => {
+      handleStatusUpdate(
+        loanId,
+        statusMap[loanId] ?? loans.find((l) => l.id === loanId)?.status,
+        value
+      );
+    }, 1000);
+  };
 
   if (loading || loadingData)
     return <div className="text-center mt-10">{t.loading || "Loading..."}</div>;
@@ -94,7 +132,6 @@ export default function AdminLoansPage({ params }) {
 
   return (
     <>
-      {/* Dynamic Head */}
       <DynamicHead
         title={meta.title}
         description={meta.description}
@@ -102,123 +139,182 @@ export default function AdminLoansPage({ params }) {
         imageUrl={meta.image}
         url={meta.url}
       />
+
       <div className="p-4 min-h-screen bg-gray-50 space-y-6">
         <h1 className="text-2xl font-bold mb-4 text-green-700">
           {t.allLoans || "All Loan Requests"}
         </h1>
 
-        {loans.map((loan) => (
-          <section
-            key={loan.id}
-            className="bg-white shadow rounded-lg p-4 flex flex-col gap-4"
-          >
-            {/* Farmer Identification */}
-            <h2 className="font-bold text-lg text-gray-700 border-b pb-1">
-              {t.farmerIdentification}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-              <p className="flex items-center gap-1">
-                <User className="w-5 h-5 text-gray-500" /> {loan.farmer_name}
-              </p>
-              <p className="flex items-center gap-1">
-                <Phone className="w-5 h-5 text-gray-500" />{" "}
-                {loan.farmer_phone || "N/A"}
-              </p>
-              <p className="flex items-center gap-1">
-                <CreditCard className="w-5 h-5 text-gray-500" />{" "}
-                {loan.national_id || "N/A"}
-              </p>
-            </div>
+        {loans.map((loan) => {
+          const currentStatus = statusMap[loan.id] ?? loan.status;
+          const currentNote = notesMap[loan.id] ?? loan.notes ?? "";
 
-            {/* Loan Details */}
-            <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-              {t.loanDetails}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-              <p className="flex items-center gap-1">
-                <Layers className="w-5 h-5 text-gray-500" />{" "}
-                {t.inputTypeNames[loan.input_type] || loan.input_type} /{" "}
-                {t.inputSubtypeNames[loan.input_subtype]}
-              </p>
-              <p className="flex items-center gap-1">
-                <Package className="w-5 h-5 text-gray-500" /> ({t.quantity}:
-                {loan.package_size}) ({t.price}: {loan.price || "N/A"})
-              </p>
-              <p>
-                {t.loanAmount}: {loan.loan_amount}
-              </p>
-              <p>
-                {t.interest}: {loan.interest_amount}
-              </p>
-              <p>
-                {t.totalLoanWithInterest}: {loan.total_amount}
-              </p>
-              <p className="flex items-center gap-1">
-                <Calendar className="w-5 h-5 text-gray-500" />{" "}
-                {loan.repayment_date}
-              </p>
-              <p>
-                {t.status}:{" "}
-                <span
-                  className={`font-semibold ${
-                    loan.status === "Approved"
-                      ? "text-green-600"
-                      : loan.status === "Rejected"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}
+          return (
+            <section
+              key={loan.id}
+              className="bg-white shadow rounded-lg p-4 flex flex-col gap-4"
+            >
+              {/* Farmer Identification */}
+              <h2 className="font-bold text-lg text-gray-700 border-b pb-1">
+                {t.farmerIdentification}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                <p className="flex items-center gap-1">
+                  <User className="w-5 h-5 text-gray-500" /> {loan.farmer_name}
+                </p>
+                <p className="flex items-center gap-1">
+                  <Phone className="w-5 h-5 text-gray-500" />{" "}
+                  {loan.farmer_phone || "N/A"}
+                </p>
+                <p className="flex items-center gap-1">
+                  <CreditCard className="w-5 h-5 text-gray-500" />{" "}
+                  {loan.national_id || "N/A"}
+                </p>
+              </div>
+
+              {/* Loan Details */}
+              <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
+                {t.loanDetails}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                <p className="flex items-center gap-1">
+                  <Layers className="w-5 h-5 text-gray-500" />{" "}
+                  {t.inputTypeNames[loan.input_type] || loan.input_type} /{" "}
+                  {t.inputSubtypeNames[loan.input_subtype]}
+                </p>
+                <p className="flex items-center gap-1">
+                  <Package className="w-5 h-5 text-gray-500" /> ({t.packageSize}
+                  : {loan.package_size} {loan.unit}) ({t.price}:{" "}
+                  {`${loan.price} FRW` || "N/A"})
+                </p>
+                <p>
+                  {t.loanAmount}: {loan.loan_amount} FRW
+                </p>
+                <p>
+                  {t.interest}: {loan.interest_amount} FRW
+                </p>
+                <p>
+                  {t.totalLoanWithInterest}: {loan.total_amount} FRW
+                </p>
+                <p className="flex items-center gap-1">
+                  <Calendar className="w-5 h-5 text-gray-500" />{" "}
+                  {loan.repayment_date}
+                </p>
+                <p>
+                  {t.status}:{" "}
+                  <span
+                    className={`font-semibold ${
+                      loan.status === "Approved"
+                        ? "text-green-600"
+                        : loan.status === "Rejected"
+                        ? "text-red-600"
+                        : "text-yellow-600"
+                    }`}
+                  >
+                    {t.loanStatus[loan.status]}
+                  </span>
+                </p>
+              </div>
+
+              {/* Location & Supplier */}
+              <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
+                {t.locationAndSupplier}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                <p className="flex items-center gap-1">
+                  <MapPin className="w-5 h-5 text-gray-500" />{" "}
+                  {lang === "en" ? loan.province : loan.province_rw},{" "}
+                  {loan.district}, {loan.sector}, {loan.cell}
+                </p>
+                <p className="flex items-center gap-1">
+                  <Factory className="w-5 h-5 text-gray-500" />{" "}
+                  {loan.supplier_name} ({loan.supplier_phone || "N/A"})
+                </p>
+              </div>
+
+              {/* Update Status & Notes */}
+              <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
+                {t.updateStatusAndNotes}
+              </h2>
+              <div className="flex flex-col md:flex-row md:items-center md:gap-4 mt-2">
+                <select
+                  className="border rounded px-2 py-1"
+                  value={currentStatus}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+                    const confirmText =
+                      lang === "rw"
+                        ? `Uremeza ko ushaka guhindura status y’inguzanyo ikajya kuri "${t.loanStatus[newStatus]}"?`
+                        : `Are you sure you want to change this loan status to "${t.loanStatus[newStatus]}"?`;
+
+                    const result = await Swal.fire({
+                      title:
+                        lang === "rw"
+                          ? "Emeza Ibyo Guhindura"
+                          : "Confirm Change",
+                      text: confirmText,
+                      icon: "question",
+                      showCancelButton: true,
+                      confirmButtonColor: "#16a34a",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText:
+                        lang === "rw" ? "Yego, Hindura" : "Yes, Change",
+                      cancelButtonText: lang === "rw" ? "Oya" : "Cancel",
+                    });
+
+                    if (result.isConfirmed) {
+                      setStatusMap((prev) => ({
+                        ...prev,
+                        [loan.id]: newStatus,
+                      }));
+                      await handleStatusUpdate(loan.id, newStatus, currentNote);
+                      Swal.fire({
+                        icon: "success",
+                        title:
+                          lang === "rw" ? "Byagenze neza!" : "Status Updated!",
+                        timer: 1500,
+                        showConfirmButton: false,
+                      });
+                    } else {
+                      setStatusMap((prev) => ({
+                        ...prev,
+                        [loan.id]: loan.status,
+                      }));
+                    }
+                  }}
+                  disabled={updatingLoanId === loan.id}
                 >
-                  {t.loanStatus[loan.status]}
-                </span>
-              </p>
-            </div>
+                  <option value="Pending">{t.loanStatus["Pending"]}</option>
+                  <option value="Approved">{t.loanStatus["Approved"]}</option>
+                  <option value="Rejected">{t.loanStatus["Rejected"]}</option>
+                </select>
 
-            {/* Location & Supplier */}
-            <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-              {t.locationAndSupplier}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-              <p className="flex items-center gap-1">
-                <MapPin className="w-5 h-5 text-gray-500" />{" "}
-                {lang === "en" ? loan.province : loan.province_rw},{" "}
-                {loan.district}, {loan.sector}, {loan.cell}
-              </p>
-              <p className="flex items-center gap-1">
-                <Factory className="w-5 h-5 text-gray-500" />{" "}
-                {loan.supplier_name} ({loan.supplier_phone || "N/A"})
-              </p>
-            </div>
-
-            {/* Update Status & Notes */}
-            <h2 className="font-bold text-lg text-gray-700 border-b pb-1 mt-4">
-              {t.updateStatusAndNotes}
-            </h2>
-            <div className="flex flex-col md:flex-row md:items-center md:gap-4 mt-2">
-              <select
-                className="border rounded px-2 py-1"
-                defaultValue={loan.status}
-                onChange={(e) =>
-                  handleStatusUpdate(loan.id, e.target.value, loan.notes || "")
-                }
-                disabled={updatingLoanId === loan.id}
-              >
-                <option value="Pending">{t.loanStatus["Pending"]}</option>
-                <option value="Approved">{t.loanStatus["Approved"]}</option>
-                <option value="Rejected">{t.loanStatus["Rejected"]}</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Add note..."
-                className="border rounded px-2 py-1 flex-1 mt-2 md:mt-0"
-                defaultValue={loan.notes || ""}
-                onBlur={(e) =>
-                  handleStatusUpdate(loan.id, loan.status, e.target.value)
-                }
-                disabled={updatingLoanId === loan.id}
-              />
-            </div>
-          </section>
-        ))}
+                <input
+                  type="text"
+                  placeholder={
+                    lang === "rw" ? "Ongeramo inyandiko..." : "Add note..."
+                  }
+                  className="border rounded px-2 py-1 flex-1 mt-2 md:mt-0"
+                  value={currentNote}
+                  onChange={(e) =>
+                    setNotesMap((prev) => ({
+                      ...prev,
+                      [loan.id]: e.target.value,
+                    }))
+                  }
+                  onBlur={async () => {
+                    await handleStatusUpdate(
+                      loan.id,
+                      statusMap[loan.id] ?? loan.status,
+                      notesMap[loan.id] ?? ""
+                    );
+                  }}
+                  disabled={updatingLoanId === loan.id}
+                />
+              </div>
+            </section>
+          );
+        })}
       </div>
     </>
   );

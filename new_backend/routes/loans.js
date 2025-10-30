@@ -124,6 +124,7 @@ router.get("/farmer/:farmerId", async (req, res) => {
       `SELECT 
       lr.*, 
       it.type AS input_type, 
+      it.unit as unit ,
       st.name AS input_subtype, 
       st.price AS price,
       f.full_name AS farmer_name, 

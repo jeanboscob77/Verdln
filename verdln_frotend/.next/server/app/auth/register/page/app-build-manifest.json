@@ -1,20 +1,29 @@
 {
   "pages": {
     "/auth/register/page": [
-      "static/chunks/be65f89c860970e9.js",
-      "static/chunks/201a3feecafb887a.js",
-      "static/chunks/712bdfa5de357037.js",
-      "static/chunks/dc1507c10ff4deb6.js",
-      "static/chunks/10cfd371b8eb96eb.js",
-      "static/chunks/34b050cd448eaa57.css",
-      "static/chunks/44c47ea439904dcb.js",
-      "static/chunks/4d08b8b9f97728e3.js",
-      "static/chunks/0f7191f8b244b4d4.js",
-      "static/chunks/caa1430cd64a51bf.js",
-      "static/chunks/003dd4a748324b68.js",
-      "static/chunks/13141b78f582d63d.js",
-      "static/chunks/6f55e9056e87d8a4.js",
-      "static/chunks/turbopack-30edd8aa1460c012.js"
+      "static/chunks/07c97_next_dist_1f13c4eb._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_app_favicon_ico_mjs_d797bad9._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_4a571122._.js",
+      "static/chunks/07c97_react-icons_fa_index_mjs_b9d3af22._.js",
+      "static/chunks/07c97_react-icons_lib_b74943eb._.js",
+      "static/chunks/07c97_motion-dom_dist_es_3f5b19da._.js",
+      "static/chunks/07c97_framer-motion_dist_es_6e892936._.js",
+      "static/chunks/07c97_06194597._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_app_globals_9aed3118.css",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_app_layout_72850bd9.js",
+      "static/chunks/07c97_next_dist_client_components_builtin_global-error_a55cd403.js",
+      "static/chunks/07c97_31663a8c._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_3f5b7e48._.js",
+      "static/chunks/3d860_FullStack_Verdln_Verdln_verdln_frotend_app_auth_register_page_jsx_a55cd403._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_92f58470._.js",
+      "static/chunks/07c97_next_dist_compiled_react-dom_b3ca4c9e._.js",
+      "static/chunks/07c97_next_dist_compiled_next-devtools_index_083f1f1f.js",
+      "static/chunks/07c97_next_dist_compiled_50df46a6._.js",
+      "static/chunks/07c97_next_dist_client_9a35fee8._.js",
+      "static/chunks/07c97_next_dist_653b2f64._.js",
+      "static/chunks/07c97_@swc_helpers_cjs_29a82373._.js",
+      "static/chunks/Desktop_FullStack_Verdln_Verdln_verdln_frotend_a0ff3932._.js",
+      "static/chunks/turbopack-Desktop_FullStack_Verdln_Verdln_verdln_frotend_2c29130d._.js"
     ]
   }
 }
