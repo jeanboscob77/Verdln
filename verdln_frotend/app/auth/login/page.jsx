@@ -129,7 +129,7 @@ function LoginContent() {
   );
 }
 
-export default function LoginPage() {
+function Login() {
   const searchParams = useSearchParams();
   const role = searchParams.get("role") || "farmer";
   const { t, lang } = useLanguage();
@@ -168,5 +168,13 @@ export default function LoginPage() {
         <LoginContent />
       </Suspense>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading login page...</div>}>
+      <Login />
+    </Suspense>
   );
 }
