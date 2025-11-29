@@ -1,7 +1,7 @@
 "use client";
 import toast from "react-hot-toast";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
 import { apiPost } from "@/Utils/api";
 import DynamicHead from "@/app/app";
@@ -11,13 +11,20 @@ import { User, IdCard, Phone, Languages } from "lucide-react";
 export default function RegisterPage() {
   const router = useRouter();
   const { t, lang, setLang } = useLanguage();
-
+  const searchParams = useSearchParams();
   const [fullName, setFullName] = useState("");
   const [nationalId, setNationalId] = useState("");
   const [phone, setPhone] = useState("");
   const [preferred, setPreferred] = useState(lang || "en");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const queryRole = searchParams.get("role");
+  const [role, setRole] = useState(queryRole || "farmer");
+
+  useEffect(() => {
+    if (queryRole) setRole(queryRole);
+  }, [queryRole]);
 
   // 🌍 Localized meta for RegisterPage
   const meta = {
@@ -99,7 +106,9 @@ export default function RegisterPage() {
         url={meta.url}
       />
       <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-        <h1 className="text-xl font-bold mb-4">{t.registerTitle}</h1>
+        <h1 className="text-xl font-bold mb-4">
+          {t.RegisterAs} {t.roleNamesRW[role]}
+        </h1>
 
         {error && <div className="mb-3 text-red-600">{error}</div>}
 

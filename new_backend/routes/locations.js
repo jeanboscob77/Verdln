@@ -66,4 +66,21 @@ router.get("/cells/:sectorId", async (req, res) => {
   }
 });
 
+//-------------------------------------------
+// Get villages by cell
+// -------------------------------------------
+router.get("/villages/:cellId", async (req, res) => {
+  try {
+    const { cellId } = req.params;
+    const [rows] = await pool.query(
+      "SELECT * FROM villages WHERE cell_id = ? ORDER BY name",
+      [cellId]
+    );
+    res.json({ success: true, villages: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch cells" });
+  }
+});
+
 module.exports = router;

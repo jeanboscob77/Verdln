@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/Context/AuthContext";
 import { useLanguage } from "@/Context/LanguageContext";
 import { apiGet, apiPut } from "@/Utils/api";
+import { useProtectedPage } from "@/components/useProtectedPage";
 import DynamicHead from "@/app/app";
 import Swal from "sweetalert2";
 import {
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function AdminLoansPage({ params }) {
+  useProtectedPage();
   const farmerId = params?.farmerId;
   const router = useRouter();
   const { user, loading } = useAuth();

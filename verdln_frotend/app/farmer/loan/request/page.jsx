@@ -59,6 +59,8 @@ export default function RequestLoan() {
   const [sector, setSector] = useState("");
   const [cells, setCells] = useState([]);
   const [cell, setCell] = useState("");
+  const [villages, setVillages] = useState([]);
+  const [village, setVillage] = useState("");
   const [suppliers, setSuppliers] = useState([]);
   const [supplier, setSupplier] = useState("");
 
@@ -141,15 +143,39 @@ export default function RequestLoan() {
   }, [sector]);
 
   useEffect(() => {
-    async function fetchSuppliers() {
-      if (!province || !district || !sector || !cell) return setSuppliers([]);
-      const res = await apiGet(
-        `/suppliers?province=${province}&district=${district}&sector=${sector}&cell=${cell}`
-      );
-      setSuppliers(Array.isArray(res) ? res : []);
+    async function fetchVillages() {
+      if (!cell) return setVillages([]);
+      const res = await apiGet(`/locations/villages/${cell}`);
+      setVillages(Array.isArray(res.villages) ? res.villages : []);
     }
+    fetchVillages();
+  }, [cell]);
+  useEffect(() => {
+    async function fetchSuppliers() {
+      if (!province || !district || !sector || !cell || !village) {
+        setSuppliers([]);
+        return;
+      }
+
+      try {
+        const res = await apiGet(
+          `/suppliers?province=${province}&district=${district}&sector=${sector}&cell=${cell}&village=${village}`
+        );
+
+        console.log("Suppliers response:", res);
+
+        const data = res?.data || res;
+        // handle both cases in case apiGet returns response.data or full response
+
+        setSuppliers(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Supplier fetch error:", err);
+        setSuppliers([]);
+      }
+    }
+
     fetchSuppliers();
-  }, [province, district, sector, cell]);
+  }, [province, district, sector, cell, village]);
 
   const selectedUnit = inputTypes.find((i) => i.id === inputType)?.unit || "";
 
@@ -167,11 +193,14 @@ export default function RequestLoan() {
       !district ||
       !sector ||
       !cell ||
+      !village ||
       !supplier
     ) {
       setError(t.required);
       return;
     }
+
+    console.log(suppliers);
 
     // Log the payload
     const payload = {
@@ -184,6 +213,7 @@ export default function RequestLoan() {
       district_id: district || null,
       sector_id: sector || null,
       cell_id: cell || null,
+      village_id: village || null,
       supplier_id: supplier || null,
     };
     console.log("Submitting loan request:", payload);
@@ -203,6 +233,7 @@ export default function RequestLoan() {
       setDistrict("");
       setSector("");
       setCell("");
+      setVillage("");
       setSupplier("");
     } catch (err) {
       console.error("Registration error:", err);
@@ -258,7 +289,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             {/* Subtype */}
             <div className="flex items-center border rounded p-2 gap-2">
               <Boxes className="w-5 h-5 text-gray-500" />
@@ -276,7 +306,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             {/* Package Size */}
             <div className="flex items-center border rounded p-2 gap-2">
               <Package className="w-5 h-5 text-gray-500" />
@@ -289,7 +318,6 @@ export default function RequestLoan() {
                 onChange={(e) => setPackageSize(e.target.value)}
               />
             </div>
-
             {/* Repayment Date with Floating Label */}
             <div className="relative w-full">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -308,7 +336,6 @@ export default function RequestLoan() {
                 {t.repaymentDate}
               </label>
             </div>
-
             {/* Province */}
             <div className="flex items-center border rounded p-2 gap-2">
               <MapPin className="w-5 h-5 text-gray-500" />
@@ -326,7 +353,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             {/* District */}
             <div className="flex items-center border rounded p-2 gap-2">
               <MapPin className="w-5 h-5 text-gray-500" />
@@ -344,7 +370,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             {/* Sector */}
             <div className="flex items-center border rounded p-2 gap-2">
               <MapPin className="w-5 h-5 text-gray-500" />
@@ -362,7 +387,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             {/* Cell */}
             <div className="flex items-center border rounded p-2 gap-2">
               <MapPin className="w-5 h-5 text-gray-500" />
@@ -381,6 +405,23 @@ export default function RequestLoan() {
               </select>
             </div>
 
+            {/* Village */}
+            <div className="flex items-center border rounded p-2 gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <select
+                className="flex-1 outline-none"
+                value={village}
+                onChange={(e) => setVillage(e.target.value)}
+                disabled={!villages.length}
+              >
+                <option value="">{t.selectVillage}</option>
+                {villages.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             {/* Supplier */}
             <div className="flex items-center border rounded p-2 gap-2">
               <Factory className="w-5 h-5 text-gray-500" />
@@ -397,7 +438,6 @@ export default function RequestLoan() {
                 ))}
               </select>
             </div>
-
             <button
               type="submit"
               className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition"

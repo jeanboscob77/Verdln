@@ -237,6 +237,82 @@ function NavLink({ label, href, pathname, icon, children }) {
   );
 }
 
+/**mobile navlink  */
+/* -------------------- Mobile NavLink -------------------- */
+function MobileNavLink({ label, href, pathname, icon, children }) {
+  const [open, setOpen] = useState(false);
+
+  const isActive =
+    pathname === href ||
+    (children && children.some((c) => c.href === pathname));
+
+  // If no dropdown children → render simple link
+  if (!children) {
+    return (
+      <Link
+        href={href}
+        className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition 
+        ${
+          isActive
+            ? "bg-white text-green-700 font-semibold"
+            : "text-white hover:bg-green-700/40"
+        }`}
+      >
+        {icon}
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      {/* Parent button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className={`flex items-center justify-between w-full px-3 py-2 rounded-md text-sm transition 
+        ${
+          isActive
+            ? "bg-white text-green-700 font-semibold"
+            : "text-white hover:bg-green-700/40"
+        }`}
+      >
+        <span className="flex items-center gap-3">
+          {icon}
+          {label}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 transform transition ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {/* Dropdown children */}
+      {open && (
+        <div className="ml-6 mt-1 flex flex-col gap-1 border-l border-white/40 pl-3">
+          {children.map((child) => {
+            const activeChild = pathname === child.href;
+
+            return (
+              <Link
+                key={child.href}
+                href={child.href}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition 
+                ${
+                  activeChild
+                    ? "bg-yellow-200 text-green-900 font-semibold"
+                    : "text-white hover:bg-green-700/40"
+                }`}
+              >
+                {child.icon}
+                {child.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* -------------------- Auth Buttons -------------------- */
 function AuthButtons({ stacked = false, t, user, logout }) {
   const [loginOpen, setLoginOpen] = useState(false);

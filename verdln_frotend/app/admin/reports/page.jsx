@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DynamicHead from "@/app/app";
 import { useLanguage } from "@/Context/LanguageContext";
+import { useProtectedPage } from "@/components/useProtectedPage";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   PieChart,
@@ -24,7 +25,7 @@ export default function ReportsPage() {
   const [byInput, setByInput] = useState([]);
   const [loading, setLoading] = useState(true);
   const { t, lang } = useLanguage();
-
+  useProtectedPage();
   //for downloadable files
   // Add these states at the top
   const [exportInfo, setExportInfo] = useState(null);

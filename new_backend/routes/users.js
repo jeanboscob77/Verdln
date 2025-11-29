@@ -35,6 +35,7 @@ router.post("/register", async (req, res) => {
       district_id,
       sector_id,
       cell_id,
+      village_id,
     } = req.body;
 
     // Validate role
@@ -45,7 +46,13 @@ router.post("/register", async (req, res) => {
 
     // Supplier must have location assigned
     if (role === "supplier") {
-      if (!province_id || !district_id || !sector_id || !cell_id) {
+      if (
+        !province_id ||
+        !district_id ||
+        !sector_id ||
+        !cell_id ||
+        !village_id
+      ) {
         return res
           .status(400)
           .json({ error: "Supplier must have full location assigned" });
@@ -70,8 +77,8 @@ router.post("/register", async (req, res) => {
 
     await pool.query(
       `INSERT INTO users
-  (id, full_name, national_id, phone_number, role, language, province_id, district_id, sector_id, cell_id)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+  (id, full_name, national_id, phone_number, role, language, province_id, district_id, sector_id, cell_id,village_id)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
       [
         id,
         full_name,
@@ -83,6 +90,7 @@ router.post("/register", async (req, res) => {
         district_id || null,
         sector_id || null,
         cell_id || null,
+        village_id || null,
       ]
     );
 

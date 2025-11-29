@@ -11,7 +11,7 @@ import DynamicHead from "@/app/app";
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, lang, setLang } = useLanguage();
+  const { t, setLang } = useLanguage();
   const { login } = useAuth();
 
   const [nationalId, setNationalId] = useState("");
@@ -72,7 +72,7 @@ function LoginContent() {
             router.push("/investor/dashboard");
             break;
           case "admin":
-            router.push("/admin/view");
+            router.push("/admin/loan/view");
             break;
           default:
             router.push("/");

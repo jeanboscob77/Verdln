@@ -7,7 +7,33 @@ const { v4: uuidv4 } = require("uuid");
  * GET /repayments/loans/delivered
  * Fetch all delivered loans with payment summary
  */
-const upload = multer({ dest: "uploads/payments/" });
+const fs = require("fs");
+const path = require("path");
+
+// Custom storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const folder = "uploads/payments/";
+
+    // Create folder if missing
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true });
+    }
+
+    cb(null, folder);
+  },
+
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname); // keep original extension
+    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+    cb(null, uniqueName + ext);
+  },
+});
+
+// Replace old upload
+const upload = multer({ storage });
+
 router.get("/loans/delivered", async (req, res) => {
   try {
     const [rows] = await pool.query(

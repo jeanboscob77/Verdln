@@ -5,7 +5,7 @@ const pool = require("../config/db");
 // GET suppliers by location
 router.get("/", async (req, res) => {
   try {
-    const { province, district, sector, cell } = req.query;
+    const { province, district, sector, cell, village } = req.query;
 
     // Build conditions dynamically
     const conditions = [];
@@ -28,13 +28,18 @@ router.get("/", async (req, res) => {
       params.push(cell);
     }
 
-    let query = `SELECT id, full_name, phone_number, province_id, district_id, sector_id, cell_id 
+    if (village) {
+      conditions.push("village_id = ?");
+      params.push(village);
+    }
+    let query = `SELECT id, full_name, phone_number, province_id, district_id, sector_id, cell_id, village_id
                  FROM users 
                  WHERE role = 'supplier'`;
 
     if (conditions.length > 0) {
       query += " AND " + conditions.join(" AND ");
     }
+    console.log("SQL:", query, params);
 
     const [rows] = await pool.query(query, params);
 

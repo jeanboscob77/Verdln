@@ -194,7 +194,7 @@ export default function AdminProofsPage() {
                 </p>
                 <p className="flex items-center gap-1">
                   <FileText className="w-5 h-5" /> {t.loanAmount}:{" "}
-                  {loan.total_loan_amount}
+                  {loan.total_loan_amount} FRW
                 </p>
               </div>
 
@@ -229,12 +229,11 @@ export default function AdminProofsPage() {
                 <h2 className="font-semibold">{t.repaymentHistory}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
                   <p className="flex items-center gap-1">
-                    <DollarSign className="w-5 h-5 text-green-600" /> {t.paid}:{" "}
-                    {loan.paid_amount || 0}
+                    {t.paid}: {loan.paid_amount || 0} FRW
                   </p>
                   <p className="flex items-center gap-1">
-                    <DollarSign className="w-5 h-5 text-red-600" />{" "}
-                    {t.remaining}: {loan.remaining_amount || loan.loan_amount}
+                    {t.remaining}: {loan.remaining_amount || loan.loan_amount}{" "}
+                    FRW
                   </p>
                   <p className="flex items-center gap-1">
                     <Calendar className="w-5 h-5" /> {t.status}:{" "}

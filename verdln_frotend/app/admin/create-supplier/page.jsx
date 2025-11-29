@@ -31,11 +31,13 @@ export default function CreateSupplierPage() {
   const [district, setDistrict] = useState("");
   const [sector, setSector] = useState("");
   const [cell, setCell] = useState("");
+  const [village, setVillage] = useState("");
 
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sectors, setSectors] = useState([]);
   const [cells, setCells] = useState([]);
+  const [villages, setVillages] = useState([]);
 
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [error, setError] = useState("");
@@ -104,6 +106,17 @@ export default function CreateSupplierPage() {
     fetchCells();
   }, [sector]);
 
+  console.log(cells);
+  useEffect(() => {
+    async function fetchVillages() {
+      if (!cell) return setVillages([]);
+      const res = await apiGet(`/locations/villages/${cell}`);
+      setVillages(Array.isArray(res.villages) ? res.villages : []);
+      setVillage("");
+    }
+    fetchVillages();
+  }, [cell]);
+
   if (loading || !user) return <div>{t.loading || "Loading..."}</div>;
 
   const handleSubmit = async (e) => {
@@ -117,7 +130,8 @@ export default function CreateSupplierPage() {
       !province ||
       !district ||
       !sector ||
-      !cell
+      !cell ||
+      !village
     ) {
       setError(t.required || "All fields are required");
       return;
@@ -135,6 +149,7 @@ export default function CreateSupplierPage() {
         district_id: district,
         sector_id: sector,
         cell_id: cell,
+        village_id: village,
       });
 
       alert(t.supplierCreated || "Supplier created successfully");
@@ -148,6 +163,7 @@ export default function CreateSupplierPage() {
       setDistrict("");
       setSector("");
       setCell("");
+      setVillage("");
     } catch (err) {
       setError(err.message || "Failed to create supplier");
     } finally {
@@ -302,6 +318,26 @@ export default function CreateSupplierPage() {
                 {cells.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </label>
+
+          {/* village */}
+          <label className="block">
+            <span className="text-sm">{t.village}</span>
+            <div className="flex items-center border rounded mt-1 p-2">
+              <Navigation className="w-5 h-5 text-gray-500 mr-2" />
+              <select
+                value={village}
+                onChange={(e) => setVillage(e.target.value)}
+                className="w-full outline-none bg-transparent"
+              >
+                <option value="">{t.selectVillage}</option>
+                {villages.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name}
                   </option>
                 ))}
               </select>

@@ -6,14 +6,7 @@ import { apiGet, apiPostUpload } from "@/Utils/api"; // for multipart/form-data
 import { useAuth } from "@/Context/AuthContext";
 import { useProtectedPage } from "@/components/useProtectedPage";
 import DynamicHead from "@/app/app";
-import {
-  FileText,
-  Calendar,
-  DollarSign,
-  CheckCircle,
-  History,
-  Upload,
-} from "lucide-react";
+import { FileText, Calendar, CheckCircle, History, Upload } from "lucide-react";
 
 const inputTypeTranslations = {
   Seeds: { en: "Seeds", rw: "Imbuto" },
@@ -284,9 +277,11 @@ export default function ViewLoans() {
                   </p>
                 </div>
                 <p className="bg-slate-200 p-1">
-                  <span className="font-bold text-gray-500 bg-blue-200 p-1 rounded">
-                    {t.reason}:
-                  </span>{" "}
+                  {r.notes && (
+                    <span className="font-bold text-gray-500 bg-blue-200 p-1 rounded">
+                      {t.reason}:
+                    </span>
+                  )}
                   {r.notes}
                 </p>
                 {/* Request Document */}
@@ -409,7 +404,8 @@ export default function ViewLoans() {
                   {t.farmer}: <strong>{selectedLoan.farmer_name}</strong>
                 </p>
                 <p>
-                  {t.loanAmount}: <strong>{selectedLoan.loan_amount}</strong>
+                  {t.loanAmount}:{" "}
+                  <strong>{selectedLoan.total_loan_amount}</strong>
                 </p>
                 <p>
                   {t.remaining}:{" "}

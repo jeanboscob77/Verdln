@@ -78,6 +78,7 @@ export const translations = {
     selectDistrict: "Select District",
     selectSector: "Select Sector",
     selectCell: "Select Cell",
+    selectVillage: "Select Village",
     selectSupplier: "Select Supplier",
     submitLoanRequest: "Submit Loan Request",
     selectSupplier: "Select Supplier",
@@ -152,6 +153,7 @@ export const translations = {
     district: "District",
     sector: "Sector",
     cell: "Cell",
+    village: "Village",
     selectSupplier: "Select Supplier",
     reason: "Explanation notes",
     // for Seeds/Fertilizer/Pesticides sub-options
@@ -325,7 +327,7 @@ export const translations = {
     login: "Injira",
     register: "Iyandikishe",
 
-    registerTitle: "Iyandikishe nk'Umuhinzi",
+    registerTitle: "Iyandikishe nk'",
     nationalId: "Indangamuntu",
     phoneNumber: "Numero ya Telefoni",
     preferredLanguage: "Ururimi Ukunda",
@@ -416,6 +418,7 @@ export const translations = {
     selectDistrict: "Hitamo Akarere",
     selectSector: "Hitamo Umurenge",
     selectCell: "Hitamo Akagali",
+    selectVillage: "Hitamo Umudugudu",
     selectSupplier: "Hitamo Umucuruzi",
     submitLoanRequest: "Saba Inguzanyo",
     repaymentDate: "Itariki yo Kwishyura",
@@ -506,6 +509,7 @@ export const translations = {
     district: "Akarere",
     sector: "Umurenge",
     cell: "Akagali",
+    village: "Umudugudu",
     selectSupplier: "Hitamo Umucuruzi",
 
     //tabs
