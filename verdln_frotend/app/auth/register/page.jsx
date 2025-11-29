@@ -1,5 +1,6 @@
 "use client";
 import toast from "react-hot-toast";
+import Suspense from "react";
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/Context/LanguageContext";
@@ -8,7 +9,7 @@ import DynamicHead from "@/app/app";
 // Icons
 import { User, IdCard, Phone, Languages } from "lucide-react";
 
-export default function RegisterPage() {
+function Register() {
   const router = useRouter();
   const { t, lang, setLang } = useLanguage();
   const searchParams = useSearchParams();
@@ -181,4 +182,10 @@ export default function RegisterPage() {
       </div>
     </>
   );
+}
+
+export default function RegisterPage() {
+  <Suspense fallback={<div>Loading...</div>}>
+    <Register />
+  </Suspense>;
 }
