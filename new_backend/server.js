@@ -35,20 +35,20 @@ const io = new Server(server, {
 
 setIO(io); // 🔹 inject io instance into exportRoute
 
-app.use("/api/users", userRoutes);
-app.use("/api/locations", locationRoutes);
-app.use("/api/inputs", inputRoutes);
-app.use("/api/loans", loanRoutes);
-app.use("/api/suppliers", supplierRoutes);
+app.use("/users", userRoutes);
+app.use("/locations", locationRoutes);
+app.use("/inputs", inputRoutes);
+app.use("/loans", loanRoutes);
+app.use("/suppliers", supplierRoutes);
 // Serve uploads folder at /uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use("/api/repayments", repaymentRoutes);
+app.use("/repayments", repaymentRoutes);
 app.use("/api", ussdRoutes);
 
 //this is endpoint for downloading exported files
 // ✅ Use export routes
-app.use("/api/export", exportRouter);
+app.use("/export", exportRouter);
 
 // ✅ Schedule hourly export
 cron.schedule("0 * * * *", () => {
