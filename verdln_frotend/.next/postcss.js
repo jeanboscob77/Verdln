@@ -1,6 +1,6 @@
 var R=require("./build/chunks/[turbopack]_runtime.js")("postcss.js")
-R.c("build/chunks/[turbopack-node]_transforms_postcss_ts_369ddab8._.js")
-R.c("build/chunks/[root-of-the-server]__133453f7._.js")
+R.c("build/chunks/[turbopack-node]_transforms_postcss_ts_e91887c8._.js")
+R.c("build/chunks/[root-of-the-server]__76b52b5d._.js")
 R.m("[turbopack-node]/globals.ts [postcss] (ecmascript)")
-R.m("[turbopack-node]/ipc/evaluate.ts/evaluate.js { INNER => \"[turbopack-node]/transforms/postcss.ts { CONFIG => \\\"[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/postcss.config.mjs [postcss] (ecmascript)\\\" } [postcss] (ecmascript)\", RUNTIME => \"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)\" } [postcss] (ecmascript)")
-module.exports=R.m("[turbopack-node]/ipc/evaluate.ts/evaluate.js { INNER => \"[turbopack-node]/transforms/postcss.ts { CONFIG => \\\"[project]/Desktop/FullStack/Verdln/Verdln/verdln_frotend/app/postcss.config.mjs [postcss] (ecmascript)\\\" } [postcss] (ecmascript)\", RUNTIME => \"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)\" } [postcss] (ecmascript)").exports
+R.m("[turbopack-node]/ipc/evaluate.ts/evaluate.js { INNER => \"[turbopack-node]/transforms/postcss.ts { CONFIG => \\\"[project]/Desktop/Verdln/Verdln/Verdln/verdln_frotend/app/postcss.config.mjs [postcss] (ecmascript)\\\" } [postcss] (ecmascript)\", RUNTIME => \"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)\" } [postcss] (ecmascript)")
+module.exports=R.m("[turbopack-node]/ipc/evaluate.ts/evaluate.js { INNER => \"[turbopack-node]/transforms/postcss.ts { CONFIG => \\\"[project]/Desktop/Verdln/Verdln/Verdln/verdln_frotend/app/postcss.config.mjs [postcss] (ecmascript)\\\" } [postcss] (ecmascript)\", RUNTIME => \"[turbopack-node]/ipc/evaluate.ts [postcss] (ecmascript)\" } [postcss] (ecmascript)").exports

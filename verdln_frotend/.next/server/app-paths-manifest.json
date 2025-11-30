@@ -1,4 +1,5 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/admin/create-supplier/page": "app/admin/create-supplier/page.js",
   "/admin/delivered/page": "app/admin/delivered/page.js",
   "/admin/loan/view/[farmerId]/page": "app/admin/loan/view/[farmerId]/page.js",
