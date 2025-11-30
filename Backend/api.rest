@@ -1,9 +1,0 @@
-POST http://localhost:5000/api/auth/register
-Content-Type: application/json
-
-{
-  "national_id": "1234567891234567",
-  "phone_number": "+250780000000",
-  "preferred_language": "en",
-  "role": "farmer"
-}
